@@ -42,8 +42,8 @@ namespace HeaterElems.Common
         #endregion EndTime
 
         #region Duration
-        private double _duration;
-        public double Duration {
+        private int _duration;
+        public int Duration {
             get { return _duration; }
             set { SetProperty(ref _duration, value); }
         }
@@ -109,7 +109,7 @@ namespace HeaterElems.Common
             Stopped = true;
         }
 
-        public void StopAfter(double durationInMilliSeconds)
+        public void StopAfter(int durationInMilliSeconds)
         {
             if (durationInMilliSeconds <= 0) throw new ArgumentException(nameof(durationInMilliSeconds));
             Duration = durationInMilliSeconds;

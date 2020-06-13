@@ -31,8 +31,8 @@ namespace HeaterElems.ViewModels
         #endregion StartCommand
 
         #region CountDownValue
-        private double _duration = 3;
-        public double Duration {
+        private int _duration = 3;
+        public int Duration {
             get => _duration;
             set => SetProperty(ref _duration, value);
         }
