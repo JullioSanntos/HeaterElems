@@ -13,7 +13,7 @@ namespace HeaterElems.ViewModels
 {
     public class MainViewModel : SetPropertyBase
     {
-
+        // In Testing branch
         #region HeatingWatch
         private StopWatch _heatingWatch;
         public StopWatch HeatingWatch {
