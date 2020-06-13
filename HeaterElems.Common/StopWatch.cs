@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using HeaterElems.Common.Annotations;
@@ -15,7 +16,10 @@ namespace HeaterElems.Common
 {
     public class StopWatch : SetPropertyBase
     {
+        #region properties
+        #region ElapsedTime
         public TimeSpan ElapsedTime => DateTime.Now - StarTime;
+        #endregion ElapsedTime
 
         #region ElapsedTotalSeconds
         private double _elapsedTotalSeconds;
@@ -28,11 +32,11 @@ namespace HeaterElems.Common
 
         #region StartTime
         private DateTime? _startTime;
-        public DateTime StarTime => (DateTime)(_startTime ?? (_startTime = DateTime.Now));
+        private DateTime StarTime => (DateTime)(_startTime ?? (_startTime = DateTime.Now));
         #endregion StartTime
 
         #region EndTime
-        public DateTime EndTime {
+        private DateTime EndTime {
             get => StarTime + TimeSpan.FromMilliseconds(Duration);
         }
         #endregion EndTime
@@ -46,42 +50,75 @@ namespace HeaterElems.Common
         #endregion Duration
 
         #region HasStopped
-        private bool _hasStopped;
-        public bool HasStopped {
-            get => _hasStopped;
-            private set => SetProperty(ref _hasStopped, value);
+        private bool _stopped;
+        public bool Stopped {
+            get => _stopped;
+            private set => SetProperty(ref _stopped, value);
         }
         #endregion HasStopped
 
-        public int RefreshRateInMiliSeconds => 100;
+        #region RefreshRateInMilliseconds
+        private int _refreshRateInMilliseconds = 100;
+        public int RefreshRateInMilliseconds {
+            get { return _refreshRateInMilliseconds; }
+            set { SetProperty(ref _refreshRateInMilliseconds, value); }
+        }
+        #endregion RefreshRateInMilliseconds
 
-        public event EventHandler CountDownCompleted;
+        #region CancellationTokenFactory
+        private CancellationTokenSource _cancellationTokenFactory;
+        private CancellationTokenSource CancellationTokenFactory {
+            get { return _cancellationTokenFactory ?? (_cancellationTokenFactory = new CancellationTokenSource()); }
+            set { SetProperty(ref _cancellationTokenFactory, value); }
+        }
+        #endregion CancellationTokenFactory
+
+        #region CancellationToken
+        public CancellationToken CancellationToken;
+        #endregion CancellationToken
+
+        #endregion properties
+
+
+        public event EventHandler Completed;
 
         public async Task Start()
         {
             //if (EndTime < DateTime.Now || _startTime < DateTime.Now)
             _startTime = null; //Reset to be lazy instantiated
+            CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
 
+            await AwaitStopOrCancel();
 
-            while (DateTime.Now <= EndTime || HasStopped) {
-                RaisePropertyChanged(nameof(ElapsedTotalSeconds));
-                await Task.Delay(RefreshRateInMiliSeconds);
-            }
-
-            CountDownCompleted?.Invoke(this, new EventArgs());
+            Completed?.Invoke(this, new EventArgs());
             ElapsedTotalSeconds = Math.Round(ElapsedTotalSeconds, 0);
-            RaisePropertyChanged(nameof(ElapsedTotalSeconds));
+        }
+
+        private async Task AwaitStopOrCancel()
+        {
+            while (DateTime.Now <= EndTime || Stopped)
+            {
+                await Task.Delay(RefreshRateInMilliseconds, CancellationToken);
+                RaisePropertyChanged(nameof(ElapsedTotalSeconds));
+                if (CancellationToken.IsCancellationRequested) break;
+            }
         }
 
         public void Stop()
         {
-            HasStopped = true;
+            Stopped = true;
         }
 
         public void StopAfter(double durationInMilliSeconds)
         {
             if (durationInMilliSeconds <= 0) throw new ArgumentException(nameof(durationInMilliSeconds));
             Duration = durationInMilliSeconds;
+        }
+
+        public void Cancel()
+        {
+            CancellationTokenFactory.Cancel();
+            //CancellationTokenFactory = null; //Reset to be lazy instantiated
         }
     }
 }

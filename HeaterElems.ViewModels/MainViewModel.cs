@@ -41,7 +41,7 @@ namespace HeaterElems.ViewModels
         public void StartWatch(object _)
         {
             IsCompleted = false;
-            HeatingWatch.CountDownCompleted += (s, a) => IsCompleted = true;
+            HeatingWatch.Completed += (s, a) => IsCompleted = true;
             HeatingWatch.Start().ConfigureAwait(false);
             HeatingWatch.StopAfter(Duration * 1000);
         }
