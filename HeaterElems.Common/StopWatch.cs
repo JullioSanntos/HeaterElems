@@ -18,17 +18,12 @@ namespace HeaterElems.Common
     {
         #region properties
 
-        #region ElapsedTime
+        #region RunDuration
         public TimeSpan RunDuration => DateTimeNow - StarTime;
-        #endregion ElapsedTime
+        #endregion RunDuration
 
         #region RunDurationInSeconds
-        private double _elapsedTotalSeconds;
-        // ReSharper disable once PossibleLossOfFraction
-        public double RunDurationInSeconds {
-            get => Math.Round(RunDuration.TotalSeconds, 1);
-            private set => _elapsedTotalSeconds = value;
-        }
+        public int RunDurationInSeconds => (int)RunDuration.TotalSeconds;
         #endregion ElapsedTotalSeconds
 
         #region StartTime
@@ -56,11 +51,11 @@ namespace HeaterElems.Common
         }
         #endregion HasStopped
 
-        #region RefreshRateInMilliseconds
-        private int _refreshRateInMilliseconds = 100;
-        public int RefreshRateInMilliseconds {
-            get { return _refreshRateInMilliseconds; }
-            set { SetProperty(ref _refreshRateInMilliseconds, value); }
+        #region RefreshFrequencyInMilliseconds
+        private int _refreshFrequencyInMilliseconds = 100;
+        public int RefreshFrequencyInMilliseconds {
+            get { return _refreshFrequencyInMilliseconds; }
+            set { SetProperty(ref _refreshFrequencyInMilliseconds, value); }
         }
         #endregion RefreshRateInMilliseconds
 
@@ -102,14 +97,13 @@ namespace HeaterElems.Common
             await RunClockAsync();
 
             Completed?.Invoke(this, new EventArgs());
-            RunDurationInSeconds = Math.Round(RunDurationInSeconds, 0);
         }
 
         protected internal async Task RunClockAsync() {
             var stopTime = EndTime;
             while (DateTimeNow <= stopTime || WasStopped)
             {
-                await Task.Delay(RefreshRateInMilliseconds, _cancellationToken);
+                await Task.Delay(RefreshFrequencyInMilliseconds, _cancellationToken);
                 RaisePropertyChanged(nameof(RunDurationInSeconds));
                 if (_cancellationToken.IsCancellationRequested) break;
 
@@ -124,8 +118,8 @@ namespace HeaterElems.Common
             else return endTime;
         }
 
-        public void ImmediateStop() {
-            CancellationTokenFactory.Cancel();
+        public void Stop() {
+            CancellationTokenFactory.Cancel(false);
             WasStopped = true;
         }
 

@@ -1,28 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="HeaterElems.Common.StopWatch">
-    <Position X="10" Y="3" Width="2" />
+    <Position X="10" Y="3" Width="3" />
     <Members>
       <Field Name="_cancellationToken" Hidden="true" />
       <Field Name="_cancellationTokenFactory" Hidden="true" />
-      <Field Name="_elapsedTotalSeconds" Hidden="true" />
       <Field Name="_endTime" Hidden="true" />
-      <Field Name="_refreshRateInMilliseconds" Hidden="true" />
+      <Field Name="_refreshFrequencyInMilliseconds" Hidden="true" />
       <Field Name="_startTime" Hidden="true" />
       <Field Name="_stopped" Hidden="true" />
       <Property Name="CancellationTokenFactory" Hidden="true" />
+      <Property Name="DateTimeNow" Hidden="true" />
+      <Field Name="DateTimeNowFunc" Hidden="true" />
       <Method Name="GetAdjustedStopTime" Hidden="true" />
       <Method Name="RunClockAsync" Hidden="true" />
       <Property Name="StarTime" Hidden="true" />
       <Property Name="WasStopped" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAEAFAAAYAAACAIAgAEISAgAAAYiAAAAEQIAAAAQAAg=</HashCode>
+      <HashCode>AAEABAAAYAAACAIAAAEJQBgAAgYiAAABMQIAAAAAAAg=</HashCode>
       <FileName>StopWatch.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="HeaterElems.Common.SetPropertyBase" Collapsed="true">
-    <Position X="10.25" Y="1.5" Width="1.5" />
+    <Position X="10.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAACAAAAAAAAAAAAAAAAgAEAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>SetPropertyBase.cs</FileName>
