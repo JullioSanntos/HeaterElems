@@ -41,6 +41,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConveyorBeltViewModel.cs" />
+    <Compile Include="DispensingWorkStationViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -48,6 +50,10 @@
     <ProjectReference Include="..\HeaterElems.Common\9 HeaterElems.Common.csproj">
       <Project>{D32EC42B-53D1-476B-8911-4CC03100AB40}</Project>
       <Name>9 HeaterElems.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HeaterElems.Model\7 HeaterElems.Model.csproj">
+      <Project>{14F76716-DE15-48EB-BBDD-1C03CFD996DD}</Project>
+      <Name>7 HeaterElems.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

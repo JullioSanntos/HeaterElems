@@ -8,8 +8,16 @@ using HeaterElems.Common;
 
 namespace HeaterElems.Model
 {
-    public class ConveyorBet : SetPropertyBase
+    public class ConveyorBelt : SetPropertyBase
     {
+
+        #region Name
+        private string _name;
+        public string Name {
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
+        #endregion Name
 
         #region PreStation
         private Station _preStation;

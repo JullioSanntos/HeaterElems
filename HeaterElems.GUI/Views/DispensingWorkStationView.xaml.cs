@@ -13,21 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace HeaterElems.GUI
+namespace HeaterElems.GUI.Views
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for DispensingWorkStationView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class DispensingWorkStationView : UserControl
     {
-        public MainWindow() {
-            InitializeComponent();
-            this.Loaded += MainWindow_Loaded;
-        }
-
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        public DispensingWorkStationView()
         {
-            
+            InitializeComponent();
         }
     }
 }

@@ -43,10 +43,10 @@
   <ItemGroup>
     <Compile Include="ConveyorBet.cs" />
     <Compile Include="Board.cs" />
-    <Compile Include="DispensedBoardsContainer.cs" />
+    <Compile Include="DispensingBoardsContainer.cs" />
     <Compile Include="Heater.cs" />
     <Compile Include="Station.cs" />
-    <Compile Include="DispensserWorkStation.cs" />
+    <Compile Include="DispensingWorkStation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
