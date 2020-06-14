@@ -26,10 +26,10 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Height="22" Margin="2" >
             <TextBlock Text="CountDown value:  " />
-            <TextBox Text="{Binding Duration}" MinWidth="30" />
+            <TextBox Text="{Binding SetDuration}" MinWidth="30" />
         </StackPanel>
         <Border BorderThickness="1" BorderBrush="Blue" Width="40" Height="23" Margin="38.666,12.857,180,37" Grid.Row="1" Grid.Column="1">
-            <TextBlock Text="{Binding HeatingWatch.RunDurationInSeconds}" Padding="1" TextAlignment="Right" />
+            <TextBlock Text="{Binding RunDuration}" Padding="1" TextAlignment="Right" />
         </Border>
         <Button  Width="40" Content="Start" Command="{Binding StartCommand}" Margin="0,0,4,4" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="1" />
         <TextBlock Grid.Column="0" Grid.Row="1" Text="Count Down completed" Visibility="{Binding IsCompleted

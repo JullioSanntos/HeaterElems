@@ -19,28 +19,43 @@ namespace HeaterElems.Common
         #region properties
 
         #region RunDuration
-        public TimeSpan RunDuration => DateTimeNow - StarTime;
+        public TimeSpan RunDuration {
+            get {
+                if (StartTime == null) return TimeSpan.Zero;
+                else return DateTimeNow - (DateTime)StartTime;
+            }
+        }
         #endregion RunDuration
-
-        #region RunDurationInSeconds
-        public int RunDurationInSeconds => (int)RunDuration.TotalSeconds;
-        #endregion ElapsedTotalSeconds
 
         #region StartTime
         private DateTime? _startTime;
-        public DateTime StarTime => (DateTime)(_startTime ?? (_startTime = DateTimeNow));
+        public DateTime? StartTime {
+            get => _startTime;
+            set => _startTime = value;
+        }
         #endregion StartTime
 
         #region EndTime
         private DateTime? _endTime;
-        public DateTime EndTime {
-            get => (DateTime) (_endTime ?? (_endTime = StarTime + TimeSpan.FromMilliseconds(SetDurationInMilliSeconds)));
+        public DateTime? EndTime {
+            get {
+                if (StartTime == null) return null;
+                else return (DateTime) (_endTime ?? (_endTime = StartTime + TimeSpan.FromMilliseconds(SetDurationInMilliSeconds)));
+            }
             private set => _endTime = value;
         }
         #endregion EndTime
 
+
         #region SetDurationInMilliSeconds
-        public int SetDurationInMilliSeconds { get; private set; }
+        private int _setDurationInMilliSeconds;
+        public int SetDurationInMilliSeconds {
+            get {
+                if (_setDurationInMilliSeconds <= 0) _setDurationInMilliSeconds = DefaultMaxDuration;
+                return _setDurationInMilliSeconds;
+            }
+            set => SetProperty(ref _setDurationInMilliSeconds, value);
+        }
         #endregion SetDurationInMilliSeconds
 
         #region WasStopped
@@ -80,9 +95,12 @@ namespace HeaterElems.Common
         private DateTime DateTimeNow => DateTimeNowFunc();
         #endregion DateTimeNow
 
-        //#region MaxRunTime
-        //private const int MaxRunTime = 10000;
-        //#endregion MaxRunTime
+        #region MaxRunTime
+        /// <summary>
+        /// default Maximum Run Time of 20 seconds unless overriden by one of the "Stop" calls
+        /// </summary>
+        private const int DefaultMaxDuration = 20000; 
+        #endregion MaxRunTime
 
         #endregion properties
 
@@ -93,7 +111,7 @@ namespace HeaterElems.Common
         #region methods
         public async Task StartAsync() {
             //if (EndTime < DateTimeNow || _startTime < DateTimeNow)
-            _startTime = null; //Reset to be lazy instantiated
+            StartTime = DateTimeNow;
             _cancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
 
             await RunClockAsync();
@@ -102,16 +120,16 @@ namespace HeaterElems.Common
         }
 
         protected internal async Task RunClockAsync() {
-            var stopTime = EndTime;
-            while (DateTimeNow <= stopTime || WasStopped)
-            {
+            
+            while (DateTimeNow <= EndTime && WasStopped == false) {
                 await Task.Delay(RefreshFrequencyInMilliseconds, _cancellationToken);
-                RaisePropertyChanged(nameof(RunDurationInSeconds));
+                RaisePropertyChanged(nameof(RunDuration));
                 if (_cancellationToken.IsCancellationRequested) break;
 
                 ////Adjust last loop's stoptime if refreshRate doesn't happen soon enough
                 //stopTime = GetAdjustedStopTime(EndTime, RefreshFrequencyInMilliseconds);
             }
+
         }
 
         protected internal DateTime GetAdjustedStopTime(DateTime endTime, int refreshFrequencyInMilliseconds) {

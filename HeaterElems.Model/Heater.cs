@@ -11,10 +11,12 @@ namespace HeaterElems.Model
 {
     public class Heater : SetPropertyBase
     {
-
-        #region StopWatch
-        private StopWatch _stopWatch;
-        #endregion StopWatch
-
+        #region IsPowered
+        private bool _isPowered;
+        public bool IsPowered {
+            get => _isPowered;
+            set => SetProperty(ref _isPowered, value);
+        }
+        #endregion IsPowered
 	}
 }

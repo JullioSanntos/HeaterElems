@@ -30,20 +30,28 @@ namespace HeaterElems.ViewModels
         }
         #endregion StartCommand
 
+        #region Durantion
+        public double RunDuration => Math.Round(HeatingWatch.RunDuration.TotalMilliseconds / 1000, 1);
+        #endregion Durantion
+
+
         #region CountDownValue
-        private int _duration = 3;
-        public int Duration {
-            get => _duration;
-            set => SetProperty(ref _duration, value);
+        private int _setDuration = 3;
+        public int SetDuration {
+            get => _setDuration;
+            set => SetProperty(ref _setDuration, value);
         }
         #endregion CountDownValue
 
-        public void StartWatch(object _)
-        {
+        public void StartWatch(object _) {
             IsCompleted = false;
             HeatingWatch.Completed += (s, a) => IsCompleted = true;
+            HeatingWatch.PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(HeatingWatch.RunDuration))
+                    RaisePropertyChanged(nameof(RunDuration));
+            };
+            HeatingWatch.StopAfter(SetDuration * 1000);
             HeatingWatch.StartAsync().ConfigureAwait(false);
-            HeatingWatch.StopAfter(Duration * 1000);
         }
 
         #region IsCompleted

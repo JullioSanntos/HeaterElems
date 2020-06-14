@@ -45,7 +45,7 @@ namespace HeaterElems.Tests.Common
             sut.RefreshFrequencyInMilliseconds = 1000;
             var newValues = new List<double>();
             sut.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(sut.RunDurationInSeconds)) newValues.Add(sut.RunDurationInSeconds);
+                if (e.PropertyName == nameof(sut.RunDuration)) newValues.Add(sut.RunDuration.TotalSeconds);
             };
             sut.StopAfter(3000);
             await sut.StartAsync();
@@ -61,7 +61,7 @@ namespace HeaterElems.Tests.Common
             sut.RefreshFrequencyInMilliseconds = 1000;
             var newValues = new List<double>();
             sut.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(sut.RunDurationInSeconds)) newValues.Add(sut.RunDurationInSeconds);
+                if (e.PropertyName == nameof(sut.RunDuration)) newValues.Add(sut.RunDuration.TotalSeconds);
             };
             sut.StopAt(DateTime.Now + new TimeSpan(0, 0, 3)); //Stop in three seconds from now
             await sut.StartAsync();
@@ -75,7 +75,7 @@ namespace HeaterElems.Tests.Common
             sut.RefreshFrequencyInMilliseconds = 500;
             var newValues = new List<double>();
             sut.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(sut.RunDurationInSeconds)) newValues.Add(sut.RunDurationInSeconds);
+                if (e.PropertyName == nameof(sut.RunDuration)) newValues.Add(sut.RunDuration.TotalSeconds);
             };
             sut.StopAfter(3000);
 #pragma warning disable 4014
@@ -96,7 +96,7 @@ namespace HeaterElems.Tests.Common
             sut.RefreshFrequencyInMilliseconds = 300;
             sut.StopAfter(1000);
             await sut.StartAsync();
-            var durationInMilliSeconds = sut.RunDurationInSeconds * 1000;
+            var durationInMilliSeconds = (int)sut.RunDuration.TotalMilliseconds;
             Assert.That((300 * 4).IsCloseTo(durationInMilliSeconds,200));
         }
 
