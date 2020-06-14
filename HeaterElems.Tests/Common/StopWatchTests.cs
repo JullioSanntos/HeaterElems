@@ -30,11 +30,11 @@ namespace HeaterElems.Tests.Common
         }
 
         [Test]
-        public async Task StopTest() {
+        public void StopTest() {
             var sut = new StopWatch();
             var isCompleted = false;
             sut.Completed += (s, e) => isCompleted = true;
-            await sut.StartAsync();
+            sut.StartAsync();
             sut.Stop();
             Assert.IsTrue(isCompleted);
         }

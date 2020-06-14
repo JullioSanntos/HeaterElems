@@ -141,6 +141,7 @@ namespace HeaterElems.Common
         public void Stop() {
             CancellationTokenFactory.Cancel(false);
             WasStopped = true;
+            Completed?.Invoke(this, new EventArgs());
         }
 
         public void StopAfter(int milliSeconds) {
