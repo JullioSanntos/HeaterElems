@@ -11,8 +11,8 @@ namespace HeaterElems.Model
     public class WorkStation : SetPropertyBase
     {
         #region ConveyorBets
-        private ObservableCollection<Transport> _conveyorBets;
-        public ObservableCollection<Transport> ConveyorBets {
+        private ObservableCollection<ConveyorBet> _conveyorBets;
+        public ObservableCollection<ConveyorBet> ConveyorBets {
             get => _conveyorBets;
             set => SetProperty(ref _conveyorBets, value);
         }

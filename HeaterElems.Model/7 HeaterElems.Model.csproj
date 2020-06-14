@@ -41,9 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Transport.cs" />
-    <Compile Include="MovingPart.cs" />
+    <Compile Include="ConveyorBet.cs" />
+    <Compile Include="Board.cs" />
     <Compile Include="Heater.cs" />
+    <Compile Include="Station.cs" />
     <Compile Include="WorkStation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -52,6 +53,9 @@
       <Project>{D32EC42B-53D1-476B-8911-4CC03100AB40}</Project>
       <Name>9 HeaterElems.Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Model.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

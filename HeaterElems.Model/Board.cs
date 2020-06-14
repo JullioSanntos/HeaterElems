@@ -7,7 +7,7 @@ using HeaterElems.Common;
 
 namespace HeaterElems.Model
 {
-    public class MovingPart : SetPropertyBase
+    public class Board : SetPropertyBase
     {
     }
 }

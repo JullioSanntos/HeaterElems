@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HeaterElems.Model.WorkStation">
+    <Position X="1.5" Y="1" Width="1.5" />
+    <Members>
+      <Field Name="_conveyorBets" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>WorkStation.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ConveyorBets" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="HeaterElems.Model.ConveyorBet">
+    <Position X="4.75" Y="2.25" Width="1.5" />
+    <Members>
+      <Field Name="_postStation" Hidden="true" />
+      <Field Name="_preStation" Hidden="true" />
+      <Field Name="_stations" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAEAAAAACACAAAAAAABAAAAAEA=</HashCode>
+      <FileName>ConveyorBet.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Stations" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="HeaterElems.Model.Station">
+    <Position X="8.25" Y="3.5" Width="1.5" />
+    <Members>
+      <Field Name="_heater" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Station.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Heater" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HeaterElems.Model.Heater">
+    <Position X="11.75" Y="3.5" Width="1.5" />
+    <Members>
+      <Field Name="_stopWatch" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAIAAA=</HashCode>
+      <FileName>Heater.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="StopWatch" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HeaterElems.Common.StopWatch">
+    <Position X="15.25" Y="3.5" Width="1.5" />
+    <Members>
+      <Field Name="DateTimeNowFunc" Hidden="true" />
+      <Method Name="GetAdjustedStopTime" Hidden="true" />
+      <Method Name="RunClockAsync" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
