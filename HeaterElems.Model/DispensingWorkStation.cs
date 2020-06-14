@@ -26,26 +26,24 @@ namespace HeaterElems.Model
         }
         #endregion DispensedBoardsContainer
 
+        #region Singleton        
+        private static readonly object SingletonLock = new object();
+        private static DispensingWorkStation _dispensingWorkStation;
 
+        public static DispensingWorkStation Instance {
+            get { return _dispensingWorkStation ?? (_dispensingWorkStation = GetSingleton()); }
+        }
 
-        //#region Singleton        
-        //private static readonly object SingletonLock = new object();
-        //private static DispensingWorkStation _dispensingWorkStation;
+        public static DispensingWorkStation GetSingleton()
+        {
+            if (_dispensingWorkStation != null) return _dispensingWorkStation;
+            lock (SingletonLock)
+            {
+                return _dispensingWorkStation ?? (_dispensingWorkStation = new DispensingWorkStation());
+            }
+        }
 
-        //public static DispensingWorkStation Instance {
-        //    get { return _dispensingWorkStation ?? (_dispensingWorkStation = GetSingleton()); }
-        //}
-
-        //public static DispensingWorkStation GetSingleton()
-        //{
-        //    if (_dispensingWorkStation != null) return _dispensingWorkStation;
-        //    lock (SingletonLock)
-        //    {
-        //        return _dispensingWorkStation ?? (_dispensingWorkStation = new DispensingWorkStation());
-        //    }
-        //}
-
-        //private DispensingWorkStation() {  }
-        //#endregion Singleton
+        private DispensingWorkStation() { }
+        #endregion Singleton
     }
 }

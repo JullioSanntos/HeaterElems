@@ -11,15 +11,7 @@ namespace HeaterElems.ViewModels
 {
     public class DispensingWorkStationViewModel : SetPropertyBase
     {
-        //public DispensingWorkStation ModelContext => DispensingWorkStation.Instance;
-
-        #region ModelContext
-        private DispensingWorkStation _modelContext;
-        public DispensingWorkStation ModelContext {
-            get { return _modelContext ?? (ModelContext = new DispensingWorkStation()); }
-            set { SetProperty(ref _modelContext, value); }
-        }
-        #endregion ModelContext
+        public DispensingWorkStation ModelContext => DispensingWorkStation.Instance;
 
         #region ConveyorBeltViewModels
         private ObservableCollection<ConveyorBeltViewModel> _conveyorBeltViewModels;
@@ -41,9 +33,5 @@ namespace HeaterElems.ViewModels
         }
         #endregion ConveyorBeltViewModels
 
-        public DispensingWorkStationViewModel()
-        {
-            RaisePropertyChanged(nameof(ConveyorBeltViewModels));
-        }
     }
 }
