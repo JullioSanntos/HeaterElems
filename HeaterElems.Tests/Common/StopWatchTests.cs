@@ -10,66 +10,117 @@ using NUnit.Framework.Internal;
 namespace HeaterElems.Tests.Common
 {
     [TestFixture()]
+    
     public class StopWatchTests
     {
         [Test]
-        public void InstantiationTest()
-        {
+        public void InstantiationTest() {
             var sut = new StopWatch();
             Assert.IsNotNull(sut);
         }
 
         [Test]
-        public async Task StopAterTest()
-        {
-            var sut = new StopWatch();
-            var isCompleted = false;
-            sut.Completed += (s,e) => isCompleted = true;
-            sut.StopAfter(1000);
-            await sut.Start();
-            Assert.IsTrue(isCompleted);
-        }
-
-        [Test]
-        public async Task StopTest()
-        {
+        public async Task StopAterTest() {
             var sut = new StopWatch();
             var isCompleted = false;
             sut.Completed += (s, e) => isCompleted = true;
-            await sut.Start();
-            sut.Stop();
+            sut.StopAfter(1000);
+            await sut.StartAsync();
             Assert.IsTrue(isCompleted);
         }
 
         [Test]
-        public async Task ElapsedTotalSecondsTest()
-        {
+        public async Task StopTest() {
+            var sut = new StopWatch();
+            var isCompleted = false;
+            sut.Completed += (s, e) => isCompleted = true;
+            await sut.StartAsync();
+            sut.ImmediateStop();
+            Assert.IsTrue(isCompleted);
+        }
+
+        [Test]
+        public async Task ProgressTest() {
             var sut = new StopWatch();
             sut.RefreshRateInMilliseconds = 1000;
             var newValues = new List<double>();
-            sut.PropertyChanged += (s, e) => { if(e.PropertyName == nameof(sut.ElapsedTotalSeconds)) newValues.Add(sut.ElapsedTotalSeconds); };
+            sut.PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(sut.RunDurationInSeconds)) newValues.Add(sut.RunDurationInSeconds);
+            };
             sut.StopAfter(3000);
-            await sut.Start();
+            await sut.StartAsync();
+            Assert.IsTrue(newValues.Any());
+            Assert.AreEqual(3, newValues.Count);
+        }
+
+
+
+        [Test]
+        public async Task StopAtTest() {
+            var sut = new StopWatch();
+            sut.RefreshRateInMilliseconds = 1000;
+            var newValues = new List<double>();
+            sut.PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(sut.RunDurationInSeconds)) newValues.Add(sut.RunDurationInSeconds);
+            };
+            sut.StopAt(DateTime.Now + new TimeSpan(0, 0, 3)); //Stop in three seconds from now
+            await sut.StartAsync();
             Assert.IsTrue(newValues.Any());
             Assert.AreEqual(3, newValues.Count);
         }
 
         [Test]
-        public async Task CancelTest()
-        {
+        public async Task CancelTest() {
             var sut = new StopWatch();
             sut.RefreshRateInMilliseconds = 500;
             var newValues = new List<double>();
-            sut.PropertyChanged += (s, e) => { if (e.PropertyName == nameof(sut.ElapsedTotalSeconds)) newValues.Add(sut.ElapsedTotalSeconds); };
+            sut.PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(sut.RunDurationInSeconds)) newValues.Add(sut.RunDurationInSeconds);
+            };
             sut.StopAfter(3000);
 #pragma warning disable 4014
-            sut.Start();
+            sut.StartAsync();
 #pragma warning restore 4014
             var cancelDelay = 1000;
             await Task.Delay(1000);
             sut.Cancel();
             Assert.IsTrue(newValues.Any());
-            Assert.AreEqual(cancelDelay/sut.RefreshRateInMilliseconds, newValues.Count);
+            Assert.AreEqual(cancelDelay / sut.RefreshRateInMilliseconds, newValues.Count);
+        }
+
+
+
+        [Test]
+        public async Task LargeRefreshRateTest()
+        {
+            var sut = new StopWatch();
+            sut.RefreshRateInMilliseconds = 300;
+            sut.StopAfter(1000);
+            await sut.StartAsync();
+            var durationInMilliSeconds = sut.RunDurationInSeconds * 1000;
+            var 
+            Assert.That(Math.Abs(sut.RunDurationInSeconds - 1) < 1);
+        }
+
+        [Test]
+        public void GetAdjustedStopTimeTestWithEarlierEndTime() {
+            var sut = new StopWatch();
+            var endTime = DateTime.Now.AddMilliseconds(2000);
+            var refreshRate = 3000;
+            var newEndTime = sut.GetAdjustedStopTime(endTime, refreshRate);
+            Assert.AreEqual(endTime, newEndTime);
+        }
+
+        [Test]
+        public void GetAdjustedStopTimeTestWithLaterEndTime() {
+            var sut = new StopWatch();
+            var dateTimeNowFrozen = DateTime.Now;
+            sut.DateTimeNowFunc = () => dateTimeNowFrozen;
+            var endTime = dateTimeNowFrozen.AddMilliseconds(4000);
+            var refreshRate = 3000;
+            var newEndTime = sut.GetAdjustedStopTime(endTime, refreshRate);
+            var expectedTime = dateTimeNowFrozen.AddMilliseconds(refreshRate);
+            Assert.AreEqual(expectedTime, newEndTime);
         }
     }
 }

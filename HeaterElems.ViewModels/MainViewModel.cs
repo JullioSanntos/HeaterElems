@@ -42,7 +42,7 @@ namespace HeaterElems.ViewModels
         {
             IsCompleted = false;
             HeatingWatch.Completed += (s, a) => IsCompleted = true;
-            HeatingWatch.Start().ConfigureAwait(false);
+            HeatingWatch.StartAsync().ConfigureAwait(false);
             HeatingWatch.StopAfter(Duration * 1000);
         }
 

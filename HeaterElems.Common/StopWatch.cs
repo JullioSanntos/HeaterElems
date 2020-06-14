@@ -17,43 +17,42 @@ namespace HeaterElems.Common
     public class StopWatch : SetPropertyBase
     {
         #region properties
+
         #region ElapsedTime
-        public TimeSpan ElapsedTime => DateTime.Now - StarTime;
+        public TimeSpan RunDuration => DateTimeNow - StarTime;
         #endregion ElapsedTime
 
-        #region ElapsedTotalSeconds
+        #region RunDurationInSeconds
         private double _elapsedTotalSeconds;
         // ReSharper disable once PossibleLossOfFraction
-        public double ElapsedTotalSeconds {
-            get => Math.Round(ElapsedTime.TotalSeconds, 1);
+        public double RunDurationInSeconds {
+            get => Math.Round(RunDuration.TotalSeconds, 1);
             private set => _elapsedTotalSeconds = value;
         }
         #endregion ElapsedTotalSeconds
 
         #region StartTime
         private DateTime? _startTime;
-        private DateTime StarTime => (DateTime)(_startTime ?? (_startTime = DateTime.Now));
+        public DateTime StarTime => (DateTime)(_startTime ?? (_startTime = DateTimeNow));
         #endregion StartTime
 
         #region EndTime
-        private DateTime EndTime {
-            get => StarTime + TimeSpan.FromMilliseconds(Duration);
+        private DateTime? _endTime;
+        public DateTime EndTime {
+            get => (DateTime) (_endTime ?? (_endTime = StarTime + TimeSpan.FromMilliseconds(SetDuration)));
+            private set => _endTime = value;
         }
         #endregion EndTime
 
-        #region Duration
-        private int _duration;
-        public int Duration {
-            get { return _duration; }
-            set { SetProperty(ref _duration, value); }
-        }
-        #endregion Duration
+        #region SetDuration
+        public int SetDuration { get; private set; }
+        #endregion ClockRun
 
-        #region HasStopped
+        #region WasStopped
         private bool _stopped;
-        public bool Stopped {
+        private bool WasStopped {
             get => _stopped;
-            private set => SetProperty(ref _stopped, value);
+            set => SetProperty(ref _stopped, value);
         }
         #endregion HasStopped
 
@@ -74,45 +73,70 @@ namespace HeaterElems.Common
         #endregion CancellationTokenFactory
 
         #region CancellationToken
-        public CancellationToken CancellationToken;
+        private CancellationToken _cancellationToken;
         #endregion CancellationToken
+
+        #region DateTimeNow
+        /// <summary>
+        /// This field is used to facilitate automate tests
+        /// This func is used to freeze the Datetime for certain tests
+        /// </summary>
+        protected internal Func<DateTime> DateTimeNowFunc = () => DateTime.Now;
+        private DateTime DateTimeNow => DateTimeNowFunc();
+        #endregion DateTimeNow
+
+        //#region MaxRunTime
+        //private const int MaxRunTime = 10000;
+        //#endregion MaxRunTime
 
         #endregion properties
 
 
         public event EventHandler Completed;
 
-        public async Task Start()
-        {
-            //if (EndTime < DateTime.Now || _startTime < DateTime.Now)
+        public async Task StartAsync() {
+            //if (EndTime < DateTimeNow || _startTime < DateTimeNow)
             _startTime = null; //Reset to be lazy instantiated
-            CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
+            _cancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
 
-            await AwaitStopOrCancel();
+            await RunClockAsync();
 
             Completed?.Invoke(this, new EventArgs());
-            ElapsedTotalSeconds = Math.Round(ElapsedTotalSeconds, 0);
+            RunDurationInSeconds = Math.Round(RunDurationInSeconds, 0);
         }
 
-        private async Task AwaitStopOrCancel()
-        {
-            while (DateTime.Now <= EndTime || Stopped)
+        protected internal async Task RunClockAsync() {
+            var stopTime = EndTime;
+            while (DateTimeNow <= stopTime || WasStopped)
             {
-                await Task.Delay(RefreshRateInMilliseconds, CancellationToken);
-                RaisePropertyChanged(nameof(ElapsedTotalSeconds));
-                if (CancellationToken.IsCancellationRequested) break;
+                await Task.Delay(RefreshRateInMilliseconds, _cancellationToken);
+                RaisePropertyChanged(nameof(RunDurationInSeconds));
+                if (_cancellationToken.IsCancellationRequested) break;
+
+                ////Adjust last loop's stoptime if refreshRate doesn't happen soon enough
+                //stopTime = GetAdjustedStopTime(EndTime, RefreshRateInMilliseconds);
             }
         }
 
-        public void Stop()
-        {
-            Stopped = true;
+        protected internal DateTime GetAdjustedStopTime(DateTime endTime, int refreshRateInMilliseconds) {
+            var balanceOfRunTime = endTime - DateTimeNow;
+            if (balanceOfRunTime.Milliseconds < refreshRateInMilliseconds) return DateTimeNow.AddMilliseconds(refreshRateInMilliseconds);
+            else return endTime;
         }
 
-        public void StopAfter(int durationInMilliSeconds)
-        {
-            if (durationInMilliSeconds <= 0) throw new ArgumentException(nameof(durationInMilliSeconds));
-            Duration = durationInMilliSeconds;
+        public void ImmediateStop() {
+            CancellationTokenFactory.Cancel();
+            WasStopped = true;
+        }
+
+        public void StopAfter(int milliSeconds) {
+            if (milliSeconds <= 0) throw new ArgumentException(nameof(milliSeconds));
+            SetDuration = milliSeconds;
+        }
+
+        public void StopAt(DateTime stopTime) {
+            if (stopTime < DateTimeNow) throw new ArgumentException("parameter is in the past", nameof(stopTime));
+            EndTime = stopTime;
         }
 
         public void Cancel()
