@@ -23,7 +23,7 @@ namespace HeaterElems.Tests.Common
         public async Task StopAterTest() {
             var sut = new StopWatch();
             var isCompleted = false;
-            sut.Completed += (s, e) => isCompleted = true;
+            sut.RunCompleted += (s, e) => isCompleted = true;
             sut.StopAfter(1000);
             await sut.StartAsync();
             Assert.IsTrue(isCompleted);
@@ -33,7 +33,7 @@ namespace HeaterElems.Tests.Common
         public void StopTest() {
             var sut = new StopWatch();
             var isCompleted = false;
-            sut.Completed += (s, e) => isCompleted = true;
+            sut.RunCompleted += (s, e) => isCompleted = true;
             sut.StartAsync();
             sut.Stop();
             Assert.IsTrue(isCompleted);
@@ -42,7 +42,7 @@ namespace HeaterElems.Tests.Common
         [Test]
         public async Task ProgressTest() {
             var sut = new StopWatch();
-            sut.RefreshFrequencyInMilliseconds = 1000;
+            sut.FrequencyMilliseconds = 1000;
             var newValues = new List<double>();
             sut.PropertyChanged += (s, e) => {
                 if (e.PropertyName == nameof(sut.RunDuration)) newValues.Add(sut.RunDuration.TotalSeconds);
@@ -58,7 +58,7 @@ namespace HeaterElems.Tests.Common
         [Test]
         public async Task StopAtTest() {
             var sut = new StopWatch();
-            sut.RefreshFrequencyInMilliseconds = 1000;
+            sut.FrequencyMilliseconds = 1000;
             var newValues = new List<double>();
             sut.PropertyChanged += (s, e) => {
                 if (e.PropertyName == nameof(sut.RunDuration)) newValues.Add(sut.RunDuration.TotalSeconds);
@@ -69,31 +69,31 @@ namespace HeaterElems.Tests.Common
             Assert.AreEqual(3, newValues.Count);
         }
 
-        [Test]
-        public async Task CancelTest() {
-            var sut = new StopWatch();
-            sut.RefreshFrequencyInMilliseconds = 500;
-            var newValues = new List<double>();
-            sut.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(sut.RunDuration)) newValues.Add(sut.RunDuration.TotalSeconds);
-            };
-            sut.StopAfter(3000);
-#pragma warning disable 4014
-            sut.StartAsync();
-#pragma warning restore 4014
-            var cancelDelay = 1000;
-            await Task.Delay(1000);
-            sut.Cancel();
-            Assert.IsTrue(newValues.Any());
-            Assert.AreEqual(cancelDelay / sut.RefreshFrequencyInMilliseconds, newValues.Count);
-        }
+//        [Test]
+//        public async Task CancelTest() {
+//            var sut = new StopWatch();
+//            sut.FrequencyMilliseconds = 500;
+//            var newValues = new List<double>();
+//            sut.PropertyChanged += (s, e) => {
+//                if (e.PropertyName == nameof(sut.RunDuration)) newValues.Add(sut.RunDuration.TotalSeconds);
+//            };
+//            sut.StopAfter(3000);
+//#pragma warning disable 4014
+//            sut.StartAsync();
+//#pragma warning restore 4014
+//            var cancelDelay = 1000;
+//            await Task.Delay(1000);
+//            sut.Cancel();
+//            Assert.IsTrue(newValues.Any());
+//            Assert.AreEqual(cancelDelay / sut.FrequencyMilliseconds, newValues.Count);
+//        }
 
 
         [Test]
         public async Task LargeRefreshRateTest()
         {
             var sut = new StopWatch();
-            sut.RefreshFrequencyInMilliseconds = 300;
+            sut.FrequencyMilliseconds = 300;
             sut.StopAfter(1000);
             await sut.StartAsync();
             var durationInMilliSeconds = (int)sut.RunDuration.TotalMilliseconds;

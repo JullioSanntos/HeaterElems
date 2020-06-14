@@ -3,22 +3,22 @@
   <Class Name="HeaterElems.Common.StopWatch">
     <Position X="10" Y="3" Width="3" />
     <Members>
-      <Field Name="_cancellationToken" Hidden="true" />
       <Field Name="_cancellationTokenFactory" Hidden="true" />
       <Field Name="_endTime" Hidden="true" />
-      <Field Name="_refreshFrequencyInMilliseconds" Hidden="true" />
+      <Field Name="_frequencyMilliseconds" Hidden="true" />
+      <Field Name="_setDurationInMilliSeconds" Hidden="true" />
       <Field Name="_startTime" Hidden="true" />
-      <Field Name="_stopped" Hidden="true" />
+      <Field Name="_wasStopped" Hidden="true" />
       <Property Name="CancellationTokenFactory" Hidden="true" />
       <Property Name="DateTimeNow" Hidden="true" />
       <Field Name="DateTimeNowFunc" Hidden="true" />
+      <Field Name="DefaultMaxDuration" Hidden="true" />
       <Method Name="GetAdjustedStopTime" Hidden="true" />
       <Method Name="RunClockAsync" Hidden="true" />
-      <Property Name="StarTime" Hidden="true" />
       <Property Name="WasStopped" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAEABAAAYAAACAIAAAEJQBgAAgYiAAABMQIAAAAAAAg=</HashCode>
+      <HashCode>AAEBAAQAYAAACAAAAAEZAAiAIgQiAAAAIQIQAABCAAg=</HashCode>
       <FileName>StopWatch.cs</FileName>
     </TypeIdentifier>
   </Class>

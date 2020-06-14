@@ -45,7 +45,7 @@ namespace HeaterElems.ViewModels
 
         public void StartWatch(object _) {
             IsCompleted = false;
-            HeatingWatch.Completed += (s, a) => IsCompleted = true;
+            HeatingWatch.RunCompleted += (s, a) => IsCompleted = true;
             HeatingWatch.PropertyChanged += (s, e) => {
                 if (e.PropertyName == nameof(HeatingWatch.RunDuration))
                     RaisePropertyChanged(nameof(RunDuration));

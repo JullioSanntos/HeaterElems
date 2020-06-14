@@ -40,7 +40,7 @@ namespace HeaterElems.Common
         public DateTime? EndTime {
             get {
                 if (StartTime == null) return null;
-                else return (DateTime) (_endTime ?? (_endTime = StartTime + TimeSpan.FromMilliseconds(SetDurationInMilliSeconds)));
+                else return (DateTime) (_endTime ?? (_endTime = StartTime + TimeSpan.FromMilliseconds(SetDurationMilliSeconds)));
             }
             private set => _endTime = value;
         }
@@ -49,7 +49,7 @@ namespace HeaterElems.Common
 
         #region SetDurationInMilliSeconds
         private int _setDurationInMilliSeconds;
-        public int SetDurationInMilliSeconds {
+        public int SetDurationMilliSeconds {
             get {
                 if (_setDurationInMilliSeconds <= 0) _setDurationInMilliSeconds = DefaultMaxDuration;
                 return _setDurationInMilliSeconds;
@@ -67,10 +67,10 @@ namespace HeaterElems.Common
         #endregion HasStopped
 
         #region RefreshFrequencyInMilliseconds
-        private int _refreshFrequencyInMilliseconds = 100;
-        public int RefreshFrequencyInMilliseconds {
-            get { return _refreshFrequencyInMilliseconds; }
-            set { SetProperty(ref _refreshFrequencyInMilliseconds, value); }
+        private int _frequencyMilliseconds = 100;
+        public int FrequencyMilliseconds {
+            get { return _frequencyMilliseconds; }
+            set { SetProperty(ref _frequencyMilliseconds, value); }
         }
         #endregion RefreshRateInMilliseconds
 
@@ -83,7 +83,7 @@ namespace HeaterElems.Common
         #endregion CancellationTokenFactory
 
         #region CancellationToken
-        private CancellationToken _cancellationToken;
+        public CancellationToken CancellationToken { get; private set; }
         #endregion CancellationToken
 
         #region DateTimeNow
@@ -105,26 +105,26 @@ namespace HeaterElems.Common
         #endregion properties
 
         #region events
-        public event EventHandler Completed;
+        public event EventHandler RunCompleted;
         #endregion events
 
         #region methods
         public async Task StartAsync() {
             //if (EndTime < DateTimeNow || _startTime < DateTimeNow)
             StartTime = DateTimeNow;
-            _cancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
+            CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
 
             await RunClockAsync();
 
-            Completed?.Invoke(this, new EventArgs());
+            RunCompleted?.Invoke(this, new EventArgs());
         }
 
         protected internal async Task RunClockAsync() {
             
             while (DateTimeNow <= EndTime && WasStopped == false) {
-                await Task.Delay(RefreshFrequencyInMilliseconds, _cancellationToken);
+                await Task.Delay(FrequencyMilliseconds, CancellationToken);
                 RaisePropertyChanged(nameof(RunDuration));
-                if (_cancellationToken.IsCancellationRequested) break;
+                if (CancellationToken.IsCancellationRequested) break;
 
                 ////Adjust last loop's stoptime if refreshRate doesn't happen soon enough
                 //stopTime = GetAdjustedStopTime(EndTime, RefreshFrequencyInMilliseconds);
@@ -138,27 +138,40 @@ namespace HeaterElems.Common
             else return endTime;
         }
 
+        /// <summary>
+        /// Stops the current StopWatch's run immediately in an ordered manner without an exception 
+        /// </summary>
         public void Stop() {
             CancellationTokenFactory.Cancel(false);
             WasStopped = true;
-            Completed?.Invoke(this, new EventArgs());
+            RunCompleted?.Invoke(this, new EventArgs());
         }
 
+        /// <summary>
+        /// Stops the current StopWatch's run after passed milliseconds
+        /// </summary>
+        /// <param name="milliSeconds"></param>
         public void StopAfter(int milliSeconds) {
             if (milliSeconds <= 0) throw new ArgumentException(nameof(milliSeconds));
-            SetDurationInMilliSeconds = milliSeconds;
+            SetDurationMilliSeconds = milliSeconds;
         }
 
+        /// <summary>
+        /// SStops the current StopWatch's run at a future time
+        /// </summary>
+        /// <param name="stopTime"></param>
         public void StopAt(DateTime stopTime) {
             if (stopTime < DateTimeNow) throw new ArgumentException("parameter is in the past", nameof(stopTime));
             EndTime = stopTime;
         }
 
-        public void Cancel()
-        {
-            CancellationTokenFactory.Cancel();
-            //CancellationTokenFactory = null; //Reset to be lazy instantiated
-        }
+        ///// <summary>
+        ///// Cancel the StopWatch Run immediately and raises an exception
+        ///// </summary>
+        //public void Cancel()
+        //{
+        //    CancellationTokenFactory.Cancel(true);
+        //}
         #endregion methods
 
     }
