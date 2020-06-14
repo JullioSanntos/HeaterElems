@@ -34,20 +34,20 @@ namespace HeaterElems.Common
         #region EndTime
         private DateTime? _endTime;
         public DateTime EndTime {
-            get => (DateTime) (_endTime ?? (_endTime = StarTime + TimeSpan.FromMilliseconds(SetDuration)));
+            get => (DateTime) (_endTime ?? (_endTime = StarTime + TimeSpan.FromMilliseconds(SetDurationInMilliSeconds)));
             private set => _endTime = value;
         }
         #endregion EndTime
 
-        #region SetDuration
-        public int SetDuration { get; private set; }
-        #endregion ClockRun
+        #region SetDurationInMilliSeconds
+        public int SetDurationInMilliSeconds { get; private set; }
+        #endregion SetDurationInMilliSeconds
 
         #region WasStopped
-        private bool _stopped;
+        private bool _wasStopped;
         private bool WasStopped {
-            get => _stopped;
-            set => SetProperty(ref _stopped, value);
+            get => _wasStopped;
+            set => SetProperty(ref _wasStopped, value);
         }
         #endregion HasStopped
 
@@ -86,9 +86,11 @@ namespace HeaterElems.Common
 
         #endregion properties
 
-
+        #region events
         public event EventHandler Completed;
+        #endregion events
 
+        #region methods
         public async Task StartAsync() {
             //if (EndTime < DateTimeNow || _startTime < DateTimeNow)
             _startTime = null; //Reset to be lazy instantiated
@@ -125,7 +127,7 @@ namespace HeaterElems.Common
 
         public void StopAfter(int milliSeconds) {
             if (milliSeconds <= 0) throw new ArgumentException(nameof(milliSeconds));
-            SetDuration = milliSeconds;
+            SetDurationInMilliSeconds = milliSeconds;
         }
 
         public void StopAt(DateTime stopTime) {
@@ -138,5 +140,7 @@ namespace HeaterElems.Common
             CancellationTokenFactory.Cancel();
             //CancellationTokenFactory = null; //Reset to be lazy instantiated
         }
+        #endregion methods
+
     }
 }
