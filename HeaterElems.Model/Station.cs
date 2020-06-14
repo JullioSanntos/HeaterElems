@@ -16,5 +16,13 @@ namespace HeaterElems.Model
             set { SetProperty(ref _heater, value); }
         }
         #endregion Heater
+
+        #region Board
+        private Board _board;
+        public Board Board {
+            get { return _board ?? (_board = new Board()); }
+            set { SetProperty(ref _board, value); }
+        }
+        #endregion Board
     }
 }

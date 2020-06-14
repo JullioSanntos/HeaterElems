@@ -1,63 +1,88 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="HeaterElems.Model.WorkStation">
-    <Position X="1.5" Y="1" Width="1.5" />
+  <Class Name="HeaterElems.Model.DispensserWorkStation">
+    <Position X="5.5" Y="0.5" Width="2.25" />
     <Members>
       <Field Name="_conveyorBets" Hidden="true" />
+      <Field Name="_dispensedBoardsContainer" Hidden="true" />
     </Members>
+    <AssociationLine Name="DispensedBoardsContainer" Type="System.Collections.ObjectModel.ObservableCollection&lt;T&gt;">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-0.928" Y="0.491" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>WorkStation.cs</FileName>
+      <HashCode>AAAAAAQAAAgAAAAAAAAAAAAAAACAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>DispensserWorkStation.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DispensedBoardsContainer" />
+    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="ConveyorBets" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="HeaterElems.Model.ConveyorBet">
-    <Position X="4.75" Y="2.25" Width="1.5" />
+    <Position X="5.5" Y="2.5" Width="1.5" />
     <Members>
+      <Field Name="_mainStations" Hidden="true" />
       <Field Name="_postStation" Hidden="true" />
       <Field Name="_preStation" Hidden="true" />
-      <Field Name="_stations" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAgAAAAAAAAAAAAEAAAAACACAAAAAAABAAAAAEA=</HashCode>
+      <HashCode>AAIAAAAAAAAAAAAAAAAEAAAAACAiAAAAAAAAAAAAAEA=</HashCode>
       <FileName>ConveyorBet.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Stations" />
+      <Property Name="MainStations" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="HeaterElems.Model.Station">
-    <Position X="8.25" Y="3.5" Width="1.5" />
+    <Position X="5.5" Y="5" Width="1.5" />
     <Members>
+      <Field Name="_board" Hidden="true" />
       <Field Name="_heater" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAEAAAAAAAAAAAAEAAAAAAAAABAAAAAAAAAACAAAAA=</HashCode>
       <FileName>Station.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Heater" />
+      <Property Name="Board" />
     </ShowAsAssociation>
   </Class>
   <Class Name="HeaterElems.Model.Heater">
-    <Position X="11.75" Y="3.5" Width="1.5" />
+    <Position X="9" Y="4.5" Width="1.5" />
+    <Members>
+      <Field Name="_stopWatch" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Heater.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Collections.ObjectModel.ObservableCollection&lt;T&gt;" Collapsed="true">
+    <Position X="8.5" Y="2.75" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HeaterElems.Model.Board">
+    <Position X="9" Y="5.75" Width="1.5" />
     <Members>
       <Field Name="_stopWatch" Hidden="true" />
     </Members>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAIAAA=</HashCode>
-      <FileName>Heater.cs</FileName>
+      <FileName>Board.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="StopWatch" />
     </ShowAsAssociation>
   </Class>
   <Class Name="HeaterElems.Common.StopWatch">
-    <Position X="15.25" Y="3.5" Width="1.5" />
+    <Position X="12.25" Y="3.75" Width="2" />
     <Members>
-      <Field Name="DateTimeNowFunc" Hidden="true" />
       <Method Name="GetAdjustedStopTime" Hidden="true" />
       <Method Name="RunClockAsync" Hidden="true" />
     </Members>
