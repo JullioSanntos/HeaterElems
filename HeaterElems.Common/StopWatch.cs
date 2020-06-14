@@ -108,13 +108,13 @@ namespace HeaterElems.Common
                 if (_cancellationToken.IsCancellationRequested) break;
 
                 ////Adjust last loop's stoptime if refreshRate doesn't happen soon enough
-                //stopTime = GetAdjustedStopTime(EndTime, RefreshRateInMilliseconds);
+                //stopTime = GetAdjustedStopTime(EndTime, RefreshFrequencyInMilliseconds);
             }
         }
 
-        protected internal DateTime GetAdjustedStopTime(DateTime endTime, int refreshRateInMilliseconds) {
+        protected internal DateTime GetAdjustedStopTime(DateTime endTime, int refreshFrequencyInMilliseconds) {
             var balanceOfRunTime = endTime - DateTimeNow;
-            if (balanceOfRunTime.Milliseconds < refreshRateInMilliseconds) return DateTimeNow.AddMilliseconds(refreshRateInMilliseconds);
+            if (balanceOfRunTime.Milliseconds < refreshFrequencyInMilliseconds) return DateTimeNow.AddMilliseconds(refreshFrequencyInMilliseconds);
             else return endTime;
         }
 
