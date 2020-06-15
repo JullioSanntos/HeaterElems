@@ -14,14 +14,14 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*" />
-            <ColumnDefinition Width="600" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="550" />
+            <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0">
             <Button Content="Run" Margin="4,50" Width="60" Command="{Binding RunCommand}" />
             <Button Content="Step" Margin="4" Width="60" Command="{Binding StepCommand}" />
         </StackPanel>
-        <Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400" Width="600" >
+        <Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400" Width="550" >
             <ItemsControl ItemsSource="{Binding ModelContext.ConveyorBets}" VerticalAlignment="Center" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -30,5 +30,13 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Border>
+        <ListBox Grid.Column="2" ItemsSource="{Binding ModelContext.BoardsContainer.DispensedBoards}" 
+                 Margin="4" Background="Transparent">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <local:BoardView />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>

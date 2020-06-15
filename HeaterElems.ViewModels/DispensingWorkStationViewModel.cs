@@ -17,11 +17,6 @@ namespace HeaterElems.ViewModels
         public RelayCommand RunCommand => new RelayCommand((o) => Run());
         public RelayCommand StepCommand => new RelayCommand((o) => Step());
 
-
-        public void Run() {
-
-        }
-
         private ConveyorBelt Lane1 => ModelContext.ConveyorBets.First();
         private ConveyorBelt Lane2 => ModelContext.ConveyorBets.Skip(1).First();
 
@@ -32,8 +27,12 @@ namespace HeaterElems.ViewModels
         private Station PostStation1 => Lane1.PostStation;
         private Station PostStation2 => Lane2.PostStation;
 
-
         public int CurrentBoardId = 1;
+
+
+        public void Run() {
+
+        }
 
         public void Step()
         {
@@ -50,6 +49,8 @@ namespace HeaterElems.ViewModels
                 //PreStation2.Board.StopWatch.Start();
             }
         }
+
+ 
     }
 }
     

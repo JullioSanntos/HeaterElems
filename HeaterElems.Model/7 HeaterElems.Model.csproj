@@ -44,7 +44,7 @@
     <Compile Include="BoardArgs.cs" />
     <Compile Include="ConveyorBet.cs" />
     <Compile Include="Board.cs" />
-    <Compile Include="DispensingBoardsContainer.cs" />
+    <Compile Include="BoardsContainer.cs" />
     <Compile Include="Heater.cs" />
     <Compile Include="Station.cs" />
     <Compile Include="DispensingWorkStation.cs" />

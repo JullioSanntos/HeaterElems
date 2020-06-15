@@ -26,13 +26,13 @@ namespace HeaterElems.Model
         }
         #endregion ConveyorBets
 
-        #region DispensedBoardsContainer
-        private ObservableCollection<DispensingBoardsContainer> _dispensedBoardsContainer;
-        public ObservableCollection<DispensingBoardsContainer> DispensedBoardsContainer {
-            get => _dispensedBoardsContainer ?? (_dispensedBoardsContainer = new ObservableCollection<DispensingBoardsContainer>());
-            set => SetProperty(ref _dispensedBoardsContainer, value);
+        #region BoardsContainer
+        private BoardsContainer _boardsContainer;
+        public BoardsContainer BoardsContainer {
+            get => _boardsContainer ?? (_boardsContainer = new BoardsContainer());
+            set => SetProperty(ref _boardsContainer, value);
         }
-        #endregion DispensedBoardsContainer
+        #endregion BoardsContainer
 
         #region Singleton        
         private static readonly object SingletonLock = new object();
@@ -51,7 +51,13 @@ namespace HeaterElems.Model
             }
         }
 
-        private DispensingWorkStation() { }
+        private DispensingWorkStation() { ConveyorBets.ToList().ForEach(cb => cb.BoardUnloaded += BoardDispensed);}
         #endregion Singleton
+
+
+        private void BoardDispensed(object sender, BoardArgs e)
+        {
+            this.BoardsContainer.DispensedBoards.Insert(0, e.Board);
+        }
     }
 }

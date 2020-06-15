@@ -8,7 +8,7 @@ using HeaterElems.Common;
 
 namespace HeaterElems.Model
 {
-    public class DispensingBoardsContainer : SetPropertyBase
+    public class BoardsContainer : SetPropertyBase
     {
         #region DispensedBoards
         private ObservableCollection<Board> _dispensedBoards;
