@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HeaterElems.Model;
+using HeaterElems.ViewModels;
 
 namespace HeaterElems.GUI.Views
 {
@@ -20,9 +22,18 @@ namespace HeaterElems.GUI.Views
     /// </summary>
     public partial class ConveyorBeltView : UserControl
     {
+        private ConveyorBeltViewModel _vm { get; set; }
         public ConveyorBeltView()
         {
             InitializeComponent();
+            this.Loaded += ConveyorBeltView_Loaded;
+            _vm = new ConveyorBeltViewModel();
+        }
+
+        private void ConveyorBeltView_Loaded(object sender, RoutedEventArgs e)
+        {
+            _vm.ModelContext = DataContext as ConveyorBelt;
+            this.DataContext = _vm;
         }
     }
 }

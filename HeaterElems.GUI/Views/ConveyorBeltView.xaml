@@ -5,13 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HeaterElems.GUI.Views"
              xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels"
+             d:DataContext="{d:DesignInstance viewModels:ConveyorBeltViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d" 
-             d:DesignHeight="100" d:DesignWidth="500">
-    <UserControl.DataContext>
+             d:DesignHeight="140" d:DesignWidth="500">
+    <!--<UserControl.DataContext>
         <viewModels:ConveyorBeltViewModel />
-    </UserControl.DataContext>
+    </UserControl.DataContext>-->
+
     <StackPanel Orientation="Vertical">
-        <TextBlock Text="{Binding ModelContext.Name}" />
+        <TextBlock Text="{Binding ModelContext.Name}" HorizontalAlignment="Center" FontSize="16" Foreground="CadetBlue" FontWeight="Bold" />
         <Border BorderThickness="0,2" BorderBrush="CadetBlue"  Height="100" Width="500" />
     </StackPanel>
 </UserControl>

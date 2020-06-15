@@ -10,9 +10,10 @@
     <UserControl.DataContext>
         <viewModels:DispensingWorkStationViewModel />
     </UserControl.DataContext>
+
     <Grid>
         <Border BorderThickness="2" BorderBrush="Black"  Height="400" Width="600" >
-            <ItemsControl ItemsSource="{Binding ConveyorBeltViewModels}" VerticalAlignment="Center" >
+            <ItemsControl ItemsSource="{Binding ModelContext.ConveyorBets}" VerticalAlignment="Center" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <local:ConveyorBeltView Margin="20"  />

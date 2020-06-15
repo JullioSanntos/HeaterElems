@@ -9,6 +9,15 @@ namespace HeaterElems.Model
 {
     public class Station : SetPropertyBase
     {
+
+        #region Name
+        private string _name;
+        public string Name {
+            get => _name;
+            set => SetProperty(ref _name, value);
+        }
+        #endregion Name
+
         #region Heater
         private Heater _heater;
         public Heater Heater {

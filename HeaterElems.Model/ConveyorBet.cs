@@ -22,7 +22,7 @@ namespace HeaterElems.Model
         #region PreStation
         private Station _preStation;
         public Station PreStation {
-            get { return _preStation ?? (_preStation = new Station()); }
+            get { return _preStation ?? (_preStation = new Station() {Name = nameof(PreStation)}); }
             set { SetProperty(ref _preStation, value); }
         }
         #endregion PreStation
@@ -30,7 +30,7 @@ namespace HeaterElems.Model
         #region MainStations
         private ObservableCollection<Station> _mainStations;
         public ObservableCollection<Station> MainStations {
-            get => _mainStations ?? (_mainStations = new ObservableCollection<Station>());
+            get => _mainStations ?? (_mainStations = new ObservableCollection<Station>() {new Station() {Name = "MainStation"}});
             set => SetProperty(ref _mainStations, value);
         }
         #endregion MainStations
@@ -38,7 +38,7 @@ namespace HeaterElems.Model
         #region PostStation
         private Station _postStation;
         public Station PostStation {
-            get { return _postStation ?? (_postStation = new Station()); }
+            get { return _postStation ?? (_postStation = new Station() { Name = nameof(PostStation) }); }
             set { SetProperty(ref _postStation, value); }
         }
         #endregion PostStation

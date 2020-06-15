@@ -13,7 +13,15 @@ namespace HeaterElems.Model
         #region ConveyorBets
         private ObservableCollection<ConveyorBelt> _conveyorBets;
         public ObservableCollection<ConveyorBelt> ConveyorBets {
-            get => _conveyorBets;
+            get {
+                if (_conveyorBets == null)
+                {
+                    ConveyorBets = new ObservableCollection<ConveyorBelt>(){
+                            new ConveyorBelt() {Name = "Front Lane"}, new ConveyorBelt() {Name = "Back Lane"}
+                        };
+                }
+                return _conveyorBets;
+            }
             set => SetProperty(ref _conveyorBets, value);
         }
         #endregion ConveyorBets
