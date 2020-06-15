@@ -43,28 +43,38 @@ namespace HeaterElems.Model
         }
         #endregion PostStation
 
+
+        public event EventHandler<BoardArgs> BoardDispensed;
+
+        #region constructor
         public ConveyorBelt() {
-            this.PreStation.PropertyChanged += PreStation_PropertyChanged;
-            this.PostStation.PropertyChanged += PostStation_PropertyChanged;
+            this.PreStation.PropertyChanged += async (s, e) => await PreStation_PropertyChanged(s, e);
+        }
+        #endregion constructor
+
+
+        private async Task PreStation_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+            if (e.PropertyName != nameof(PreStation.Board)) return;
+            await MarchBoardsForward();
         }
 
 
-        private void PreStation_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case nameof(PreStation.Board):
-                    if (PreStation.Board != null) {
-                        MainStation.Board = PreStation.Board;
-                        PreStation.Board = null;
-                    }
-                    break;
+        private async Task MarchBoardsForward() {
+            await Task.Delay(1500);
+            var dispensedBoard = PostStation.Board;
+            if (PostStation.Board != null) {
+                PostStation.Board.StopWatch.Stop();
+                PostStation.Board = null;
             }
+
+            PostStation.Board = MainStation.Board;
+            MainStation.Board = PreStation.Board;
+            PreStation.Board = null;
+
+            if (dispensedBoard != null) 
+                BoardDispensed?.Invoke(this, new BoardArgs(dispensedBoard));
         }
 
-        private void PostStation_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
 
-        }
     }
 }

@@ -109,6 +109,12 @@ namespace HeaterElems.Common
         #endregion events
 
         #region methods
+        public void Start() {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            StartAsync();
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+        }
+
         public async Task StartAsync() {
             //if (EndTime < DateTimeNow || _startTime < DateTimeNow)
             StartTime = DateTimeNow;

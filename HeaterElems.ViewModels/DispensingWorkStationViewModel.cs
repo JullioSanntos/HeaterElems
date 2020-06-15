@@ -22,23 +22,34 @@ namespace HeaterElems.ViewModels
 
         }
 
+        private ConveyorBelt Lane1 => ModelContext.ConveyorBets.First();
+        private ConveyorBelt Lane2 => ModelContext.ConveyorBets.Skip(1).First();
+
+        private Station PreStation1 => Lane1.PreStation;
+        private Station PreStation2 => Lane2.PreStation;
+        private Station MainStation1 => Lane1.MainStation;
+        private Station MainStation2 => Lane2.MainStation;
+        private Station PostStation1 => Lane1.PostStation;
+        private Station PostStation2 => Lane2.PostStation;
+
+
         public int CurrentBoardId = 1;
 
-        public void Step() {
-            var preStation1 = ModelContext.ConveyorBets.First().PreStation;
-            if (preStation1.Board == null) {
-                preStation1.Board = new Board() {Id = CurrentBoardId++};
-                return;
+        public void Step()
+        {
+
+            if (PreStation1.Board == null)
+            {
+                PreStation1.Board = new Board() { Id = CurrentBoardId++ };
+                //PreStation1.Board.StopWatch.Start();
             }
 
-            var preStation2 = ModelContext.ConveyorBets.Skip(1).First().PreStation;
-            if (preStation2.Board == null) {
-                preStation2.Board = new Board() { Id = CurrentBoardId++ };
-                return;
+            if (PreStation2.Board == null)
+            {
+                PreStation2.Board = new Board() { Id = CurrentBoardId++ };
+                //PreStation2.Board.StopWatch.Start();
             }
         }
-
-
- 
     }
 }
+    

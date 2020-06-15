@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoardViewModel.cs" />
     <Compile Include="ConveyorBeltViewModel.cs" />
     <Compile Include="DispensingWorkStationViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
