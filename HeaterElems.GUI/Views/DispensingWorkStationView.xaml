@@ -6,13 +6,21 @@
              xmlns:local="clr-namespace:HeaterElems.GUI.Views"
              xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="600">
+             d:DesignHeight="400" d:DesignWidth="800">
     <UserControl.DataContext>
         <viewModels:DispensingWorkStationViewModel />
     </UserControl.DataContext>
 
     <Grid>
-        <Border BorderThickness="2" BorderBrush="Black"  Height="400" Width="600" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="600" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0">
+            <Button Content="Run" Margin="4,50" Width="60" Command="{Binding RunCommand}" />
+        </StackPanel>
+        <Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400" Width="600" >
             <ItemsControl ItemsSource="{Binding ModelContext.ConveyorBets}" VerticalAlignment="Center" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

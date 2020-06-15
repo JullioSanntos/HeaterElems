@@ -13,6 +13,12 @@ namespace HeaterElems.ViewModels
     {
         public DispensingWorkStation ModelContext => DispensingWorkStation.Instance;
 
+        public RelayCommand RunCommand => new RelayCommand((o) => Run());
+
+        public void Run() {
+
+        }
+
         //#region ConveyorBeltViewModels
         //private ObservableCollection<ConveyorBeltViewModel> _conveyorBeltViewModels;
         //public ObservableCollection<ConveyorBeltViewModel> ConveyorBeltViewModels {

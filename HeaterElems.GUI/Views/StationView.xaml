@@ -10,7 +10,10 @@
              d:DesignHeight="100" d:DesignWidth="150">
     <Grid>
         <Border BorderThickness="1" BorderBrush="Coral"  Height="90" Width="150" >
-            <TextBlock Text="{Binding ModelContext.Name}" Width="100" Height="23" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="4" Foreground="Coral" FontSize="14" />
+            <StackPanel>
+                <TextBlock Text="{Binding ModelContext.Name}" Width="100" Height="23" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="4" Foreground="Coral" FontSize="14" />
+                <local:BoardView />
+            </StackPanel>
         </Border>
     </Grid>
 </UserControl>

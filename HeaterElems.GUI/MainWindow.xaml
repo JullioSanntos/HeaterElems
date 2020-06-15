@@ -8,12 +8,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="3*"/>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="1*"/>
-        </Grid.ColumnDefinitions>
+
         <!--<views:MainView Height="100" Width="400" />-->
-        <views:DispensingWorkStationView Grid.Column="1"  />
+        <views:DispensingWorkStationView  />
     </Grid>
 </Window>
