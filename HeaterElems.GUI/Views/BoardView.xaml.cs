@@ -22,19 +22,9 @@ namespace HeaterElems.GUI.Views
     /// </summary>
     public partial class BoardView : UserControl
     {
-        private BoardViewModel _vm { get; set; }
-
         public BoardView()
         {
             InitializeComponent();
-            this.Loaded += BoardView_Loaded;
-            _vm = new BoardViewModel();
-        }
-
-        private void BoardView_Loaded(object sender, RoutedEventArgs e)
-        {
-            _vm.ModelContext = DataContext as Board;
-            this.DataContext = _vm;
         }
     }
 }

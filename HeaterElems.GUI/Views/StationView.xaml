@@ -5,14 +5,19 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HeaterElems.GUI.Views"
              xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels"
+             xmlns:common="clr-namespace:HeaterElems.Common;assembly=HeaterElems.Common"
              d:DataContext="{d:DesignInstance viewModels:StationViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="150">
+    <UserControl.Resources>
+        <common:BooleanToStringConverter x:Key="BooleanToStringConverter" />
+    </UserControl.Resources>
     <Grid>
         <Border BorderThickness="1" BorderBrush="Coral"  Height="90" Width="150" >
             <StackPanel>
-                <TextBlock Text="{Binding ModelContext.Name}" Width="100" Height="23" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="4" Foreground="Coral" FontSize="14" />
-                <local:BoardView />
+                <TextBlock Text="{Binding ModelContext.Name}" Width="100" Height="23" TextAlignment="Center" HorizontalAlignment="Center" 
+                         VerticalAlignment="Top" Margin="4" Foreground="Coral" FontSize="14" />
+                <local:BoardView Visibility="{Binding HasBoard, Converter={StaticResource BooleanToStringConverter }, ConverterParameter=Visible|Hidden}" />
             </StackPanel>
         </Border>
     </Grid>

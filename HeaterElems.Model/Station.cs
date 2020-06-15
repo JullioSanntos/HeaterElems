@@ -29,7 +29,7 @@ namespace HeaterElems.Model
         #region Board
         private Board _board;
         public Board Board {
-            get { return _board ?? (_board = new Board()); }
+            get { return _board; }
             set { SetProperty(ref _board, value); }
         }
         #endregion Board

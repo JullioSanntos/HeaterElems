@@ -42,6 +42,29 @@ namespace HeaterElems.Model
             set { SetProperty(ref _postStation, value); }
         }
         #endregion PostStation
- 
+
+        public ConveyorBelt() {
+            this.PreStation.PropertyChanged += PreStation_PropertyChanged;
+            this.PostStation.PropertyChanged += PostStation_PropertyChanged;
+        }
+
+
+        private void PreStation_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(PreStation.Board):
+                    if (PreStation.Board != null) {
+                        MainStation.Board = PreStation.Board;
+                        PreStation.Board = null;
+                    }
+                    break;
+            }
+        }
+
+        private void PostStation_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+
+        }
     }
 }
