@@ -27,13 +27,13 @@ namespace HeaterElems.Model
         }
         #endregion PreStation
 
-        #region MainStations
-        private ObservableCollection<Station> _mainStations;
-        public ObservableCollection<Station> MainStations {
-            get => _mainStations ?? (_mainStations = new ObservableCollection<Station>() {new Station() {Name = "MainStation"}});
-            set => SetProperty(ref _mainStations, value);
+        #region MainStation
+        private Station _mainStation;
+        public Station MainStation {
+            get { return _mainStation ?? (_mainStation = new Station() { Name = nameof(MainStation) }); }
+            set => SetProperty(ref _mainStation, value);
         }
-        #endregion MainStations
+        #endregion MainStation
 
         #region PostStation
         private Station _postStation;

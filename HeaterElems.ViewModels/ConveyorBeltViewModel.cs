@@ -27,20 +27,18 @@ namespace HeaterElems.ViewModels
         }
         #endregion StationViewModelsList
 
-        public ConveyorBeltViewModel() {
-            this.PropertyChanged += ConveyorBeltViewModel_PropertyChanged;
-        }
+        //public ConveyorBeltViewModel() {
+        //    this.PropertyChanged += ConveyorBeltViewModel_PropertyChanged;
+        //}
 
-        private void ConveyorBeltViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(ModelContext))
-            {
-                ModelContext.PreStation = new Station();
-                ModelContext.PostStation = new Station();
-                ModelContext.MainStations = new ObservableCollection<Station>(){new Station()};
-                StationViewModelsList = new ObservableCollection<StationViewModel>();
-            }
-
-        }
+        //private void ConveyorBeltViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        //{
+        //    if (e.PropertyName == nameof(ModelContext))
+        //    {
+        //        ModelContext.PreStation = new Station();
+        //        ModelContext.PostStation = new Station();
+        //        ModelContext.MainStation = new Station();
+        //    }
+        //}
     }
 }

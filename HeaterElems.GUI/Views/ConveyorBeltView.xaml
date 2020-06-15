@@ -7,13 +7,19 @@
              xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels"
              d:DataContext="{d:DesignInstance viewModels:ConveyorBeltViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d" 
-             d:DesignHeight="140" d:DesignWidth="500">
+             d:DesignHeight="140" d:DesignWidth="550">
     <!--<UserControl.DataContext>
         <viewModels:ConveyorBeltViewModel />
     </UserControl.DataContext>-->
 
     <StackPanel Orientation="Vertical">
         <TextBlock Text="{Binding ModelContext.Name}" HorizontalAlignment="Center" FontSize="16" Foreground="CadetBlue" FontWeight="Bold" />
-        <Border BorderThickness="0,2" BorderBrush="CadetBlue"  Height="100" Width="500" />
+        <Border BorderThickness="0,2" BorderBrush="CadetBlue"  Height="100" Width="500" >
+            <StackPanel Orientation="Horizontal">
+                <local:StationView DataContext="{Binding ModelContext.PreStation}" Margin="2,0,22,0" />
+                <local:StationView DataContext="{Binding ModelContext.MainStation}" Margin="2,0,22,0" />
+                <local:StationView DataContext="{Binding ModelContext.PostStation}" />
+            </StackPanel>
+        </Border>
     </StackPanel>
 </UserControl>

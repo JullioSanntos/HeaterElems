@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using HeaterElems.Model;
+using HeaterElems.ViewModels;
 
 namespace HeaterElems.GUI.Views
 {
@@ -20,9 +22,20 @@ namespace HeaterElems.GUI.Views
     /// </summary>
     public partial class StationView : UserControl
     {
+        private StationViewModel _vm { get; set; }
+
         public StationView()
         {
             InitializeComponent();
+            this.Loaded += StationView_Loaded;
+            _vm = new StationViewModel();
+        }
+
+        private void StationView_Loaded(object sender, RoutedEventArgs e)
+        {
+            _vm.ModelContext = DataContext as Station;
+            this.DataContext = _vm;
+
         }
     }
 }
