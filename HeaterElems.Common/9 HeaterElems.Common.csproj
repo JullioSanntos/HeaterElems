@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooleanToStringConverter.cs" />
+    <Compile Include="Canvas\IStopWatchWrapper.cs" />
+    <Compile Include="Canvas\StopWatchWrapper.cs" />
     <Compile Include="StopWatch.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="SetPropertyBase.cs" />
@@ -52,5 +54,6 @@
   <ItemGroup>
     <None Include="StopWatch.cd" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,7 +5,6 @@
     <Members>
       <Field Name="_cancellationTokenFactory" Hidden="true" />
       <Field Name="_endTime" Hidden="true" />
-      <Field Name="_frequencyMilliseconds" Hidden="true" />
       <Field Name="_setDurationInMilliSeconds" Hidden="true" />
       <Field Name="_startTime" Hidden="true" />
       <Field Name="_wasStopped" Hidden="true" />
@@ -18,7 +17,7 @@
       <Property Name="WasStopped" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAEBAAQAYAAACAAAAAEZAAiAIgQiAAAAIQIQAABCAAg=</HashCode>
+      <HashCode>BAEBAAQAYCAECEAAAAAJAAiAIgQiAAgAIQIQAAACAAg=</HashCode>
       <FileName>StopWatch.cs</FileName>
     </TypeIdentifier>
   </Class>

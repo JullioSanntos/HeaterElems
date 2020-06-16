@@ -18,14 +18,14 @@ namespace HeaterElems.Common
     {
         #region properties
 
-        #region RunDuration
-        public TimeSpan RunDuration {
+        #region RunProgress
+        public TimeSpan RunProgress {
             get {
                 if (StartTime == null) return TimeSpan.Zero;
                 else return DateTimeNow - (DateTime)StartTime;
             }
         }
-        #endregion RunDuration
+        #endregion RunProgress
 
         #region StartTime
         private DateTime? _startTime;
@@ -46,7 +46,6 @@ namespace HeaterElems.Common
         }
         #endregion EndTime
 
-
         #region SetDurationInMilliSeconds
         private int _setDurationInMilliSeconds;
         public int SetDurationMilliSeconds {
@@ -66,11 +65,11 @@ namespace HeaterElems.Common
         }
         #endregion HasStopped
 
-        #region RefreshFrequencyInMilliseconds
-        private int _frequencyMilliseconds = 100;
-        public int FrequencyMilliseconds {
-            get { return _frequencyMilliseconds; }
-            set { SetProperty(ref _frequencyMilliseconds, value); }
+        #region ProgressFrequencyMilliseconds
+        private int _progressFrequencyMilliseconds = 100;
+        public int ProgressFrequencyMilliseconds {
+            get { return _progressFrequencyMilliseconds; }
+            set { SetProperty(ref _progressFrequencyMilliseconds, value); }
         }
         #endregion RefreshRateInMilliseconds
 
@@ -128,8 +127,8 @@ namespace HeaterElems.Common
         protected internal async Task RunClockAsync() {
             
             while (DateTimeNow <= EndTime && WasStopped == false) {
-                await Task.Delay(FrequencyMilliseconds, CancellationToken);
-                RaisePropertyChanged(nameof(RunDuration));
+                await Task.Delay(ProgressFrequencyMilliseconds, CancellationToken);
+                RaisePropertyChanged(nameof(RunProgress));
                 if (CancellationToken.IsCancellationRequested) break;
 
                 ////Adjust last loop's stoptime if refreshRate doesn't happen soon enough
@@ -179,6 +178,55 @@ namespace HeaterElems.Common
         //    CancellationTokenFactory.Cancel(true);
         //}
         #endregion methods
+
+        //FOR MY RECORDS: 
+        //  
+        //
+        // WHY I DIDN'T USE System.Timers.Timer type: https://docs.microsoft.com/en-us/dotnet/api/system.timers.timer?view=netframework-4.8
+        //
+        // This type implements the IDisposable interface... 
+        // The Timer component catches and suppresses all exceptions thrown by event handlers for the Elapsed event.
+        // This behavior is subject to change in future releases of the .NET Framework. Note, however,
+        //      that this is not true of event handlers that execute asynchronously and include the await operator (in C#) or the Await operator (in Visual Basic).
+        //      Exceptions thrown in these event handlers are propagated back to the calling thread, ...
+        // If the SynchronizingObject property is null, the Elapsed event is raised on a ThreadPool thread.
+        // If processing of the Elapsed event lasts longer than Interval, the event might be raised again on another ThreadPool thread.
+        // In this situation, the event handler should be re-entrant.
+        // Even if SynchronizingObject is not null, Elapsed events can occur after the Dispose or Stop method has been called or
+        //      after the Enabled property has been set to false, because the signal to raise the Elapsed event is always queued for execution on a thread pool thread.
+        //      One way to resolve this race condition is to set a flag that tells the event handler for the Elapsed event to ignore subsequent events.
+        //
+        //
+        // WHY I CREATED A WRAPPER FOR The System.Diagnostics.StopWatch using Common.Utilities.Wrappers.StopWatchWrapper (wrapper for testing purposes):
+        // 
+        // Stopwatch doesn't show progress
+        // Stopwatch doesn't have a count down.
+        // Stopwatch doesn't raise events.
+        // Stopwatch can't be called asynchronously (async/await).
+        // Stopwatch doesn't show many other properties of interest for the consumer  
+        //  
+        // WHY I DIDN"T USE Common.Utilities.HighPrecisionTimer
+        //  
+        // This type implements the IDisposable interface... 
+        //  Despite of the name, there are more precise Timers like Stopwatch (depending on hardware),
+        //      but this story, "Heater Sit Time", doesn't need that
+        //  Relies on old Native Window API's that may be deprecated sooner than .NET framework
+        //  Desktop operating system (such as windows) are not real-time operating system, which means, you can't expect
+        //      full accuracy and you can't force the scheduler to trigger your code in the exact millisecond you want
+        //  
+        //  
+        // WHY I DIDN"T USE Common.Utilities.Wrappers.TimerWrapper
+        //  
+        //  It is just a wrapper for testing purposes (I believe).
+        //  
+
+        // 
+        // 
+
+
+
+
+
 
     }
 }
