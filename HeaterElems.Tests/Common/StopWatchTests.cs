@@ -63,7 +63,7 @@ namespace HeaterElems.Tests.Common
             sut.PropertyChanged += (s, e) => {
                 if (e.PropertyName == nameof(sut.RunDuration)) newValues.Add(sut.RunDuration.TotalSeconds);
             };
-            sut.StopAt(DateTime.Now + new TimeSpan(0, 0, 3)); //Stop in three seconds from now
+            sut.StopAt(DateTime.Now + new TimeSpan(0, 0, 3)); 
             await sut.StartAsync();
             Assert.IsTrue(newValues.Any());
             Assert.AreEqual(3, newValues.Count);

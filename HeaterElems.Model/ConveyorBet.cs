@@ -45,17 +45,18 @@ namespace HeaterElems.Model
 
 
         public event EventHandler<BoardArgs> BoardUnloaded;
+        public event EventHandler<ConveyorArgs> BoardsMoved;
 
         #region constructor
         public ConveyorBelt() {
             this.PreStation.PropertyChanged += async (s, e) => {
                 if (e.PropertyName == nameof(PreStation.Board))
-                    await MarchBoardsForward();
+                    await MarchBoardsForward(this);
             };
 
             this.PostStation.PropertyChanged += async (s, e) => {
                 if (e.PropertyName == nameof(PostStation.Board))
-                    await MarchBoardsForward();
+                    await MarchBoardsForward(this);
             };
         }
         #endregion constructor
@@ -67,7 +68,7 @@ namespace HeaterElems.Model
         //}
 
 
-        private async Task MarchBoardsForward() {
+        private async Task MarchBoardsForward(ConveyorBelt lane) {
             await Task.Delay(1500);
             var dispensedBoard = PostStation.Board;
             if (PostStation.Board != null) {
@@ -79,6 +80,7 @@ namespace HeaterElems.Model
             PostStation.Board = MainStation.Board;
             MainStation.Board = PreStation.Board;
             PreStation.Board = null;
+            BoardsMoved?.Invoke(this,new ConveyorArgs(lane));
         }
 
 
