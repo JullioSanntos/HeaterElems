@@ -12,7 +12,7 @@
       <Field Name="SingletonLock" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAQAAAAAABCAAAAAAIAAAAiAAAAAQAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAASAAAAAABCAAAAAAIAAAAiAAAAAQAAAAAAAAAA=</HashCode>
       <FileName>DispensingWorkStation.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -30,13 +30,7 @@
       <Field Name="_postStation" Hidden="true" />
       <Field Name="_preStation" Hidden="true" />
       <Method Name="ConveyorBelt" Hidden="true" />
-      <Method Name="PreStation_PropertyChanged" Hidden="true" />
     </Members>
-    <AssociationLine Name="PostStation" Type="HeaterElems.Model.Station">
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-1.045" Y="0.774" />
-      </MemberNameLabel>
-    </AssociationLine>
     <AssociationLine Name="PreStation" Type="HeaterElems.Model.Station">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.586" Y="1.155" />
@@ -47,14 +41,19 @@
         <Position X="-1.051" Y="0.971" />
       </MemberNameLabel>
     </AssociationLine>
+    <AssociationLine Name="PostStation" Type="HeaterElems.Model.Station">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.045" Y="0.774" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAIAIACAAAAAAAAQAAAEAAQEACACAAAAAAAAAAAAAEg=</HashCode>
+      <HashCode>AAIAMAAAAAAAAAAQAAAEAAQEACACAAAAAAAAAAAAAEA=</HashCode>
       <FileName>ConveyorBet.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="PostStation" />
       <Property Name="PreStation" />
       <Property Name="MainStation" />
+      <Property Name="PostStation" />
     </ShowAsAssociation>
   </Class>
   <Class Name="HeaterElems.Model.Station">
@@ -84,24 +83,11 @@
     <Position X="9.25" Y="6.25" Width="1.5" />
     <Members>
       <Field Name="_id" Hidden="true" />
-      <Field Name="_stopWatch" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAABAAAAAAAAABAAAAAAAAAAIAAA=</HashCode>
+      <HashCode>AAACAAAAAAAAAAAAAABAEAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
       <FileName>Board.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="StopWatch" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="HeaterElems.Common.StopWatch">
-    <Position X="12.25" Y="4.75" Width="2" />
-    <Members>
-      <Field Name="DateTimeNowFunc" Hidden="true" />
-      <Method Name="GetAdjustedStopTime" Hidden="true" />
-      <Method Name="RunClockAsync" Hidden="true" />
-    </Members>
-    <TypeIdentifier />
   </Class>
   <Class Name="HeaterElems.Model.BoardsContainer">
     <Position X="8.75" Y="3.75" Width="1.5" />

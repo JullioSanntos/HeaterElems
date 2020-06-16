@@ -14,7 +14,8 @@ using HeaterElems.Common.Annotations;
 
 namespace HeaterElems.Common
 {
-    public class StopWatch : SetPropertyBase
+
+    public class ProgressiveTimer : SetPropertyBase
     {
         #region properties
 
@@ -31,7 +32,7 @@ namespace HeaterElems.Common
         private DateTime? _startTime;
         public DateTime? StartTime {
             get => _startTime;
-            set => _startTime = value;
+            internal set => _startTime = value;
         }
         #endregion StartTime
 
@@ -65,11 +66,11 @@ namespace HeaterElems.Common
         }
         #endregion HasStopped
 
-        #region ProgressFrequencyMilliseconds
-        private int _progressFrequencyMilliseconds = 100;
-        public int ProgressFrequencyMilliseconds {
-            get { return _progressFrequencyMilliseconds; }
-            set { SetProperty(ref _progressFrequencyMilliseconds, value); }
+        #region TickFrequencyMilliseconds
+        private int _tickFrequencyMilliseconds = 100;
+        public int TickFrequencyMilliseconds {
+            get { return _tickFrequencyMilliseconds; }
+            set { SetProperty(ref _tickFrequencyMilliseconds, value); }
         }
         #endregion RefreshRateInMilliseconds
 
@@ -119,22 +120,30 @@ namespace HeaterElems.Common
             StartTime = DateTimeNow;
             CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
 
-            await RunClockAsync();
+            await RunClockAsync((DateTime)StartTime, TickFrequencyMilliseconds);
 
             RunCompleted?.Invoke(this, new EventArgs());
         }
 
-        protected internal async Task RunClockAsync() {
-            
+        protected internal async Task RunClockAsync(DateTime startTime, int frequencyMilliseconds)
+        {
+            var waitTimeForNextTick = frequencyMilliseconds;
             while (DateTimeNow <= EndTime && WasStopped == false) {
-                await Task.Delay(ProgressFrequencyMilliseconds, CancellationToken);
+                await Task.Delay(waitTimeForNextTick, CancellationToken);
+                waitTimeForNextTick = GetNextTickTimeMilliseconds(startTime, frequencyMilliseconds);
                 RaisePropertyChanged(nameof(RunProgress));
                 if (CancellationToken.IsCancellationRequested) break;
-
-                ////Adjust last loop's stoptime if refreshRate doesn't happen soon enough
-                //stopTime = GetAdjustedStopTime(EndTime, RefreshFrequencyInMilliseconds);
             }
+        }
 
+        protected internal int GetNextTickTimeMilliseconds(DateTime startTime, int frequencyMilliseconds)
+        {
+            var timeSpanFromStartTime = (DateTimeNow - startTime).TotalMilliseconds;
+            var numberOfTicksSinceStartTime = ((int)timeSpanFromStartTime / frequencyMilliseconds);
+            var nextTickTimeSpanFromStartTime = (numberOfTicksSinceStartTime + 1) * frequencyMilliseconds;
+            var waitTimeForNextTickFromNow = nextTickTimeSpanFromStartTime - (DateTimeNow - startTime).TotalMilliseconds;  //to be used with or added to DateTimeNow
+
+            return (int)waitTimeForNextTickFromNow;
         }
 
         protected internal DateTime GetAdjustedStopTime(DateTime endTime, int refreshFrequencyInMilliseconds) {
@@ -144,7 +153,7 @@ namespace HeaterElems.Common
         }
 
         /// <summary>
-        /// Stops the current StopWatch's run immediately in an ordered manner without an exception 
+        /// Stops the current ProgressiveTimer's run immediately in an ordered manner without an exception 
         /// </summary>
         public void Stop() {
             CancellationTokenFactory.Cancel(false);
@@ -153,7 +162,7 @@ namespace HeaterElems.Common
         }
 
         /// <summary>
-        /// Stops the current StopWatch's run after passed milliseconds
+        /// Stops the current ProgressiveTimer's run after passed milliseconds
         /// </summary>
         /// <param name="milliSeconds"></param>
         public void StopAfter(int milliSeconds) {
@@ -162,7 +171,7 @@ namespace HeaterElems.Common
         }
 
         /// <summary>
-        /// SStops the current StopWatch's run at a future time
+        /// SStops the current ProgressiveTimer's run at a future time
         /// </summary>
         /// <param name="stopTime"></param>
         public void StopAt(DateTime stopTime) {
@@ -171,7 +180,7 @@ namespace HeaterElems.Common
         }
 
         ///// <summary>
-        ///// Cancel the StopWatch Run immediately and raises an exception
+        ///// Cancel the ProgressiveTimer Run immediately and raises an exception
         ///// </summary>
         //public void Cancel()
         //{
@@ -197,7 +206,7 @@ namespace HeaterElems.Common
         //      One way to resolve this race condition is to set a flag that tells the event handler for the Elapsed event to ignore subsequent events.
         //
         //
-        // WHY I CREATED A WRAPPER FOR The System.Diagnostics.StopWatch using Common.Utilities.Wrappers.StopWatchWrapper (wrapper for testing purposes):
+        // WHY I CREATED A WRAPPER FOR The System.Diagnostics.ProgressiveTimer using Common.Utilities.Wrappers.StopWatchWrapper (wrapper for testing purposes):
         // 
         // Stopwatch doesn't show progress
         // Stopwatch doesn't have a count down.

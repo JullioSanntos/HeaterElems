@@ -72,7 +72,7 @@ namespace HeaterElems.Model
             await Task.Delay(1500);
             var dispensedBoard = PostStation.Board;
             if (PostStation.Board != null) {
-                PostStation.Board.StopWatch.Stop();
+                PostStation.Board.ProgressiveTimer.Stop();
                 BoardUnloaded?.Invoke(this, new BoardArgs(dispensedBoard)); 
                 PostStation.Board = null;
             }

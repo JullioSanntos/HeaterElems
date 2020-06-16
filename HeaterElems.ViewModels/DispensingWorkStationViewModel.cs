@@ -78,7 +78,7 @@ namespace HeaterElems.ViewModels
             if (PreStation1.Board == null)
             {
                 PreStation1.Board = new Board() {Id = CurrentBoardId += 1 };
-                //PreStation1.Board.StopWatch.Start();
+                //PreStation1.Board.ProgressiveTimer.Start();
             }
         }
 
@@ -87,7 +87,7 @@ namespace HeaterElems.ViewModels
             if (PreStation2.Board == null)
             {
                 PreStation2.Board = new Board() {Id = CurrentBoardId += 1 };
-                //PreStation2.Board.StopWatch.Start();
+                //PreStation2.Board.ProgressiveTimer.Start();
             }
         }
 

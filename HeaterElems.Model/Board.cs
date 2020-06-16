@@ -17,12 +17,12 @@ namespace HeaterElems.Model
         }
         #endregion Id
 
-        #region StopWatch
-        private StopWatch _stopWatch;
-        public StopWatch StopWatch {
-            get { return _stopWatch ?? (_stopWatch = new StopWatch()); }
-            set { SetProperty(ref _stopWatch, value); }
+        #region ProgressiveTimer
+        private ProgressiveTimer _progressiveTimer;
+        public ProgressiveTimer ProgressiveTimer {
+            get { return _progressiveTimer ?? (_progressiveTimer = new ProgressiveTimer()); }
+            set { SetProperty(ref _progressiveTimer, value); }
         }
-        #endregion StopWatch
+        #endregion ProgressiveTimer
     }
 }

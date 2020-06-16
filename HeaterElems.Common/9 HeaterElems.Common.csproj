@@ -45,7 +45,7 @@
     <Compile Include="BooleanToStringConverter.cs" />
     <Compile Include="Canvas\IStopWatchWrapper.cs" />
     <Compile Include="Canvas\StopWatchWrapper.cs" />
-    <Compile Include="StopWatch.cs" />
+    <Compile Include="ProgressiveTimer.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="SetPropertyBase.cs" />
     <Compile Include="Properties\Annotations.cs" />

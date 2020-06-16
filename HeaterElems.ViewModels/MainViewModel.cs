@@ -16,9 +16,9 @@ namespace HeaterElems.ViewModels
 
         // In Testing branch
         #region HeatingWatch
-        private StopWatch _heatingWatch;
-        public StopWatch HeatingWatch {
-            get => _heatingWatch ?? (_heatingWatch = new StopWatch());
+        private ProgressiveTimer _heatingWatch;
+        public ProgressiveTimer HeatingWatch {
+            get => _heatingWatch ?? (_heatingWatch = new ProgressiveTimer());
             set => SetProperty(ref _heatingWatch, value);
         }
         #endregion HeatingWatch

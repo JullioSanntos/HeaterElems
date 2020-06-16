@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using HeaterElems.Common;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
+// ReSharper disable UseObjectOrCollectionInitializer
 
 namespace HeaterElems.Tests.Common
 {
     [TestFixture()]
     
-    public class StopWatchTests
+    public class ProgressiveTimerTests
     {
         [Test]
         public void InstantiationTest() {
-            var sut = new StopWatch();
+            var sut = new ProgressiveTimer();
             Assert.IsNotNull(sut);
         }
 
         [Test]
         public async Task StopAterTest() {
-            var sut = new StopWatch();
+            var sut = new ProgressiveTimer();
             var isCompleted = false;
             sut.RunCompleted += (s, e) => isCompleted = true;
             sut.StopAfter(1000);
@@ -31,18 +33,18 @@ namespace HeaterElems.Tests.Common
 
         [Test]
         public void StopTest() {
-            var sut = new StopWatch();
+            var sut = new ProgressiveTimer();
             var isCompleted = false;
             sut.RunCompleted += (s, e) => isCompleted = true;
-            sut.StartAsync();
+            sut.Start();
             sut.Stop();
             Assert.IsTrue(isCompleted);
         }
 
         [Test]
-        public async Task ProgressTest() {
-            var sut = new StopWatch();
-            sut.ProgressFrequencyMilliseconds = 1000;
+        public async Task TicksTest() {
+            var sut = new ProgressiveTimer();
+            sut.TickFrequencyMilliseconds = 1000;
             var newValues = new List<double>();
             sut.PropertyChanged += (s, e) => {
                 if (e.PropertyName == nameof(sut.RunProgress)) newValues.Add(sut.RunProgress.TotalSeconds);
@@ -57,8 +59,8 @@ namespace HeaterElems.Tests.Common
 
         [Test]
         public async Task StopAtTest() {
-            var sut = new StopWatch();
-            sut.ProgressFrequencyMilliseconds = 1000;
+            var sut = new ProgressiveTimer();
+            sut.TickFrequencyMilliseconds = 1000;
             var newValues = new List<double>();
             sut.PropertyChanged += (s, e) => {
                 if (e.PropertyName == nameof(sut.RunProgress)) newValues.Add(sut.RunProgress.TotalSeconds);
@@ -71,8 +73,8 @@ namespace HeaterElems.Tests.Common
 
 //        [Test]
 //        public async Task CancelTest() {
-//            var sut = new StopWatch();
-//            sut.ProgressFrequencyMilliseconds = 500;
+//            var sut = new ProgressiveTimer();
+//            sut.TickFrequencyMilliseconds = 500;
 //            var newValues = new List<double>();
 //            sut.PropertyChanged += (s, e) => {
 //                if (e.PropertyName == nameof(sut.RunProgress)) newValues.Add(sut.RunProgress.TotalSeconds);
@@ -85,15 +87,15 @@ namespace HeaterElems.Tests.Common
 //            await Task.Delay(1000);
 //            sut.Cancel();
 //            Assert.IsTrue(newValues.Any());
-//            Assert.AreEqual(cancelDelay / sut.ProgressFrequencyMilliseconds, newValues.Count);
+//            Assert.AreEqual(cancelDelay / sut.TickFrequencyMilliseconds, newValues.Count);
 //        }
 
 
         [Test]
         public async Task LargeRefreshRateTest()
         {
-            var sut = new StopWatch();
-            sut.ProgressFrequencyMilliseconds = 300;
+            var sut = new ProgressiveTimer();
+            sut.TickFrequencyMilliseconds = 300;
             sut.StopAfter(1000);
             await sut.StartAsync();
             var durationInMilliSeconds = (int)sut.RunProgress.TotalMilliseconds;
@@ -102,7 +104,7 @@ namespace HeaterElems.Tests.Common
 
         [Test]
         public void GetAdjustedStopTimeTestWithEarlierEndTime() {
-            var sut = new StopWatch();
+            var sut = new ProgressiveTimer();
             var endTime = DateTime.Now.AddMilliseconds(2000);
             var refreshRate = 3000;
             var newEndTime = sut.GetAdjustedStopTime(endTime, refreshRate);
@@ -111,7 +113,7 @@ namespace HeaterElems.Tests.Common
 
         [Test]
         public void GetAdjustedStopTimeTestWithLaterEndTime() {
-            var sut = new StopWatch();
+            var sut = new ProgressiveTimer();
             var dateTimeNowFrozen = DateTime.Now;
             sut.DateTimeNowFunc = () => dateTimeNowFrozen;
             var endTime = dateTimeNowFrozen.AddMilliseconds(4000);
@@ -119,6 +121,19 @@ namespace HeaterElems.Tests.Common
             var newEndTime = sut.GetAdjustedStopTime(endTime, refreshRate);
             var expectedTime = dateTimeNowFrozen.AddMilliseconds(refreshRate);
             Assert.AreEqual(expectedTime, newEndTime);
+        }
+
+        [Test]
+        public void GetNextTickTimeMillisecondsTest1()
+        {
+            var sut = new ProgressiveTimer();
+            var dateTimeNowFrozen = new DateTime(1, 1, 1, 0, 0, 5); // = 5,000 Milliseconds
+            sut.DateTimeNowFunc = () => dateTimeNowFrozen;
+            var startTime = new DateTime(1, 1, 1, 0, 0, 1); // = 1,000 Milliseconds;
+            sut.TickFrequencyMilliseconds = 3000; // ticksSeconds = 4 (= 1 + 3), 7 (= 1 + 2 * 3), 10 (= 1 + 3 * 3), etc...
+            var expectedNextTick = 2000; // the wait time until 7,000 from 5,000 Milliseconds
+            var actualNextTick = sut.GetNextTickTimeMilliseconds(startTime, sut.TickFrequencyMilliseconds);
+            Assert.AreEqual(expectedNextTick, actualNextTick);
         }
     }
 
