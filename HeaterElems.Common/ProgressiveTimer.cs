@@ -1,126 +1,152 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Permissions;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Xml;
-using HeaterElems.Common.Annotations;
 
 namespace HeaterElems.Common
 {
-
     public class ProgressiveTimer : SetPropertyBase
     {
+        #region events
+
+        public event EventHandler RunCompleted;
+
+        #endregion events
+
         #region properties
 
         #region RunProgress
-        public TimeSpan RunProgress {
-            get {
+
+        public TimeSpan RunProgress
+        {
+            get
+            {
                 if (StartTime == null) return TimeSpan.Zero;
-                else return DateTimeNow - (DateTime)StartTime;
+                return DateTimeNow - (DateTime) StartTime;
             }
         }
+
         #endregion RunProgress
 
         #region StartTime
-        private DateTime? _startTime;
-        public DateTime? StartTime {
-            get => _startTime;
-            internal set => _startTime = value;
-        }
+
+        public DateTime? StartTime { get; internal set; }
+
         #endregion StartTime
 
         #region EndTime
+
         private DateTime? _endTime;
-        public DateTime? EndTime {
-            get {
+
+        public DateTime? EndTime
+        {
+            get
+            {
                 if (StartTime == null) return null;
-                else return (DateTime) (_endTime ?? (_endTime = StartTime + TimeSpan.FromMilliseconds(SetDurationMilliSeconds)));
+                return (DateTime) (_endTime ?? (_endTime =
+                    StartTime + TimeSpan.FromMilliseconds(SetDurationMilliSeconds)));
             }
             private set => _endTime = value;
         }
+
         #endregion EndTime
 
         #region SetDurationInMilliSeconds
+
         private int _setDurationInMilliSeconds;
-        public int SetDurationMilliSeconds {
-            get {
+
+        public int SetDurationMilliSeconds
+        {
+            get
+            {
                 if (_setDurationInMilliSeconds <= 0) _setDurationInMilliSeconds = DefaultMaxDuration;
                 return _setDurationInMilliSeconds;
             }
             set => SetProperty(ref _setDurationInMilliSeconds, value);
         }
+
         #endregion SetDurationInMilliSeconds
 
         #region WasStopped
+
         private bool _wasStopped;
-        private bool WasStopped {
+
+        private bool WasStopped
+        {
             get => _wasStopped;
             set => SetProperty(ref _wasStopped, value);
         }
+
         #endregion HasStopped
 
         #region TickFrequencyMilliseconds
+
         private int _tickFrequencyMilliseconds = 100;
-        public int TickFrequencyMilliseconds {
-            get { return _tickFrequencyMilliseconds; }
-            set { SetProperty(ref _tickFrequencyMilliseconds, value); }
+
+        public int TickFrequencyMilliseconds
+        {
+            get => _tickFrequencyMilliseconds;
+            set => SetProperty(ref _tickFrequencyMilliseconds, value);
         }
+
         #endregion RefreshRateInMilliseconds
 
         #region CancellationTokenFactory
+
         private CancellationTokenSource _cancellationTokenFactory;
-        private CancellationTokenSource CancellationTokenFactory {
-            get { return _cancellationTokenFactory ?? (_cancellationTokenFactory = new CancellationTokenSource()); }
-            set { SetProperty(ref _cancellationTokenFactory, value); }
+
+        private CancellationTokenSource CancellationTokenFactory
+        {
+            get => _cancellationTokenFactory ?? (_cancellationTokenFactory = new CancellationTokenSource());
+            set => SetProperty(ref _cancellationTokenFactory, value);
         }
+
         #endregion CancellationTokenFactory
 
         #region CancellationToken
+
         public CancellationToken CancellationToken { get; private set; }
+
         #endregion CancellationToken
 
         #region DateTimeNow
+
         /// <summary>
-        /// This field is used to facilitate automate tests
-        /// This func is used to freeze the Datetime for certain tests
+        ///     This field is used to facilitate automate tests
+        ///     This func is used to freeze the Datetime for certain tests
         /// </summary>
         protected internal Func<DateTime> DateTimeNowFunc = () => DateTime.Now;
+
         private DateTime DateTimeNow => DateTimeNowFunc();
+
         #endregion DateTimeNow
 
         #region MaxRunTime
+
         /// <summary>
-        /// default Maximum Run Time of 20 seconds unless overriden by one of the "Stop" calls
+        ///     default Maximum Run Time of 20 seconds unless overriden by one of the "Stop" calls
         /// </summary>
-        private const int DefaultMaxDuration = 20000; 
+        private const int DefaultMaxDuration = 20000;
+
         #endregion MaxRunTime
 
         #endregion properties
 
-        #region events
-        public event EventHandler RunCompleted;
-        #endregion events
-
         #region methods
-        public void Start() {
+
+        public void Start()
+        {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             StartAsync();
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
-        public async Task StartAsync() {
+        public async Task StartAsync()
+        {
             //if (EndTime < DateTimeNow || _startTime < DateTimeNow)
             StartTime = DateTimeNow;
             CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
 
-            await RunClockAsync((DateTime)StartTime, TickFrequencyMilliseconds);
+            await RunClockAsync((DateTime) StartTime, TickFrequencyMilliseconds);
 
             RunCompleted?.Invoke(this, new EventArgs());
         }
@@ -128,7 +154,8 @@ namespace HeaterElems.Common
         protected internal async Task RunClockAsync(DateTime startTime, int frequencyMilliseconds)
         {
             var waitTimeForNextTick = frequencyMilliseconds;
-            while (DateTimeNow <= EndTime && WasStopped == false) {
+            while (DateTimeNow <= EndTime && WasStopped == false)
+            {
                 await Task.Delay(waitTimeForNextTick, CancellationToken);
                 waitTimeForNextTick = GetNextTickTimeMilliseconds(startTime, frequencyMilliseconds);
                 RaisePropertyChanged(nameof(RunProgress));
@@ -139,42 +166,49 @@ namespace HeaterElems.Common
         protected internal int GetNextTickTimeMilliseconds(DateTime startTime, int frequencyMilliseconds)
         {
             var timeSpanFromStartTime = (DateTimeNow - startTime).TotalMilliseconds;
-            var numberOfTicksSinceStartTime = ((int)timeSpanFromStartTime / frequencyMilliseconds);
+            var numberOfTicksSinceStartTime = (int) timeSpanFromStartTime / frequencyMilliseconds;
             var nextTickTimeSpanFromStartTime = (numberOfTicksSinceStartTime + 1) * frequencyMilliseconds;
-            var waitTimeForNextTickFromNow = nextTickTimeSpanFromStartTime - (DateTimeNow - startTime).TotalMilliseconds;  //to be used with or added to DateTimeNow
+            var waitTimeForNextTickFromNow =
+                nextTickTimeSpanFromStartTime -
+                (DateTimeNow - startTime).TotalMilliseconds; //to be used with or added to DateTimeNow
 
-            return (int)waitTimeForNextTickFromNow;
+            return (int) waitTimeForNextTickFromNow;
         }
 
-        protected internal DateTime GetAdjustedStopTime(DateTime endTime, int refreshFrequencyInMilliseconds) {
+        protected internal DateTime GetAdjustedStopTime(DateTime endTime, int refreshFrequencyInMilliseconds)
+        {
             var balanceOfRunTime = endTime - DateTimeNow;
-            if (balanceOfRunTime.Milliseconds < refreshFrequencyInMilliseconds) return DateTimeNow.AddMilliseconds(refreshFrequencyInMilliseconds);
-            else return endTime;
+            if (balanceOfRunTime.Milliseconds < refreshFrequencyInMilliseconds)
+                return DateTimeNow.AddMilliseconds(refreshFrequencyInMilliseconds);
+            return endTime;
         }
 
         /// <summary>
-        /// Stops the current ProgressiveTimer's run immediately in an ordered manner without an exception 
+        ///     Stops the current ProgressiveTimer's run immediately in an ordered manner without an exception
         /// </summary>
-        public void Stop() {
+        public void Stop()
+        {
             CancellationTokenFactory.Cancel(false);
             WasStopped = true;
             RunCompleted?.Invoke(this, new EventArgs());
         }
 
         /// <summary>
-        /// Stops the current ProgressiveTimer's run after passed milliseconds
+        ///     Stops the current ProgressiveTimer's run after passed milliseconds
         /// </summary>
         /// <param name="milliSeconds"></param>
-        public void StopAfter(int milliSeconds) {
+        public void StopAfter(int milliSeconds)
+        {
             if (milliSeconds <= 0) throw new ArgumentException(nameof(milliSeconds));
             SetDurationMilliSeconds = milliSeconds;
         }
 
         /// <summary>
-        /// SStops the current ProgressiveTimer's run at a future time
+        ///     SStops the current ProgressiveTimer's run at a future time
         /// </summary>
         /// <param name="stopTime"></param>
-        public void StopAt(DateTime stopTime) {
+        public void StopAt(DateTime stopTime)
+        {
             if (stopTime < DateTimeNow) throw new ArgumentException("parameter is in the past", nameof(stopTime));
             EndTime = stopTime;
         }
@@ -186,6 +220,7 @@ namespace HeaterElems.Common
         //{
         //    CancellationTokenFactory.Cancel(true);
         //}
+
         #endregion methods
 
         //FOR MY RECORDS: 
@@ -231,11 +266,5 @@ namespace HeaterElems.Common
 
         // 
         // 
-
-
-
-
-
-
     }
 }
