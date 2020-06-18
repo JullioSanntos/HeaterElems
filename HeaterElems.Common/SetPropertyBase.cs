@@ -10,7 +10,7 @@ using HeaterElems.Common.Annotations;
 
 namespace HeaterElems.Common
 {
-    public class SetPropertyBase : INotifyPropertyChanged
+    public abstract class SetPropertyBase : INotifyPropertyChanged
     {
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
