@@ -30,8 +30,18 @@ namespace HeaterElems.Model
         private Board _board;
         public Board Board {
             get { return _board; }
-            set { SetProperty(ref _board, value); }
+            set
+            {
+                var previousBoard = _board;
+                SetProperty(ref _board, value);
+                if (_board == null) BoardUnloaded?.Invoke(this, new BoardArgs(null, previousBoard));
+                else BoardLoaded?.Invoke(this, new BoardArgs(null, _board));
+            }
         }
         #endregion Board
+
+        public event EventHandler<BoardArgs> BoardLoaded;
+        public event EventHandler<BoardArgs> BoardUnloaded;
+
     }
 }

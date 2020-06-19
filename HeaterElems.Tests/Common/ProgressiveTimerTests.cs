@@ -137,7 +137,7 @@ namespace HeaterElems.Tests.Common
         }
     }
 
-    public static class MyMath {
+    public static class MyPrecisionExtension {
         public static bool IsCloseTo(this int value1, int value2, int maxDifference) {
             var difference = Math.Abs(value1 - value2);
             if (difference <= maxDifference) return true;

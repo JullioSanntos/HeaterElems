@@ -23,7 +23,7 @@
             <Button Content="Step" Margin="4" Width="60" Command="{Binding StepCommand}" />
         </StackPanel>
         <Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400" Width="550" >
-            <ItemsControl ItemsSource="{Binding ModelContext.ConveyorBets}" VerticalAlignment="Center" >
+            <ItemsControl ItemsSource="{Binding ModelContext.Conveyors}" VerticalAlignment="Center" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <local:ConveyorBeltView Margin="20"  />

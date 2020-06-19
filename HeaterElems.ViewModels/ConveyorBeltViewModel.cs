@@ -12,8 +12,8 @@ namespace HeaterElems.ViewModels
     public class ConveyorBeltViewModel : SetPropertyBase
     {
         #region ModelContext
-        private ConveyorBelt _modelContext;
-        public ConveyorBelt ModelContext {
+        private Conveyor _modelContext;
+        public Conveyor ModelContext {
             get => _modelContext;
             set => SetProperty(ref _modelContext, value);
         }

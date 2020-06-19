@@ -10,21 +10,21 @@ namespace HeaterElems.Model
 {
     public class DispensingWorkStation : SetPropertyBase
     {
-        #region ConveyorBets
-        private ObservableCollection<ConveyorBelt> _conveyorBets;
-        public ObservableCollection<ConveyorBelt> ConveyorBets {
+        #region Conveyors
+        private ObservableCollection<Conveyor> _conveyors;
+        public ObservableCollection<Conveyor> Conveyors {
             get {
-                if (_conveyorBets == null)
+                if (_conveyors == null)
                 {
-                    ConveyorBets = new ObservableCollection<ConveyorBelt>(){
-                            new ConveyorBelt() {Name = "Front Lane"}, new ConveyorBelt() {Name = "Back Lane"}
+                    Conveyors = new ObservableCollection<Conveyor>(){
+                            new Conveyor() {Name = "Front Lane"}, new Conveyor() {Name = "Back Lane"}
                         };
                 }
-                return _conveyorBets;
+                return _conveyors;
             }
-            set => SetProperty(ref _conveyorBets, value);
+            set => SetProperty(ref _conveyors, value);
         }
-        #endregion ConveyorBets
+        #endregion Conveyors
 
         #region BoardsContainer
         private BoardsContainer _boardsContainer;
@@ -38,9 +38,7 @@ namespace HeaterElems.Model
         private static readonly object SingletonLock = new object();
         private static DispensingWorkStation _dispensingWorkStation;
 
-        public static DispensingWorkStation Instance {
-            get { return _dispensingWorkStation ?? (_dispensingWorkStation = GetSingleton()); }
-        }
+        public static DispensingWorkStation Instance => _dispensingWorkStation ?? (_dispensingWorkStation = GetSingleton());
 
         public static DispensingWorkStation GetSingleton()
         {
@@ -51,13 +49,17 @@ namespace HeaterElems.Model
             }
         }
 
-        private DispensingWorkStation() { ConveyorBets.ToList().ForEach(cb => cb.BoardUnloaded += BoardDispensed);}
+        private DispensingWorkStation()
+        {
+            Conveyors.ToList().ForEach(cb => cb.BoardDispensed += BoardDispensed);
+        }
         #endregion Singleton
 
 
         private void BoardDispensed(object sender, BoardArgs e)
         {
-            this.BoardsContainer.DispensedBoards.Insert(0, e.Board);
+            if (e.Station.Name == Conveyor.PostStationName)
+                this.BoardsContainer.DispensedBoards.Insert(0, e.Board);
         }
     }
 }

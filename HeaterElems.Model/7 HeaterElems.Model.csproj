@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="ConveyorArgs.cs" />
     <Compile Include="BoardArgs.cs" />
-    <Compile Include="ConveyorBet.cs" />
+    <Compile Include="Conveyor.cs" />
     <Compile Include="Board.cs" />
     <Compile Include="BoardsContainer.cs" />
     <Compile Include="Heater.cs" />

@@ -32,7 +32,7 @@ namespace HeaterElems.GUI.Views
 
         private void ConveyorBeltView_Loaded(object sender, RoutedEventArgs e)
         {
-            _vm.ModelContext = DataContext as ConveyorBelt;
+            _vm.ModelContext = DataContext as Conveyor;
             this.DataContext = _vm;
         }
     }

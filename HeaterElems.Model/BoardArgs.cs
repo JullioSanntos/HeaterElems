@@ -8,9 +8,12 @@ namespace HeaterElems.Model
 {
     public class BoardArgs : EventArgs
     {
+        public Station Station { get; private set; }
         public Board Board { get; private set; }
 
-        public BoardArgs(Board board) {
+        public BoardArgs(Station station, Board board)
+        {
+            Station = station;
             Board = board;
         }
     }

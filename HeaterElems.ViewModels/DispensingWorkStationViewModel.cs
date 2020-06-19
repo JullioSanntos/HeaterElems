@@ -18,8 +18,8 @@ namespace HeaterElems.ViewModels
         public RelayCommand StopCommand => new RelayCommand((o) => HasStopped = true);
         public RelayCommand StepCommand => new RelayCommand((o) => Step());
 
-        private ConveyorBelt Lane1 => ModelContext.ConveyorBets.First();
-        private ConveyorBelt Lane2 => ModelContext.ConveyorBets.Skip(1).First();
+        private Conveyor Lane1 => ModelContext.Conveyors.First();
+        private Conveyor Lane2 => ModelContext.Conveyors.Skip(1).First();
 
         private Station PreStation1 => Lane1.PreStation;
         private Station PreStation2 => Lane2.PreStation;
@@ -43,15 +43,27 @@ namespace HeaterElems.ViewModels
         public void Run()
         {
             HasStopped = false;
-            Lane1.BoardsMoved -= Lane1_BoardUnloaded;
-            Lane1.BoardsMoved += Lane1_BoardUnloaded;
+            Lane1.BoardDispensed -= Lane1_BoardDispensed;
+            Lane1.BoardDispensed += Lane1_BoardDispensed;
+            Lane1.PreStation.BoardUnloaded -= PreStation1_BoardUnloaded;
+            Lane1.PreStation.BoardUnloaded += PreStation1_BoardUnloaded;
             Lane1StepRun();
-            Lane2.BoardsMoved -= Lane2_BoardUnloaded;
-            Lane2.BoardsMoved += Lane2_BoardUnloaded;
+            Lane2.BoardDispensed -= Lane2_BoardDispensed;
+            Lane2.BoardDispensed += Lane2_BoardDispensed;
+            Lane2.PreStation.BoardUnloaded -= PreStation2_BoardUnloaded;
+            Lane2.PreStation.BoardUnloaded += PreStation2_BoardUnloaded;
             Lane2StepRun();
         }
 
-        
+        private void PreStation1_BoardUnloaded(object sender, BoardArgs e)
+        {
+            Lane1StepRun();
+        }
+
+        private void PreStation2_BoardUnloaded(object sender, BoardArgs e)
+        {
+            Lane2StepRun();
+        }
 
         public void Step()
         {
@@ -60,13 +72,13 @@ namespace HeaterElems.ViewModels
             Lane2StepRun();
         }
 
-        private void Lane1_BoardUnloaded(object sender, ConveyorArgs e)
+        private void Lane1_BoardDispensed(object sender, BoardArgs e)
         {
             Lane1StepRun();
         }
 
 
-        private void Lane2_BoardUnloaded(object sender, ConveyorArgs e)
+        private void Lane2_BoardDispensed(object sender, BoardArgs e)
         {
             Lane2StepRun();
         }

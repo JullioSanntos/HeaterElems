@@ -8,9 +8,9 @@ namespace HeaterElems.Model
 {
     public class ConveyorArgs : EventArgs
     {
-        public ConveyorBelt Conveyor { get; private set; }
+        public Conveyor Conveyor { get; private set; }
 
-        public ConveyorArgs(ConveyorBelt conveyor) {
+        public ConveyorArgs(Conveyor conveyor) {
             Conveyor = conveyor;
         }
     }
