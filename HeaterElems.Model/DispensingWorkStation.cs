@@ -55,7 +55,6 @@ namespace HeaterElems.Model
         }
         #endregion Singleton
 
-
         private void BoardDispensed(object sender, BoardArgs e)
         {
             if (e.Station.Name == Conveyor.PostStationName)

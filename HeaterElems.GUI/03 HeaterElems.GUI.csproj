@@ -130,17 +130,17 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HeaterElems.Common\9 HeaterElems.Common.csproj">
+    <ProjectReference Include="..\HeaterElems.Common\09 HeaterElems.Common.csproj">
       <Project>{d32ec42b-53d1-476b-8911-4cc03100ab40}</Project>
-      <Name>9 HeaterElems.Common</Name>
+      <Name>09 HeaterElems.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\HeaterElems.Model\7 HeaterElems.Model.csproj">
+    <ProjectReference Include="..\HeaterElems.Model\07 HeaterElems.Model.csproj">
       <Project>{14f76716-de15-48eb-bbdd-1c03cfd996dd}</Project>
-      <Name>7 HeaterElems.Model</Name>
+      <Name>07 HeaterElems.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\HeaterElems.ViewModels\5 HeaterElems.ViewModels.csproj">
+    <ProjectReference Include="..\HeaterElems.ViewModels\05 HeaterElems.ViewModels.csproj">
       <Project>{fdbf46ae-e71c-4f68-afe4-2aceec01d9e7}</Project>
-      <Name>5 HeaterElems.ViewModels</Name>
+      <Name>05 HeaterElems.ViewModels</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FDBF46AE-E71C-4F68-AFE4-2ACEEC01D9E7}</ProjectGuid>
+    <ProjectGuid>{D32EC42B-53D1-476B-8911-4CC03100AB40}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HeaterElems.ViewModels</RootNamespace>
-    <AssemblyName>HeaterElems.ViewModels</AssemblyName>
+    <RootNamespace>HeaterElems.Common</RootNamespace>
+    <AssemblyName>HeaterElems.Common</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,21 +42,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConveyorBeltViewModel.cs" />
-    <Compile Include="DispensingWorkStationViewModel.cs" />
-    <Compile Include="MainViewModel.cs" />
+    <Compile Include="BooleanToStringConverter.cs" />
+    <Compile Include="ProgressiveTimer.cs" />
+    <Compile Include="RelayCommand.cs" />
+    <Compile Include="SetPropertyBase.cs" />
+    <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StationViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HeaterElems.Common\9 HeaterElems.Common.csproj">
-      <Project>{D32EC42B-53D1-476B-8911-4CC03100AB40}</Project>
-      <Name>9 HeaterElems.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HeaterElems.Model\7 HeaterElems.Model.csproj">
-      <Project>{14F76716-DE15-48EB-BBDD-1C03CFD996DD}</Project>
-      <Name>7 HeaterElems.Model</Name>
-    </ProjectReference>
+    <None Include="ProgressiveTimer.cd" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

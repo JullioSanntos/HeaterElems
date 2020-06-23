@@ -54,9 +54,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HeaterElems.Common\9 HeaterElems.Common.csproj">
+    <ProjectReference Include="..\HeaterElems.Common\09 HeaterElems.Common.csproj">
       <Project>{D32EC42B-53D1-476B-8911-4CC03100AB40}</Project>
-      <Name>9 HeaterElems.Common</Name>
+      <Name>09 HeaterElems.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
