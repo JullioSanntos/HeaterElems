@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
@@ -9,20 +10,22 @@ using NUnit.Framework;
 using NUnit.Framework.Internal;
 // ReSharper disable UseObjectOrCollectionInitializer
 
+//namespace Common.Utilities_UnitTests
 namespace HeaterElems.Tests.Common
 {
     [TestFixture()]
-    
     public class ProgressiveTimerTests
     {
         [Test]
-        public void InstantiationTest() {
+        public void InstantiationTest()
+        {
             var sut = new ProgressiveTimer();
             Assert.IsNotNull(sut);
         }
 
         [Test]
-        public async Task StopAterTest() {
+        public async Task StopAfterTest()
+        {
             var sut = new ProgressiveTimer();
             var isCompleted = false;
             sut.RunCompleted += (s, e) => isCompleted = true;
@@ -32,116 +35,156 @@ namespace HeaterElems.Tests.Common
         }
 
         [Test]
-        public void StopTest() {
+        public void StopTest()
+        {
             var sut = new ProgressiveTimer();
             var isCompleted = false;
             sut.RunCompleted += (s, e) => isCompleted = true;
+            Assert.IsFalse(sut.IsRunning);
             sut.Start();
-            sut.Stop();
+            Assert.IsTrue(sut.IsRunning);
+            sut.StopNow();
             Assert.IsTrue(isCompleted);
         }
 
         [Test]
-        public async Task TicksTest() {
+        public async Task TicksTest()
+        {
+            var testStartTime = DateTime.Now;
             var sut = new ProgressiveTimer();
-            sut.TickFrequencyMilliseconds = 1000;
-            var newValues = new List<double>();
-            sut.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(sut.RunProgress)) newValues.Add(sut.RunProgress.TotalSeconds);
-            };
+            sut.TickIntervalMilliseconds = 500;
+            var newValues = new ConcurrentQueue<double>();
+            sut.PropertyChanged += (s, e) =>
+            { if (e.PropertyName == nameof(sut.ProgressTick)) newValues.Enqueue(sut.ProgressTick.TotalSeconds); };
             sut.StopAfter(3000);
             await sut.StartAsync();
-            Assert.IsTrue(newValues.Any());
-            Assert.AreEqual(3, newValues.Count);
+            Assert.IsTrue(newValues.Any(), "ProgressTicks not received");
+            var testEndTime = DateTime.Now;
+            var testTimeMilliseconds = (int)(testEndTime - testStartTime).TotalMilliseconds;
+            Assert.IsTrue(testTimeMilliseconds.IsInBetweenValues(sut.StopAfterMilliseconds - sut.TickIntervalMilliseconds, (int)(sut.StopAfterMilliseconds * 1.1)), $"Test time: Expected: {sut.StopAfterMilliseconds}. Actual: {testTimeMilliseconds}");
+            var expectedNumberOfTicks = sut.StopAfterMilliseconds / sut.TickIntervalMilliseconds;
+            var minTolerance = (int)(expectedNumberOfTicks * 0.5); // We need tolerance level because the testing threads may be occupied with other tests. Windows is not a real time OS.
+            Assert.IsTrue(newValues.Count.IsInBetweenValues(minTolerance, expectedNumberOfTicks + 1), $"Expected: {expectedNumberOfTicks}, Actual: {newValues.Count}");
         }
-
-
 
         [Test]
-        public async Task StopAtTest() {
+        public async Task StopAtTest()
+        {
             var sut = new ProgressiveTimer();
-            sut.TickFrequencyMilliseconds = 1000;
+            sut.TickIntervalMilliseconds = 1000;
             var newValues = new List<double>();
             sut.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(sut.RunProgress)) newValues.Add(sut.RunProgress.TotalSeconds);
+                if (e.PropertyName == nameof(sut.ProgressTick)) newValues.Add(sut.ProgressTick.TotalSeconds);
             };
-            sut.StopAt(DateTime.Now + new TimeSpan(0, 0, 3)); 
+            sut.StopAt(DateTime.Now + new TimeSpan(0, 0, 3));
             await sut.StartAsync();
             Assert.IsTrue(newValues.Any());
-            Assert.AreEqual(3, newValues.Count);
+            Assert.IsTrue(newValues.Count.IsInBetweenValues(2, 3));
         }
-
-//        [Test]
-//        public async Task CancelTest() {
-//            var sut = new ProgressiveTimer();
-//            sut.TickFrequencyMilliseconds = 500;
-//            var newValues = new List<double>();
-//            sut.PropertyChanged += (s, e) => {
-//                if (e.PropertyName == nameof(sut.RunProgress)) newValues.Add(sut.RunProgress.TotalSeconds);
-//            };
-//            sut.StopAfter(3000);
-//#pragma warning disable 4014
-//            sut.StartAsync();
-//#pragma warning restore 4014
-//            var cancelDelay = 1000;
-//            await Task.Delay(1000);
-//            sut.Cancel();
-//            Assert.IsTrue(newValues.Any());
-//            Assert.AreEqual(cancelDelay / sut.TickFrequencyMilliseconds, newValues.Count);
-//        }
-
 
         [Test]
         public async Task LargeRefreshRateTest()
         {
             var sut = new ProgressiveTimer();
-            sut.TickFrequencyMilliseconds = 300;
+            sut.TickIntervalMilliseconds = 300;
             sut.StopAfter(1000);
+            int duration = 0;
+            sut.RunCompleted += (s, dt) => duration = (int)((DateTime)dt - sut.StartTime).TotalMilliseconds;
             await sut.StartAsync();
-            var durationInMilliSeconds = (int)sut.RunProgress.TotalMilliseconds;
-            Assert.That((300 * 4).IsCloseTo(durationInMilliSeconds,200));
+            var durationInMilliseconds = (int)sut.ProgressTick.TotalMilliseconds;
+            var expectedDuration = sut.StopAfterMilliseconds;
+            var tolerance = (int)(expectedDuration * 1.25); // 25% longer tolerance when threads are busy
+            Assert.That(expectedDuration.IsEqualWithinTolerance(duration, tolerance));
         }
 
         [Test]
-        public void GetAdjustedStopTimeTestWithEarlierEndTime() {
-            var sut = new ProgressiveTimer();
-            var endTime = DateTime.Now.AddMilliseconds(2000);
-            var refreshRate = 3000;
-            var newEndTime = sut.GetAdjustedStopTime(endTime, refreshRate);
-            Assert.AreEqual(endTime, newEndTime);
-        }
-
-        [Test]
-        public void GetAdjustedStopTimeTestWithLaterEndTime() {
-            var sut = new ProgressiveTimer();
-            var dateTimeNowFrozen = DateTime.Now;
-            sut.DateTimeNowFunc = () => dateTimeNowFrozen;
-            var endTime = dateTimeNowFrozen.AddMilliseconds(4000);
-            var refreshRate = 3000;
-            var newEndTime = sut.GetAdjustedStopTime(endTime, refreshRate);
-            var expectedTime = dateTimeNowFrozen.AddMilliseconds(refreshRate);
-            Assert.AreEqual(expectedTime, newEndTime);
-        }
-
-        [Test]
-        public void GetNextTickTimeMillisecondsTest1()
+        public void GetNextTickTimeWithNoEndTimeTest()
         {
-            var sut = new ProgressiveTimer();
-            var dateTimeNowFrozen = new DateTime(1, 1, 1, 0, 0, 5); // = 5,000 Milliseconds
-            sut.DateTimeNowFunc = () => dateTimeNowFrozen;
-            var startTime = new DateTime(1, 1, 1, 0, 0, 1); // = 1,000 Milliseconds;
-            sut.TickFrequencyMilliseconds = 3000; // ticksSeconds = 4 (= 1 + 3), 7 (= 1 + 2 * 3), 10 (= 1 + 3 * 3), etc...
-            var expectedNextTick = 2000; // the wait time until 7,000 from 5,000 Milliseconds
-            var actualNextTick = sut.GetNextTickTimeMilliseconds(startTime, sut.TickFrequencyMilliseconds);
-            Assert.AreEqual(expectedNextTick, actualNextTick);
+            var sut = new ProgressiveTimerShunt();
+            sut.DateTimeNowFunc = new Func<DateTime>(() => new DateTime(2000, 1, 1, 0, 0, 0)); // to facilitate tests we use a frozen time 
+            sut.TickIntervalMilliseconds = 3000; // Time ticks every 3 seconds. 
+            var nextTickSpan = sut.GetNextTickTimeMilliseconds();
+            Assert.AreEqual(sut.TickIntervalMilliseconds, nextTickSpan);
+        }
+
+        [Test]
+        public void GetNextTickTimeWithEarlierEndTimeTest()
+        {
+            var sut = new ProgressiveTimerShunt();
+            sut.DateTimeNowFunc = new Func<DateTime>(() => new DateTime(2000, 1, 1, 0, 0, 0)); // to facilitate tests we use a frozen time 
+            sut.TickIntervalMilliseconds = 3000; // Time ticks every 3 seconds. 
+            var runTimeMilliseconds = 1000;
+            sut.EndTime = sut.StartTime.AddMilliseconds(runTimeMilliseconds);
+            var nextTickSpan = sut.GetNextTickTimeMilliseconds();
+            Assert.AreEqual(runTimeMilliseconds, nextTickSpan);
+        }
+
+        [Test]
+        public void GetNextTickTimeWithLaterEndTimeTest()
+        {
+            var sut = new ProgressiveTimerShunt();
+            sut.DateTimeNowFunc = new Func<DateTime>(() => new DateTime(2000, 1, 1, 0, 0, 0)); // to facilitate tests we use a frozen time 
+            sut.TickIntervalMilliseconds = 3000; // Time ticks every 3 seconds. 
+            var runTimeMilliseconds = 10000;
+            sut.EndTime = sut.StartTime.AddMilliseconds(runTimeMilliseconds);
+            var nextTickSpan = sut.GetNextTickTimeMilliseconds();
+            Assert.AreEqual(sut.TickIntervalMilliseconds, nextTickSpan);
+        }
+
+        [Test]
+        public void GetNextTickTimeWithLaterEndTimeTestUsingCurrentTimeTest()
+        {
+            var sut = new ProgressiveTimerShunt();
+            sut.TickIntervalMilliseconds = 3000; // Time ticks every 3 seconds. 
+            var runTimeMilliseconds = 10000;
+            sut.EndTime = sut.StartTime.AddMilliseconds(runTimeMilliseconds);
+            var nextTickSpan = sut.GetNextTickTimeMilliseconds();
+            Assert.IsTrue(nextTickSpan.IsEqualWithinTolerance(sut.TickIntervalMilliseconds, 10));
+        }
+
+        [Test]
+        public void GetDateTimeNowTest()
+        {
+            var sut = new ProgressiveTimerShunt();
+            var expected = sut.DateTimeNowFunc();
+            Assert.IsTrue(expected == DateTime.Now);
         }
     }
 
-    public static class MyPrecisionExtension {
-        public static bool IsCloseTo(this int value1, int value2, int maxDifference) {
+    public class ProgressiveTimerShunt : ProgressiveTimer
+    {
+
+        public new Func<DateTime> DateTimeNowFunc
+        {
+            get => base.DateTimeNowFunc;
+            set => base.DateTimeNowFunc = value;
+        }
+
+        public new DateTime EndTime
+        {
+            get => base.EndTime;
+            set => base.EndTime = value;
+        }
+
+        public new int GetNextTickTimeMilliseconds()
+        {
+            return base.GetNextTickTimeMilliseconds();
+        }
+    }
+
+    public static class MyPrecisionExtension
+    {
+        public static bool IsInBetweenValues(this int testingValue, int minValue, int maxValue)
+        {
+            if (testingValue >= minValue && testingValue <= maxValue) return true;
+            else return false;
+        }
+        public static bool IsEqualWithinTolerance(this int value1, int value2, int tolerance)
+        {
             var difference = Math.Abs(value1 - value2);
-            if (difference <= maxDifference) return true;
+            if (difference <= tolerance) return true;
             else return false;
         }
     }
+
 }

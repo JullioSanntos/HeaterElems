@@ -5,22 +5,24 @@
     <Members>
       <Field Name="_cancellationTokenFactory" Hidden="true" />
       <Field Name="_endTime" Hidden="true" />
-      <Field Name="_setDurationInMilliSeconds" Hidden="true" />
-      <Field Name="_tickFrequencyMilliseconds" Hidden="true" />
-      <Field Name="_wasStopped" Hidden="true" />
+      <Field Name="_isRunning" Hidden="true" />
+      <Field Name="_startTime" Hidden="true" />
+      <Field Name="_stopAfterMilliseconds" Hidden="true" />
+      <Field Name="_tickIntervalMilliseconds" Hidden="true" />
       <Property Name="CancellationTokenFactory" Hidden="true" />
       <Property Name="DateTimeNow" Hidden="true" />
       <Field Name="DateTimeNowFunc" Hidden="true" />
-      <Field Name="DefaultMaxDuration" Hidden="true" />
-      <Method Name="GetAdjustedStopTime" Hidden="true" />
+      <Field Name="DefaultMaxDurationMilliseconds" Hidden="true" />
       <Method Name="GetNextTickTimeMilliseconds" Hidden="true" />
+      <Method Name="RaisePropertyChanged" Hidden="true" />
       <Method Name="RunClockAsync" Hidden="true" />
       <Property Name="WasStopped" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>BAEBAAQAQCAACQAAAAAJAAiAIgQiAAAAIQIQAEACAAg=</HashCode>
+      <HashCode>AAEAABQCYCQACQEAAIAJQEiAogUgABQAAQAAAAACAAg=</HashCode>
       <FileName>ProgressiveTimer.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="HeaterElems.Common.SetPropertyBase" Collapsed="true">
     <Position X="10.75" Y="1.5" Width="2" />

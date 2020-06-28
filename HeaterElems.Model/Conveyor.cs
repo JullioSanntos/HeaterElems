@@ -101,5 +101,6 @@ namespace HeaterElems.Model
         }
 
         #endregion constructor
-        }
+
+    }
 }
