@@ -4,21 +4,30 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HeaterElems.GUI.Views"
+             xmlns:resources="clr-namespace:HeaterElems.GUI.Resources"
              xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels"
              xmlns:common="clr-namespace:HeaterElems.Common;assembly=HeaterElems.Common"
-             d:DataContext="{d:DesignInstance viewModels:StationViewModel, IsDesignTimeCreatable=True}"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
+             d:DataContext="{d:DesignInstance {x:Type viewModels:StationViewModel}, IsDesignTimeCreatable=True}"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="150">
+    <b:Interaction.Behaviors>
+        <resources:ViewModelLocatorBehavior />
+    </b:Interaction.Behaviors>
     <UserControl.Resources>
         <common:BooleanToStringConverter x:Key="BooleanToStringConverter" />
     </UserControl.Resources>
     <Grid>
         <Border BorderThickness="1" BorderBrush="Coral"  Height="90" Width="150" >
             <StackPanel>
+                <!--<b:Interaction.Behaviors>
+                    <b:MouseDragElementBehavior/>
+                </b:Interaction.Behaviors>-->
                 <TextBlock Text="{Binding ModelContext.Name}" Width="100" Height="23" TextAlignment="Center" HorizontalAlignment="Center" 
                          VerticalAlignment="Top" Margin="4" Foreground="Coral" FontSize="14" />
-                <local:BoardView Visibility="{Binding HasBoard, Converter={StaticResource BooleanToStringConverter }, ConverterParameter=Visible|Hidden}" />
+                <local:BoardView Visibility="{Binding HasBoard, ConverterParameter=Visible|Hidden, Converter={StaticResource BooleanToStringConverter}}" />
             </StackPanel>
         </Border>
+        <!--<ContentControl Content="{resources:MyMarkupExtension FirstStr=J, SecondStr=S,VMType={x:Type viewModels:StationViewModel}}" />-->
     </Grid>
 </UserControl>

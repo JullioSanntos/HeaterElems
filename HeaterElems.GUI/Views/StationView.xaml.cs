@@ -27,8 +27,8 @@ namespace HeaterElems.GUI.Views
         public StationView()
         {
             InitializeComponent();
-            this.Loaded += StationView_Loaded;
-            _vm = new StationViewModel();
+            //this.Loaded += StationView_Loaded;
+            //_vm = new StationViewModel();
         }
 
         private void StationView_Loaded(object sender, RoutedEventArgs e)
