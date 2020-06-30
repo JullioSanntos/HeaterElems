@@ -48,7 +48,7 @@
     </Members>
     <AssociationLine Name="Conveyors" Type="HeaterElems.Model.Conveyor">
       <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-1.65" Y="0.081" />
+        <Position X="-1.683" Y="0.231" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>

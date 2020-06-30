@@ -120,16 +120,21 @@ namespace HeaterElems.Common
         #endregion HasStopped
 
         #region TickIntervalMilliseconds
-        private int _tickIntervalMilliseconds = 100;
+        private const int _minimumTickIntervalMilliseconds = 100;
+        private int _tickIntervalMilliseconds = _minimumTickIntervalMilliseconds;
         /// <summary>
-        /// Indicates how frequently Property Changed event should be raised naming the property <see cref="ProgressTick"/>
+        /// Indicates how frequently Property Changed event should be raised for the property <see cref="ProgressTick"/>.
+        /// Minimum Tick interval is 100 milliseconds.
         /// </summary>
         public int TickIntervalMilliseconds
         {
             get => _tickIntervalMilliseconds;
-            set => SetProperty(ref _tickIntervalMilliseconds, value);
+            set {
+                if (value <= _minimumTickIntervalMilliseconds) value = _minimumTickIntervalMilliseconds;
+                SetProperty(ref _tickIntervalMilliseconds, value);
+            }
         }
-        #endregion RefreshRateInMilliseconds
+        #endregion TickIntervalMilliseconds
 
         #region CancellationTokenFactory
         private CancellationTokenSource _cancellationTokenFactory;
@@ -343,7 +348,7 @@ namespace HeaterElems.Common
         //      One way to resolve this race condition is to set a flag that tells the event handler for the Elapsed event to ignore subsequent events.
         //
         //
-        // WHY I DIDN'T USE the Common.Utilities.Wrappers.StopWatchWrapper (wrapper for testing purposes):
+        // WHY I DIDN'T USE the System.Diagnostics.StopWatch https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch?view=netframework-4.8
         // 
         // Stopwatch doesn't show progress
         // Stopwatch doesn't have a count down. It is still up to the client to determine when to stop the watch.
@@ -364,13 +369,11 @@ namespace HeaterElems.Common
         //      full accuracy because you can't force the scheduler to trigger your code in the exact millisecond you want
         //  
         //  
-        // WHY I DIDN"T USE Common.Utilities.Wrappers.TimerWrapper
+        // WHY I DIDN'T USE the Common.Utilities.Wrappers.StopWatchWrapper (wrapper for testing purposes):
+        // WHY I DIDN"T USE Common.Utilities.Wrappers.TimerWrapper (wrapper for testing purposes):
         //  
-        //  It is just a wrapper for testing purposes (I believe).
         //  
 
-        // 
-        // 
     }
 
 }

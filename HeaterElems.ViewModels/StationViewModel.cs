@@ -19,9 +19,9 @@ namespace HeaterElems.ViewModels
         }
         #endregion ModelContext
 
-        #region ModelContext
+        #region HasBoard
         public bool HasBoard => ModelContext.Board != null;
-        #endregion ModelContext
+        #endregion HasBoard
 
         public StationViewModel() {
             this.PropertyChanged += (s, e) => {
