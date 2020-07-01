@@ -13,18 +13,18 @@ namespace HeaterElems.Common
 {
     /// <summary>
     /// Provides a way for clients to be notified when an specified time was reached.
-    /// It also provides a series of progress notifications through <see cref="RunningTime"/> (as in Tick/Tock).
+    /// It also provides a series of progress notifications through <see cref="Tick"/> (as in Tick/Tock).
     /// 
     /// The timer completed notification is done through any one of two approaches:
     ///     1) By awaiting the <see cref="StartAsync"/> call to be returned;
     ///     2) By subscribing to the <see cref="RunCompleted"/> event.
     /// 
-    /// Progress notifications is done through <see cref="INotifyPropertyChanged.PropertyChanged"/> events which
-    /// identifies property <see cref="RunningTime"/> as having changed.
+    /// Progress notifications is done through <see cref="Tick"/> events which
+    /// identifies property <see cref="TotalRunningTime"/> as having changed.
     ///
     /// <example>
     /// In this example ProgressiveTime raises <see cref="RunCompleted"/> event after 2 seconds after
-    /// it raises <see cref="RunningTime"/> PropertyChange event every 1/2 second.
+    /// it raises <see cref="TotalRunningTime"/> PropertyChange event every 1/2 second.
     /// <code>
     ///     var sut = new ProgressiveTimer();
     ///     sut.PropertyChanged += (s, e) => {if (e.PropertyName == nameof(sut.ProgressTick)) Console.WriteLine(sut.ProgressTick.TotalSeconds);
@@ -34,7 +34,7 @@ namespace HeaterElems.Common
     ///     var durationInMilliseconds = sut.ProgressTick.TotalMilliseconds;
     /// </code>
     /// </example>
-    /// Please, observe that the number of <see cref="RunningTime"/> events can vary depending on how busy the threads are.
+    /// Please, observe that the number of <see cref="TotalRunningTime"/> events can vary depending on how busy the threads are.
     /// However, the intervals are self-adjusted to provide the closest number of ticks expected. 
     /// </summary>
     public class ProgressiveTimer /*: INotifyPropertyChanged*/
@@ -44,6 +44,10 @@ namespace HeaterElems.Common
         /// Event is raised when <see cref="EndTime"/> time is reached
         /// </summary>
         public event EventHandler<TimeSpan?> RunCompleted;
+        /// <summary>
+        /// Event is raise every <see cref="TickIntervalMilliseconds"/>
+        /// 
+        /// </summary>
         public event EventHandler<TimeSpan> Tick;
 
         #endregion events
@@ -52,14 +56,17 @@ namespace HeaterElems.Common
 
         #region RunningTimeSegments
 
+        private List<TimeSpan> _runningTimeSegments;
         public List<TimeSpan> RunningTimeSegments
         {
-            get { return _runningTimeSegments ?? (_runningTimeSegments = new List<TimeSpan>()); }
-            protected set { _runningTimeSegments = value; }
+            get => _runningTimeSegments ?? (_runningTimeSegments = new List<TimeSpan>());
+            protected set => _runningTimeSegments = value;
         }
         #endregion RunningTimeSegments
 
-        #region RunningTime
+        #region TotalRunningTime
+
+        private TimeSpan _totalRunningTime;
         public TimeSpan TotalRunningTime
         {
             get {
@@ -67,9 +74,9 @@ namespace HeaterElems.Common
                 if (IsPaused) { return sumOfSegments; }
                 else { return sumOfSegments + (DateTimeNow - StartTime); }
             }
-            protected set { _totalRunningTime = value; }
+            protected set => _totalRunningTime = value;
         }
-        #endregion RunningTime
+        #endregion TotalRunningTime
 
         #region StartTime
         private DateTime _startTime;
@@ -223,7 +230,7 @@ namespace HeaterElems.Common
         }
 
         /// <summary>
-        /// Starts the clock in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="RunningTime"/>
+        /// Starts the clock in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="TotalRunningTime"/>
         /// The event is raised as often as determined by <see cref="TickIntervalMilliseconds"/> in milliseconds.
         /// This clock will have a hard stop when elapsed time indicated by <see cref="DefaultMaxDurationMilliseconds"/> or when time in <see cref="EndTime"/> is reached.
         /// This awaitable method returns when the clock is stopped.
@@ -265,11 +272,9 @@ namespace HeaterElems.Common
         }
 
         /// <summary>
-        /// Run a timer and raise <see cref="RunningTime"/> events, every <see cref="TickIntervalMilliseconds"/>
-        /// The clock and the <see cref="RunningTime"/> events are cancellable by calling <see cref="Cancel"/> 
+        /// Run a timer and raise <see cref="TotalRunningTime"/> events, every <see cref="TickIntervalMilliseconds"/>
+        /// This Timer's clock and the <see cref="Tick"/> events are cancellable by calling <see cref="Cancel"/> 
         /// </summary>
-        /// <param name="startTime"></param>
-        /// <param name="frequencyMilliseconds"></param>
         /// <returns></returns>
         protected async Task RunClockAsync()
         {
