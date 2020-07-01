@@ -1,27 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 //namespace Common.Utilities
 namespace HeaterElems.Common
 {
     /// <summary>
     /// Provides a way for clients to be notified when an specified time was reached.
-    /// It also provides a series of progress notifications through <see cref="ProgressTick"/> (as in Tick/Tock).
+    /// It also provides a series of progress notifications through <see cref="RunningTime"/> (as in Tick/Tock).
     /// 
     /// The timer completed notification is done through any one of two approaches:
     ///     1) By awaiting the <see cref="StartAsync"/> call to be returned;
     ///     2) By subscribing to the <see cref="RunCompleted"/> event.
     /// 
     /// Progress notifications is done through <see cref="INotifyPropertyChanged.PropertyChanged"/> events which
-    /// identifies property <see cref="ProgressTick"/> as having changed.
+    /// identifies property <see cref="RunningTime"/> as having changed.
     ///
     /// <example>
     /// In this example ProgressiveTime raises <see cref="RunCompleted"/> event after 2 seconds after
-    /// it raises <see cref="ProgressTick"/> PropertyChange event every 1/2 second.
+    /// it raises <see cref="RunningTime"/> PropertyChange event every 1/2 second.
     /// <code>
     ///     var sut = new ProgressiveTimer();
     ///     sut.PropertyChanged += (s, e) => {if (e.PropertyName == nameof(sut.ProgressTick)) Console.WriteLine(sut.ProgressTick.TotalSeconds);
@@ -31,36 +34,51 @@ namespace HeaterElems.Common
     ///     var durationInMilliseconds = sut.ProgressTick.TotalMilliseconds;
     /// </code>
     /// </example>
-    /// Please, observe that the number of <see cref="ProgressTick"/> events can vary depending on how busy the threads are.
+    /// Please, observe that the number of <see cref="RunningTime"/> events can vary depending on how busy the threads are.
     /// However, the intervals are self-adjusted to provide the closest number of ticks expected. 
     /// </summary>
-    public class ProgressiveTimer : INotifyPropertyChanged
+    public class ProgressiveTimer /*: INotifyPropertyChanged*/
     {
         #region events
         /// <summary>
         /// Event is raised when <see cref="EndTime"/> time is reached
         /// </summary>
-        public event EventHandler<DateTime?> RunCompleted;
+        public event EventHandler<TimeSpan?> RunCompleted;
+        public event EventHandler<TimeSpan> Tick;
 
         #endregion events
 
         #region properties
 
-        #region ProgressTick
-        /// <summary>
-        /// Elapsed time from <see cref="StartTime" /> to the time this property is interrogated
-        /// </summary>
-        public TimeSpan ProgressTick => DateTimeNow - (DateTime)StartTime;
-        #endregion ProgressTick
+        #region RunningTimeSegments
+
+        public List<TimeSpan> RunningTimeSegments
+        {
+            get { return _runningTimeSegments ?? (_runningTimeSegments = new List<TimeSpan>()); }
+            protected set { _runningTimeSegments = value; }
+        }
+        #endregion RunningTimeSegments
+
+        #region RunningTime
+        public TimeSpan TotalRunningTime
+        {
+            get {
+                var sumOfSegments = new TimeSpan(RunningTimeSegments.Sum(s => s.Ticks));
+                if (IsPaused) { return sumOfSegments; }
+                else { return sumOfSegments + (DateTimeNow - StartTime); }
+            }
+            protected set { _totalRunningTime = value; }
+        }
+        #endregion RunningTime
 
         #region StartTime
-        private DateTime? _startTime;
+        private DateTime _startTime;
         /// <summary>
         /// Time when <see cref="Start"/> or <see cref="StartAsync"/> was invoked.
         /// </summary>
         public DateTime StartTime
         {
-            get => (DateTime)(_startTime ?? (_startTime = DateTimeNow));
+            get => _startTime;
             protected set => _startTime = value;
         }
         #endregion StartTime
@@ -77,7 +95,7 @@ namespace HeaterElems.Common
 
         private DateTime? _endTime;
         /// <summary>
-        /// Time at which this Timer will stop looping and raising PropertyChanged events for the <see cref="ProgressTick"/> property.
+        /// Time at which this Timer will stop looping and raising PropertyChanged events for the <see cref="RunningTime"/> property.
         /// This property is setup by calling <see cref="StopAt"/> or <see cref="StopAfter"/>
         /// </summary>
         public DateTime EndTime
@@ -106,24 +124,22 @@ namespace HeaterElems.Common
                 if (_stopAfterMilliseconds <= 0) _stopAfterMilliseconds = DefaultMaxDurationMilliseconds;
                 return _stopAfterMilliseconds;
             }
-            set => SetProperty(ref _stopAfterMilliseconds, value);
+            set => _stopAfterMilliseconds = value;
         }
         #endregion StopAfterMilliseconds
 
-        #region WasStopped
-
+        #region IsCancelled
         /// <summary>
-        ///  This property indicates if <see cref="StopNow"/> was invoked
+        ///  This property indicates if <see cref="Cancel"/> was invoked
         /// </summary>
-        public bool WasStopped { get; protected set; }
-
-        #endregion HasStopped
+        public bool IsCancelled { get; protected set; }
+        #endregion IsCancelled
 
         #region TickIntervalMilliseconds
-        private const int _minimumTickIntervalMilliseconds = 100;
+        private const int _minimumTickIntervalMilliseconds = 200;
         private int _tickIntervalMilliseconds = _minimumTickIntervalMilliseconds;
         /// <summary>
-        /// Indicates how frequently Property Changed event should be raised for the property <see cref="ProgressTick"/>.
+        /// Indicates how frequently Property Changed event should be raised for the property <see cref="RunningTime"/>.
         /// Minimum Tick interval is 100 milliseconds.
         /// </summary>
         public int TickIntervalMilliseconds
@@ -131,7 +147,7 @@ namespace HeaterElems.Common
             get => _tickIntervalMilliseconds;
             set {
                 if (value <= _minimumTickIntervalMilliseconds) value = _minimumTickIntervalMilliseconds;
-                SetProperty(ref _tickIntervalMilliseconds, value);
+                _tickIntervalMilliseconds = value;
             }
         }
         #endregion TickIntervalMilliseconds
@@ -148,7 +164,7 @@ namespace HeaterElems.Common
         #region CancellationToken
         /// <summary>
         /// Indicates if a run was cancelled.
-        /// Its state is changed by <see cref="StopNow"/> only.
+        /// Its state is changed by <see cref="Cancel"/> only.
         /// </summary>
         public CancellationToken CancellationToken { get; protected set; }
         #endregion CancellationToken
@@ -179,11 +195,19 @@ namespace HeaterElems.Common
         public bool IsRunning
         {
             get => _isRunning;
-            set => SetProperty(ref _isRunning, value);
+            set => _isRunning = value;
         }
 
         #endregion IsRunning
 
+        #region IsCancelled
+        /// <summary>
+        ///  This property indicates if <see cref="Cancel"/> was invoked
+        /// </summary>
+        public bool IsPaused { get; protected set; }
+        #endregion IsCancelled
+
+        
         #endregion properties
 
         #region methods
@@ -199,7 +223,7 @@ namespace HeaterElems.Common
         }
 
         /// <summary>
-        /// Starts the clock in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="ProgressTick"/>
+        /// Starts the clock in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="RunningTime"/>
         /// The event is raised as often as determined by <see cref="TickIntervalMilliseconds"/> in milliseconds.
         /// This clock will have a hard stop when elapsed time indicated by <see cref="DefaultMaxDurationMilliseconds"/> or when time in <see cref="EndTime"/> is reached.
         /// This awaitable method returns when the clock is stopped.
@@ -220,33 +244,44 @@ namespace HeaterElems.Common
             StartTime = DateTimeNow;
             CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
             IsRunning = true;
+            IsCancelled = false;
+            IsPaused = false;
+            RunningTimeSegments.Clear();
 
-            await RunClockAsync((DateTime)StartTime, TickIntervalMilliseconds);
+            try
+            {
+                await RunClockAsync();
+            }
+            finally
+            {
+                CancellationTokenFactory.Dispose();
+                CancellationTokenFactory = null;
+            }
 
             IsRunning = false;
             EndTime = DateTimeNow;
-            RunCompleted?.Invoke(this, EndTime);
+            if (IsCancelled == false) RunCompleted?.Invoke(this, TotalRunningTime);
+            else RunCompleted?.Invoke(this, null);
         }
 
-
         /// <summary>
-        /// Run a timer and raise <see cref="ProgressTick"/> events, every <see cref="TickIntervalMilliseconds"/>
-        /// The clock and the <see cref="ProgressTick"/> events are cancellable by calling <see cref="StopNow"/> 
+        /// Run a timer and raise <see cref="RunningTime"/> events, every <see cref="TickIntervalMilliseconds"/>
+        /// The clock and the <see cref="RunningTime"/> events are cancellable by calling <see cref="Cancel"/> 
         /// </summary>
         /// <param name="startTime"></param>
         /// <param name="frequencyMilliseconds"></param>
         /// <returns></returns>
-        protected async Task RunClockAsync(DateTime startTime, int frequencyMilliseconds)
+        protected async Task RunClockAsync()
         {
-            var waitTimeForNextTick = frequencyMilliseconds;
+            var waitTimeForNextTick = TickIntervalMilliseconds;
 
             var endTimeReached = EndTime < DateTimeNow;
             // Run the timer while EndTime is not reached and while StopNow is not invoked
-            while (endTimeReached == false && WasStopped == false)
+            while (endTimeReached == false && IsCancelled == false)
             {
-                await Task.Delay(waitTimeForNextTick, CancellationToken);
+                await Task.Delay(waitTimeForNextTick, CancellationToken).ConfigureAwait(false);
 #pragma warning disable 4014
-                Task.Run(() => RaisePropertyChanged(nameof(ProgressTick)), CancellationToken);
+                Task.Run(() => Tick?.Invoke(this, TotalRunningTime), CancellationToken);
 #pragma warning restore 4014
                 waitTimeForNextTick = GetNextTickTimeMilliseconds();
                 if (CancellationToken.IsCancellationRequested) break;
@@ -279,11 +314,10 @@ namespace HeaterElems.Common
         /// <summary>
         /// Immediately stops the clock
         /// </summary>
-        public void StopNow()
+        public void Cancel()
         {
             CancellationTokenFactory.Cancel(false);
-            WasStopped = true;
-            RunCompleted?.Invoke(this, DateTimeNow);
+            IsCancelled = true;
         }
 
         /// <summary>
@@ -308,71 +342,14 @@ namespace HeaterElems.Common
             EndTime = endTIme;
         }
 
+        public void Pause()
+        {
+            IsPaused = true;
+            RunningTimeSegments.Add(DateTimeNow - StartTime);
+            CancellationTokenFactory.Cancel(false);
+        }
+
         #endregion methods
-
-        #region INotifyPropertyChanged
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [DebuggerStepThrough]
-        protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        [DebuggerStepThrough]
-        public void SetProperty<T>(ref T backingField, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (Equals(value, backingField)) return;
-
-            backingField = value;
-
-            RaisePropertyChanged(propertyName);
-        }
-        #endregion INotifyPropertyChanged
-
-        //FOR MY RECORDS: 
-        //  
-        //
-        // WHY I DIDN'T USE System.Timers.Timer type: https://docs.microsoft.com/en-us/dotnet/api/system.timers.timer?view=netframework-4.8
-        //
-        // This type implements the IDisposable interface... 
-        // The Timer component catches and suppresses all exceptions thrown by event handlers for the Elapsed event.
-        // This behavior is subject to change in future releases of the .NET Framework. Note, however,
-        //      that this is not true of event handlers that execute asynchronously and include the await operator (in C#)
-        //      Exceptions thrown in these event handlers are propagated back to the calling thread, ...
-        // If the SynchronizingObject property is null, the Elapsed event is raised on a ThreadPool thread.
-        // If processing of the Elapsed event lasts longer than Interval, the event might be raised again on another ThreadPool thread.
-        // In this situation, the event handler should be re-entrant.
-        // Even if SynchronizingObject is not null, Elapsed events can occur after the Dispose or Stop method has been called or
-        //      after the Enabled property has been set to false, because the signal to raise the Elapsed event is always queued for execution on a thread pool thread.
-        //      One way to resolve this race condition is to set a flag that tells the event handler for the Elapsed event to ignore subsequent events.
-        //
-        //
-        // WHY I DIDN'T USE the System.Diagnostics.StopWatch https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.stopwatch?view=netframework-4.8
-        // 
-        // Stopwatch doesn't show progress
-        // Stopwatch doesn't have a count down. It is still up to the client to determine when to stop the watch.
-        // Stopwatch doesn't raise events.
-        // Stopwatch can't be called asynchronously (async/await).
-        // Stopwatch doesn't show many other properties of interest for the consumer  
-        // It is not cancellable
-        //  
-        // WHY I DIDN'T USE Common.Utilities.HighPrecisionTimer
-        //  
-        // This type implements the IDisposable interface... 
-        // It can't be called asynchronously (async/await).
-        // It is not cancellable
-        //  Despite of the name, there are more precise Timers like the .net based Stopwatch (based on hardware),
-        //      but this story, "Heater Sit Time", doesn't need much precision
-        //  Relies on old Native Window API's that may be deprecated sooner than .NET framework
-        //  Desktop operating system (such as windows) are not real-time operating system, which means, you can't expect
-        //      full accuracy because you can't force the scheduler to trigger your code in the exact millisecond you want
-        //  
-        //  
-        // WHY I DIDN'T USE the Common.Utilities.Wrappers.StopWatchWrapper (wrapper for testing purposes):
-        // WHY I DIDN"T USE Common.Utilities.Wrappers.TimerWrapper (wrapper for testing purposes):
-        //  
-        //  
 
     }
 

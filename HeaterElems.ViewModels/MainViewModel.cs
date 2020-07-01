@@ -32,7 +32,7 @@ namespace HeaterElems.ViewModels
         #endregion StartCommand
 
         #region Durantion
-        public double RunDuration => Math.Round(HeatingWatch.ProgressTick.TotalMilliseconds / 1000, 1);
+        public double RunDuration => Math.Round(HeatingWatch.TotalRunningTime.TotalMilliseconds / 1000, 1);
         #endregion Durantion
 
 
@@ -47,8 +47,7 @@ namespace HeaterElems.ViewModels
         public void StartWatch(object _) {
             IsCompleted = false;
             HeatingWatch.RunCompleted += (s, a) => IsCompleted = true;
-            HeatingWatch.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(HeatingWatch.ProgressTick))
+            HeatingWatch.Tick += (s, e) => {
                     RaisePropertyChanged(nameof(RunDuration));
             };
             HeatingWatch.StopAfter(SetDuration * 1000);

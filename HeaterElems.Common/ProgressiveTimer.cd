@@ -1,11 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
   <Class Name="HeaterElems.Common.ProgressiveTimer">
-    <Position X="10" Y="2.75" Width="3.5" />
+    <Position X="3.25" Y="1.25" Width="3.5" />
     <Members>
       <Field Name="_cancellationTokenFactory" Hidden="true" />
       <Field Name="_endTime" Hidden="true" />
       <Field Name="_isRunning" Hidden="true" />
+      <Field Name="_minimumTickIntervalMilliseconds" Hidden="true" />
+      <Field Name="_runningTime" Hidden="true" />
       <Field Name="_startTime" Hidden="true" />
       <Field Name="_stopAfterMilliseconds" Hidden="true" />
       <Field Name="_tickIntervalMilliseconds" Hidden="true" />
@@ -14,23 +16,12 @@
       <Field Name="DateTimeNowFunc" Hidden="true" />
       <Field Name="DefaultMaxDurationMilliseconds" Hidden="true" />
       <Method Name="GetNextTickTimeMilliseconds" Hidden="true" />
-      <Method Name="RaisePropertyChanged" Hidden="true" />
       <Method Name="RunClockAsync" Hidden="true" />
-      <Property Name="WasStopped" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAEAABQCYCQACQEAAIAJQEiAogUgABQAAQAAAAACAAg=</HashCode>
+      <HashCode>AAEgABQAYCQAQQEAAIAJSEgAIgQgQAQAAQAgIAgCQAg=</HashCode>
       <FileName>ProgressiveTimer.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="HeaterElems.Common.SetPropertyBase" Collapsed="true">
-    <Position X="10.75" Y="1.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAACAAAAAAAAAAAAAAAAgAEAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>SetPropertyBase.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

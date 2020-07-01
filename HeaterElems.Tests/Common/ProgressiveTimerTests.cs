@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using HeaterElems.Common;
 using NUnit.Framework;
 using NUnit.Framework.Internal;
@@ -35,7 +36,7 @@ namespace HeaterElems.Tests.Common
         }
 
         [Test]
-        public void StopTest()
+        public void CancelTest()
         {
             var sut = new ProgressiveTimer();
             var isCompleted = false;
@@ -43,8 +44,8 @@ namespace HeaterElems.Tests.Common
             Assert.IsFalse(sut.IsRunning);
             sut.Start();
             Assert.IsTrue(sut.IsRunning);
-            sut.StopNow();
-            Assert.IsTrue(isCompleted);
+            sut.Cancel();
+            Assert.IsFalse(isCompleted);
         }
 
         [Test]
@@ -54,8 +55,8 @@ namespace HeaterElems.Tests.Common
             var sut = new ProgressiveTimer();
             sut.TickIntervalMilliseconds = 500;
             var newValues = new ConcurrentQueue<double>();
-            sut.PropertyChanged += (s, e) =>
-            { if (e.PropertyName == nameof(sut.ProgressTick)) newValues.Enqueue(sut.ProgressTick.TotalSeconds); };
+            sut.Tick += (s, e) =>
+            { newValues.Enqueue(sut.TotalRunningTime.TotalSeconds); };
             sut.StopAfter(3000);
             await sut.StartAsync();
             Assert.IsTrue(newValues.Any(), "ProgressTicks not received");
@@ -73,8 +74,8 @@ namespace HeaterElems.Tests.Common
             var sut = new ProgressiveTimer();
             sut.TickIntervalMilliseconds = 1000;
             var newValues = new List<double>();
-            sut.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(sut.ProgressTick)) newValues.Add(sut.ProgressTick.TotalSeconds);
+            sut.Tick += (s, e) => {
+                newValues.Add(sut.TotalRunningTime.TotalSeconds);
             };
             sut.StopAt(DateTime.Now + new TimeSpan(0, 0, 3));
             await sut.StartAsync();
@@ -89,9 +90,9 @@ namespace HeaterElems.Tests.Common
             sut.TickIntervalMilliseconds = 300;
             sut.StopAfter(1000);
             int duration = 0;
-            sut.RunCompleted += (s, dt) => duration = (int)((DateTime)dt - sut.StartTime).TotalMilliseconds;
+            sut.RunCompleted += (s, timerDuration) => duration = (int)(timerDuration?.TotalMilliseconds ?? 0);
             await sut.StartAsync();
-            var durationInMilliseconds = (int)sut.ProgressTick.TotalMilliseconds;
+            var durationInMilliseconds = (int)sut.TotalRunningTime.TotalMilliseconds;
             var expectedDuration = sut.StopAfterMilliseconds;
             var tolerance = (int)(expectedDuration * 1.25); // 25% longer tolerance when threads are busy
             Assert.That(expectedDuration.IsEqualWithinTolerance(duration, tolerance));
@@ -102,6 +103,7 @@ namespace HeaterElems.Tests.Common
         {
             var sut = new ProgressiveTimerShunt();
             sut.DateTimeNowFunc = new Func<DateTime>(() => new DateTime(2000, 1, 1, 0, 0, 0)); // to facilitate tests we use a frozen time 
+            sut.StartTime = sut.DateTimeNowFunc();
             sut.TickIntervalMilliseconds = 3000; // Time ticks every 3 seconds. 
             var nextTickSpan = sut.GetNextTickTimeMilliseconds();
             Assert.AreEqual(sut.TickIntervalMilliseconds, nextTickSpan);
@@ -112,6 +114,7 @@ namespace HeaterElems.Tests.Common
         {
             var sut = new ProgressiveTimerShunt();
             sut.DateTimeNowFunc = new Func<DateTime>(() => new DateTime(2000, 1, 1, 0, 0, 0)); // to facilitate tests we use a frozen time 
+            sut.StartTime = sut.DateTimeNowFunc();
             sut.TickIntervalMilliseconds = 3000; // Time ticks every 3 seconds. 
             var runTimeMilliseconds = 1000;
             sut.EndTime = sut.StartTime.AddMilliseconds(runTimeMilliseconds);
@@ -124,6 +127,7 @@ namespace HeaterElems.Tests.Common
         {
             var sut = new ProgressiveTimerShunt();
             sut.DateTimeNowFunc = new Func<DateTime>(() => new DateTime(2000, 1, 1, 0, 0, 0)); // to facilitate tests we use a frozen time 
+            sut.StartTime = sut.DateTimeNowFunc();
             sut.TickIntervalMilliseconds = 3000; // Time ticks every 3 seconds. 
             var runTimeMilliseconds = 10000;
             sut.EndTime = sut.StartTime.AddMilliseconds(runTimeMilliseconds);
@@ -137,6 +141,7 @@ namespace HeaterElems.Tests.Common
             var sut = new ProgressiveTimerShunt();
             sut.TickIntervalMilliseconds = 3000; // Time ticks every 3 seconds. 
             var runTimeMilliseconds = 10000;
+            sut.StartTime = sut.DateTimeNowFunc();
             sut.EndTime = sut.StartTime.AddMilliseconds(runTimeMilliseconds);
             var nextTickSpan = sut.GetNextTickTimeMilliseconds();
             Assert.IsTrue(nextTickSpan.IsEqualWithinTolerance(sut.TickIntervalMilliseconds, 10));
@@ -149,8 +154,42 @@ namespace HeaterElems.Tests.Common
             var expected = sut.DateTimeNowFunc();
             Assert.IsTrue(expected == DateTime.Now);
         }
+
+        [Test]
+        public async Task RunningTimerWhileRunningTest()
+        {
+            var sut = new ProgressiveTimer();
+            sut.TickIntervalMilliseconds = 200;
+            var tickTimes = new List<int>();
+            sut.Tick += (s, tickElapsedTime) => tickTimes.Add((int)tickElapsedTime.TotalMilliseconds);
+            sut.StopAfter(1000);
+            await sut.StartAsync();
+            Assert.IsTrue(tickTimes.Count >= 4);
+            await Task.Delay(600);
+            Assert.IsTrue(tickTimes.Count >= 4); // this confirms that the Timer stopped
+        }
+
+        [Test]
+        public async Task PauseTest()
+        {
+            var sut = new ProgressiveTimer();
+            sut.StopAfter(3000);
+            sut.Start();
+            await Task.Delay(1000).ConfigureAwait(false);
+            sut.Pause();
+            var actualRunTimeMillisecond = (int)sut.TotalRunningTime.TotalMilliseconds;
+            var expectedRunTimeMillisecond = 1000;
+            Assert.IsTrue(actualRunTimeMillisecond.IsEqualWithinTolerance(expectedRunTimeMillisecond, 100));
+
+            await Task.Delay(1000).ConfigureAwait(false);
+            await sut.StartAsync();
+            actualRunTimeMillisecond = (int)sut.TotalRunningTime.TotalMilliseconds;
+            expectedRunTimeMillisecond = 2000;
+            Assert.IsTrue(actualRunTimeMillisecond.IsEqualWithinTolerance(expectedRunTimeMillisecond, 100));
+        }
     }
 
+    #region Shunt
     public class ProgressiveTimerShunt : ProgressiveTimer
     {
 
@@ -158,6 +197,12 @@ namespace HeaterElems.Tests.Common
         {
             get => base.DateTimeNowFunc;
             set => base.DateTimeNowFunc = value;
+        }
+
+        public new DateTime StartTime
+        {
+            get => base.StartTime;
+            set => base.StartTime = value;
         }
 
         public new DateTime EndTime
@@ -171,7 +216,9 @@ namespace HeaterElems.Tests.Common
             return base.GetNextTickTimeMilliseconds();
         }
     }
+    #endregion Shunt
 
+    #region Math precision extensions
     public static class MyPrecisionExtension
     {
         public static bool IsInBetweenValues(this int testingValue, int minValue, int maxValue)
@@ -186,5 +233,7 @@ namespace HeaterElems.Tests.Common
             else return false;
         }
     }
+    #endregion Math precision extensions
+
 
 }
