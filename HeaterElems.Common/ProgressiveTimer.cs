@@ -242,7 +242,6 @@ namespace HeaterElems.Common
         //    protected set => _waiter = value;
         //}
         //#endregion Waiter
-
         
         #endregion properties
 
@@ -301,7 +300,7 @@ namespace HeaterElems.Common
             RunningTimeSegments.Add(DateTimeNow - StartTime);
             if (IsCancelled == false) RunCompleted?.Invoke(this, TotalRunningTime);
             else RunCompleted?.Invoke(this, null);
-            Waiter = null; // this prepares this ManualResetEvent to be lazy instantiated on the first call
+            //Waiter = null; // this prepares this ManualResetEvent to be lazy instantiated on the first call
         }
 
         /// <summary>
