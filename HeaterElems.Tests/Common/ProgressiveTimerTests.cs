@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using HeaterElems.Common;
@@ -33,6 +34,44 @@ namespace HeaterElems.Tests.Common
             sut.StopAfter(1000);
             await sut.StartAsync();
             Assert.IsTrue(isCompleted);
+        }
+
+        [Test]
+        public void EndTimeTest()
+        {
+            var sut = new ProgressiveTimer();
+            Assert.IsTrue((sut.EndTime - DateTime.Now).TotalMilliseconds <= ProgressiveTimer.DefaultMaxDurationMilliseconds); 
+        }
+
+        [Test]
+        public void EndTimeAWhenStopAtInvokedTest()
+        {
+            var sut = new ProgressiveTimer();
+            var runningTime = 5000;
+            sut.StopAt(DateTime.Now.AddMilliseconds(runningTime));
+            Assert.IsTrue((sut.EndTime - DateTime.Now).TotalMilliseconds <= runningTime);
+        }
+
+        [Test]
+        public void EndTimeAWhenStopAfterAndStartAreInvokedTest()
+        {
+            var sut = new ProgressiveTimer();
+            var runningTime = 5000;
+            sut.Start(); // A StartTime is required to compute the EndTime
+            sut.StopAfter(runningTime);
+            var actual = (sut.EndTime - DateTime.Now).TotalMilliseconds;
+            Assert.IsTrue(actual <= runningTime);
+        }
+
+        [Test]
+        public void EndTimeAWhenStopAfterInvokedTest()
+        {
+            var sut = new ProgressiveTimer();
+            var runningTime = 5000;
+            sut.StopAfter(runningTime);
+            // Without StartTime and with Just the StopAfter the EndTime can not be computed.
+            // It gets just the DateTime's MinValue
+            Assert.AreEqual(DateTime.MinValue, sut.EndTime);
         }
 
         [Test]
@@ -173,19 +212,24 @@ namespace HeaterElems.Tests.Common
         public async Task PauseTest()
         {
             var sut = new ProgressiveTimer();
-            sut.StopAfter(3000);
+            var runningTime = 3000;
+            sut.StopAfter(runningTime);
             sut.Start();
-            await Task.Delay(1000).ConfigureAwait(false);
-            sut.Pause();
-            var actualRunTimeMillisecond = (int)sut.TotalRunningTime.TotalMilliseconds;
-            var expectedRunTimeMillisecond = 1000;
-            Assert.IsTrue(actualRunTimeMillisecond.IsEqualWithinTolerance(expectedRunTimeMillisecond, 100));
 
-            await Task.Delay(1000).ConfigureAwait(false);
-            await sut.StartAsync();
+            var expectedRunTimeMillisecond = 1000;
+            await Task.Delay(expectedRunTimeMillisecond);
+            sut.Pause();
+            
+            var actualRunTimeMillisecond = (int)sut.TotalRunningTime.TotalMilliseconds;
+            Assert.IsTrue(actualRunTimeMillisecond.IsEqualWithinTolerance(expectedRunTimeMillisecond, 500)
+                , $"Assert 1: Actual:{actualRunTimeMillisecond}. Expected:{expectedRunTimeMillisecond}");
+
+            await Task.Delay(1000);
+
+            await sut.StartAsync(); //re-start
             actualRunTimeMillisecond = (int)sut.TotalRunningTime.TotalMilliseconds;
-            expectedRunTimeMillisecond = 2000;
-            Assert.IsTrue(actualRunTimeMillisecond.IsEqualWithinTolerance(expectedRunTimeMillisecond, 100));
+            Assert.IsTrue(actualRunTimeMillisecond.IsEqualWithinTolerance(runningTime, 500)
+                , $"Assert 2: Actual:{actualRunTimeMillisecond}. Expected:{runningTime}");
         }
     }
 
@@ -229,6 +273,7 @@ namespace HeaterElems.Tests.Common
         public static bool IsEqualWithinTolerance(this int value1, int value2, int tolerance)
         {
             var difference = Math.Abs(value1 - value2);
+            //Assert.Warn($"difference:{difference}. tolerance:{tolerance}");
             if (difference <= tolerance) return true;
             else return false;
         }

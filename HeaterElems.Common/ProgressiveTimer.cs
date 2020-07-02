@@ -54,8 +54,16 @@ namespace HeaterElems.Common
 
         #region properties
 
-        #region RunningTimeSegments
 
+        #region DefaultMaxDurationMilliseconds
+        /// <summary>
+        /// sets the run default time to a Maximum of 20 seconds unless overriden by one of the "Stop" calls.
+        /// It will be ignored if <see cref="StopAfter"/> or <see cref="StopAt"/>  is invoked or <see cref="StopAfterMilliseconds"/> is set
+        /// </summary>
+        public const int DefaultMaxDurationMilliseconds = 20000;
+        #endregion DefaultMaxDurationMilliseconds
+
+        #region RunningTimeSegments
         private List<TimeSpan> _runningTimeSegments;
         public List<TimeSpan> RunningTimeSegments
         {
@@ -67,12 +75,21 @@ namespace HeaterElems.Common
         #region TotalRunningTime
 
         private TimeSpan _totalRunningTime;
+        /// <summary>
+        /// It returns the total time that this Timer has been running.
+        /// If this Timer is running the total running time keeps increasing.
+        /// If this Timer has stopped or paused, this property returns the timespan between
+        /// a Start (<see cref="Start"/> or <see cref="StartAsync"/>)
+        /// and a Stop (<see cref="StopAt"/> or <see cref="StopAfter"/>).
+        /// If Pause was invoked (<see cref="Pause"/>, the Pause time interval is not counted by
+        /// accumulating only the Running Time Segments in this property.
+        /// </summary>
         public TimeSpan TotalRunningTime
         {
             get {
                 var sumOfSegments = new TimeSpan(RunningTimeSegments.Sum(s => s.Ticks));
-                if (IsPaused) { return sumOfSegments; }
-                else { return sumOfSegments + (DateTimeNow - StartTime); }
+                if (IsPaused  || IsRunning == false) { return sumOfSegments; }
+                else { return  sumOfSegments + (DateTimeNow - StartTime); }
             }
             protected set => _totalRunningTime = value;
         }
@@ -90,33 +107,36 @@ namespace HeaterElems.Common
         }
         #endregion StartTime
 
-        #region DefaultMaxDurationMilliseconds
-        /// <summary>
-        /// sets the run default time to a Maximum of 20 seconds unless overriden by one of the "Stop" calls.
-        /// It will be ignored if <see cref="StopAfter"/> or <see cref="StopAt"/>  is invoked or <see cref="StopAfterMilliseconds"/> is set
-        /// </summary>
-        private const int DefaultMaxDurationMilliseconds = 20000;
-        #endregion DefaultMaxDurationMilliseconds
-
         #region EndTime
 
         private DateTime? _endTime;
         /// <summary>
-        /// Time at which this Timer will stop looping and raising PropertyChanged events for the <see cref="RunningTime"/> property.
-        /// This property is setup by calling <see cref="StopAt"/> or <see cref="StopAfter"/>
+        /// Time at which this Timer will stop running and will stop raising <see cref="Tick"/> events.
+        /// This property is setup by calling <see cref="StopAt"/> or <see cref="StopAfter"/>.
+        /// This property is also adjusted on a re-start (<see cref="Start"/>) after a <see cref="Pause"/>.
         /// </summary>
         public DateTime EndTime
         {
             get
             {
-                if (_endTime != null) return (DateTime)_endTime;
-                if (StopAfterMilliseconds != 0) return StartTime.AddMilliseconds(StopAfterMilliseconds);
-                return StartTime.AddMilliseconds(DefaultMaxDurationMilliseconds);
+                if (_endTime != null) return (DateTime)_endTime; // for unit tests purposes only. This is a Calculated property.
+                if (StopAtDateTime != null) return (DateTime)StopAtDateTime;
+                if (StartTime == DateTime.MinValue) return DateTime.MinValue;
+                if (StopAfterMilliseconds > 0 && StartTime != DateTime.MinValue) return StartTime.AddMilliseconds(StopAfterMilliseconds);
+                // return default maximum duration from current time if neither Stop properties has been set yet
+                return DateTimeNow.AddMilliseconds(DefaultMaxDurationMilliseconds);
             }
+            // this setter should not be used but on Unit Tests. This is a Calculated property.
             protected set => _endTime = value;
         }
 
         #endregion EndTime
+
+        #region StopAtDateTime
+
+        public DateTime? StopAtDateTime { get; private set; }
+
+        #endregion StopAtDateTime
 
         #region StopAfterMilliseconds
         private int _stopAfterMilliseconds;
@@ -214,6 +234,15 @@ namespace HeaterElems.Common
         public bool IsPaused { get; protected set; }
         #endregion IsCancelled
 
+        //#region Waiter
+        //private ManualResetEvent _waiter;
+        //public ManualResetEvent Waiter
+        //{
+        //    get => _waiter ?? (_waiter = new ManualResetEvent(false));
+        //    protected set => _waiter = value;
+        //}
+        //#endregion Waiter
+
         
         #endregion properties
 
@@ -237,23 +266,25 @@ namespace HeaterElems.Common
         /// <example>
         /// <code>
         ///     var sut = new ProgressiveTimer();
-        ///     sut.PropertyChanged += (s, e) => {if (e.PropertyName == nameof(sut.ProgressTick)) Console.WriteLine(sut.ProgressTick.TotalSeconds);
-        ///     sut.TickIntervalMilliseconds = 500;
-        ///     sut.StopAfter(2000);
+        ///     var isCompleted = false;;
+        ///     sut.RunCompleted += (s, e) => isCompleted = true;
+        ///     sut.StopAfter(1000);
         ///     await sut.StartAsync();
-        ///     var durationInMilliseconds = sut.ProgressTick.TotalMilliseconds;
+        ///     Assert.IsTrue(isCompleted);
         /// </code>
         /// </example>
         /// </summary>
         /// <returns></returns>
         public async Task StartAsync()
         {
+            // Adjust EndTime, if after a Pause and StopAfterMilliseconds was set, by subtracting last run timespan from StopAfterMilliseconds
+            if (IsPaused &&  StopAfterMilliseconds > 0 ) { StopAfterMilliseconds -= (int)RunningTimeSegments.Last().TotalMilliseconds; }
+            if (IsPaused == false) { RunningTimeSegments.Clear(); }
             StartTime = DateTimeNow;
             CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
             IsRunning = true;
             IsCancelled = false;
             IsPaused = false;
-            RunningTimeSegments.Clear();
 
             try
             {
@@ -267,8 +298,10 @@ namespace HeaterElems.Common
 
             IsRunning = false;
             EndTime = DateTimeNow;
+            RunningTimeSegments.Add(DateTimeNow - StartTime);
             if (IsCancelled == false) RunCompleted?.Invoke(this, TotalRunningTime);
             else RunCompleted?.Invoke(this, null);
+            Waiter = null; // this prepares this ManualResetEvent to be lazy instantiated on the first call
         }
 
         /// <summary>
@@ -285,7 +318,9 @@ namespace HeaterElems.Common
             while (endTimeReached == false && IsCancelled == false)
             {
                 await Task.Delay(waitTimeForNextTick, CancellationToken).ConfigureAwait(false);
+                //await Waiter.WaitOneAsync(waitTimeForNextTick, CancellationToken);
 #pragma warning disable 4014
+                // by design this is a fire-and-forget call. This timer shouldn't be blocked by clients code
                 Task.Run(() => Tick?.Invoke(this, TotalRunningTime), CancellationToken);
 #pragma warning restore 4014
                 waitTimeForNextTick = GetNextTickTimeMilliseconds();
@@ -333,7 +368,7 @@ namespace HeaterElems.Common
         {
             if (stopAfterMilliseconds <= 0) throw new ArgumentException(nameof(stopAfterMilliseconds));
             StopAfterMilliseconds = stopAfterMilliseconds;
-            _endTime = null;
+            StopAtDateTime = null;
         }
 
         /// <summary>
@@ -343,6 +378,7 @@ namespace HeaterElems.Common
         public void StopAt(DateTime endTIme)
         {
             if (endTIme < DateTimeNow) throw new ArgumentException("parameter is in the past", nameof(endTIme));
+            StopAtDateTime = endTIme;
             StopAfterMilliseconds = 0;
             EndTime = endTIme;
         }

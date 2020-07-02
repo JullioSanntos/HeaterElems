@@ -7,10 +7,11 @@
       <Field Name="_endTime" Hidden="true" />
       <Field Name="_isRunning" Hidden="true" />
       <Field Name="_minimumTickIntervalMilliseconds" Hidden="true" />
-      <Field Name="_runningTime" Hidden="true" />
+      <Field Name="_runningTimeSegments" Hidden="true" />
       <Field Name="_startTime" Hidden="true" />
       <Field Name="_stopAfterMilliseconds" Hidden="true" />
       <Field Name="_tickIntervalMilliseconds" Hidden="true" />
+      <Field Name="_totalRunningTime" Hidden="true" />
       <Property Name="CancellationTokenFactory" Hidden="true" />
       <Property Name="DateTimeNow" Hidden="true" />
       <Field Name="DateTimeNowFunc" Hidden="true" />
@@ -19,7 +20,7 @@
       <Method Name="RunClockAsync" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAEgABQAYCQAQQEAAIAJSEgAIgQgQAQAAQAgIAgCQAg=</HashCode>
+      <HashCode>AAMgARQAYCQAAQECAIAJQEgAIgQgQAQAAQAgIAACQAg=</HashCode>
       <FileName>ProgressiveTimer.cs</FileName>
     </TypeIdentifier>
   </Class>
