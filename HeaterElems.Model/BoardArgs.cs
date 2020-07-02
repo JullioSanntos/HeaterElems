@@ -9,12 +9,12 @@ namespace HeaterElems.Model
     public class BoardArgs : EventArgs
     {
         public Station Station { get; private set; }
-        public Board Board { get; private set; }
+        public WorkPiece WorkPiece { get; private set; }
 
-        public BoardArgs(Station station, Board board)
+        public BoardArgs(Station station, WorkPiece workPiece)
         {
             Station = station;
-            Board = board;
+            WorkPiece = workPiece;
         }
     }
 

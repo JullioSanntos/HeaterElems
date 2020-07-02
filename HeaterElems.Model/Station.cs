@@ -26,22 +26,22 @@ namespace HeaterElems.Model
         }
         #endregion Heater
 
-        #region Board
-        private Board _board;
-        public Board Board {
-            get { return _board; }
+        #region WorkPiece
+        private WorkPiece _workPiece;
+        public WorkPiece WorkPiece {
+            get { return _workPiece; }
             set
             {
-                var previousBoard = _board;
-                SetProperty(ref _board, value);
-                if (_board == null) BoardUnloaded?.Invoke(this, new BoardArgs(null, previousBoard));
-                else BoardLoaded?.Invoke(this, new BoardArgs(null, _board));
+                var previousBoard = _workPiece;
+                SetProperty(ref _workPiece, value);
+                if (_workPiece == null) WorkPieceUnloaded?.Invoke(this, new BoardArgs(null, previousBoard));
+                else WorkPieceLoaded?.Invoke(this, new BoardArgs(null, _workPiece));
             }
         }
-        #endregion Board
+        #endregion WorkPiece
 
-        public event EventHandler<BoardArgs> BoardLoaded;
-        public event EventHandler<BoardArgs> BoardUnloaded;
+        public event EventHandler<BoardArgs> WorkPieceLoaded;
+        public event EventHandler<BoardArgs> WorkPieceUnloaded;
 
     }
 }

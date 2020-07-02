@@ -40,7 +40,7 @@ namespace HeaterElems.Tests.Common
         public void EndTimeTest()
         {
             var sut = new ProgressiveTimer();
-            Assert.IsTrue((sut.EndTime - DateTime.Now).TotalMilliseconds <= ProgressiveTimer.DefaultMaxDurationMilliseconds); 
+            Assert.IsTrue((sut.EndTime - DateTime.Now).TotalMilliseconds <= ProgressiveTimer.DEFAULT_MAX_DURATION_MILLISECONDS);
         }
 
         [Test]
@@ -69,8 +69,8 @@ namespace HeaterElems.Tests.Common
             var sut = new ProgressiveTimer();
             var runningTime = 5000;
             sut.StopAfter(runningTime);
-            // Without StartTime and with Just the StopAfter the EndTime can not be computed.
-            // It gets just the DateTime's MinValue
+            // Without StartTime, with Just the StopAfter, the EndTime can not be computed.
+            // It gets just the DateTime's MinValue instead
             Assert.AreEqual(DateTime.MinValue, sut.EndTime);
         }
 
@@ -80,9 +80,9 @@ namespace HeaterElems.Tests.Common
             var sut = new ProgressiveTimer();
             var isCompleted = false;
             sut.RunCompleted += (s, e) => isCompleted = true;
-            Assert.IsFalse(sut.IsRunning);
+            Assert.IsFalse(sut.IsActive);
             sut.Start();
-            Assert.IsTrue(sut.IsRunning);
+            Assert.IsTrue(sut.IsActive);
             sut.Cancel();
             Assert.IsFalse(isCompleted);
         }
@@ -101,10 +101,12 @@ namespace HeaterElems.Tests.Common
             Assert.IsTrue(newValues.Any(), "ProgressTicks not received");
             var testEndTime = DateTime.Now;
             var testTimeMilliseconds = (int)(testEndTime - testStartTime).TotalMilliseconds;
-            Assert.IsTrue(testTimeMilliseconds.IsInBetweenValues(sut.StopAfterMilliseconds - sut.TickIntervalMilliseconds, (int)(sut.StopAfterMilliseconds * 1.1)), $"Test time: Expected: {sut.StopAfterMilliseconds}. Actual: {testTimeMilliseconds}");
+            Assert.That(testTimeMilliseconds, Is.GreaterThanOrEqualTo(sut.StopAfterMilliseconds - sut.TickIntervalMilliseconds));
+            Assert.That(testTimeMilliseconds, Is.LessThanOrEqualTo((int)(sut.StopAfterMilliseconds * 1.3)));
             var expectedNumberOfTicks = sut.StopAfterMilliseconds / sut.TickIntervalMilliseconds;
             var minTolerance = (int)(expectedNumberOfTicks * 0.5); // We need tolerance level because the testing threads may be occupied with other tests. Windows is not a real time OS.
-            Assert.IsTrue(newValues.Count.IsInBetweenValues(minTolerance, expectedNumberOfTicks + 1), $"Expected: {expectedNumberOfTicks}, Actual: {newValues.Count}");
+            Assert.That(newValues.Count, Is.GreaterThanOrEqualTo(minTolerance));
+            Assert.That(newValues.Count, Is.LessThanOrEqualTo(expectedNumberOfTicks + 1));
         }
 
         [Test]
@@ -119,7 +121,7 @@ namespace HeaterElems.Tests.Common
             sut.StopAt(DateTime.Now + new TimeSpan(0, 0, 3));
             await sut.StartAsync();
             Assert.IsTrue(newValues.Any());
-            Assert.IsTrue(newValues.Count.IsInBetweenValues(2, 3));
+            Assert.That(newValues.Count, Is.EqualTo(3).Within(1));
         }
 
         [Test]
@@ -134,7 +136,7 @@ namespace HeaterElems.Tests.Common
             var durationInMilliseconds = (int)sut.TotalRunningTime.TotalMilliseconds;
             var expectedDuration = sut.StopAfterMilliseconds;
             var tolerance = (int)(expectedDuration * 1.25); // 25% longer tolerance when threads are busy
-            Assert.That(expectedDuration.IsEqualWithinTolerance(duration, tolerance));
+            Assert.That(expectedDuration, Is.EqualTo(duration).Within(tolerance));
         }
 
         [Test]
@@ -183,7 +185,7 @@ namespace HeaterElems.Tests.Common
             sut.StartTime = sut.DateTimeNowFunc();
             sut.EndTime = sut.StartTime.AddMilliseconds(runTimeMilliseconds);
             var nextTickSpan = sut.GetNextTickTimeMilliseconds();
-            Assert.IsTrue(nextTickSpan.IsEqualWithinTolerance(sut.TickIntervalMilliseconds, 10));
+            Assert.That(nextTickSpan, Is.EqualTo(sut.TickIntervalMilliseconds).Within(10));
         }
 
         [Test]
@@ -200,7 +202,7 @@ namespace HeaterElems.Tests.Common
             var sut = new ProgressiveTimer();
             sut.TickIntervalMilliseconds = 200;
             var tickTimes = new List<int>();
-            sut.Tick += (s, tickElapsedTime) => tickTimes.Add((int)tickElapsedTime.TotalMilliseconds);
+            sut.Tick += (s, tickTuple) => tickTimes.Add((int)tickTuple.Item1.TotalMilliseconds);
             sut.StopAfter(1000);
             await sut.StartAsync();
             Assert.IsTrue(tickTimes.Count >= 4);
@@ -219,17 +221,15 @@ namespace HeaterElems.Tests.Common
             var expectedRunTimeMillisecond = 1000;
             await Task.Delay(expectedRunTimeMillisecond);
             sut.Pause();
-            
+
             var actualRunTimeMillisecond = (int)sut.TotalRunningTime.TotalMilliseconds;
-            Assert.IsTrue(actualRunTimeMillisecond.IsEqualWithinTolerance(expectedRunTimeMillisecond, 500)
-                , $"Assert 1: Actual:{actualRunTimeMillisecond}. Expected:{expectedRunTimeMillisecond}");
+            Assert.That(actualRunTimeMillisecond, Is.EqualTo(expectedRunTimeMillisecond).Within(500));
 
             await Task.Delay(1000);
 
             await sut.StartAsync(); //re-start
             actualRunTimeMillisecond = (int)sut.TotalRunningTime.TotalMilliseconds;
-            Assert.IsTrue(actualRunTimeMillisecond.IsEqualWithinTolerance(runningTime, 500)
-                , $"Assert 2: Actual:{actualRunTimeMillisecond}. Expected:{runningTime}");
+            Assert.That(actualRunTimeMillisecond, Is.EqualTo(runningTime).Within(500));
         }
     }
 
@@ -261,24 +261,5 @@ namespace HeaterElems.Tests.Common
         }
     }
     #endregion Shunt
-
-    #region Math precision extensions
-    public static class MyPrecisionExtension
-    {
-        public static bool IsInBetweenValues(this int testingValue, int minValue, int maxValue)
-        {
-            if (testingValue >= minValue && testingValue <= maxValue) return true;
-            else return false;
-        }
-        public static bool IsEqualWithinTolerance(this int value1, int value2, int tolerance)
-        {
-            var difference = Math.Abs(value1 - value2);
-            //Assert.Warn($"difference:{difference}. tolerance:{tolerance}");
-            if (difference <= tolerance) return true;
-            else return false;
-        }
-    }
-    #endregion Math precision extensions
-
 
 }

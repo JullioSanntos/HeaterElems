@@ -45,22 +45,22 @@ namespace HeaterElems.ViewModels
             HasStopped = false;
             Lane1.BoardDispensed -= Lane1_BoardDispensed;
             Lane1.BoardDispensed += Lane1_BoardDispensed;
-            Lane1.PreStation.BoardUnloaded -= PreStation1_BoardUnloaded;
-            Lane1.PreStation.BoardUnloaded += PreStation1_BoardUnloaded;
+            Lane1.PreStation.WorkPieceUnloaded -= PreStation1WorkPieceUnloaded;
+            Lane1.PreStation.WorkPieceUnloaded += PreStation1WorkPieceUnloaded;
             Lane1StepRun();
             Lane2.BoardDispensed -= Lane2_BoardDispensed;
             Lane2.BoardDispensed += Lane2_BoardDispensed;
-            Lane2.PreStation.BoardUnloaded -= PreStation2_BoardUnloaded;
-            Lane2.PreStation.BoardUnloaded += PreStation2_BoardUnloaded;
+            Lane2.PreStation.WorkPieceUnloaded -= PreStation2WorkPieceUnloaded;
+            Lane2.PreStation.WorkPieceUnloaded += PreStation2WorkPieceUnloaded;
             Lane2StepRun();
         }
 
-        private void PreStation1_BoardUnloaded(object sender, BoardArgs e)
+        private void PreStation1WorkPieceUnloaded(object sender, BoardArgs e)
         {
             Lane1StepRun();
         }
 
-        private void PreStation2_BoardUnloaded(object sender, BoardArgs e)
+        private void PreStation2WorkPieceUnloaded(object sender, BoardArgs e)
         {
             Lane2StepRun();
         }
@@ -87,19 +87,19 @@ namespace HeaterElems.ViewModels
 
         private void Lane1StepRun()
         {
-            if (PreStation1.Board == null)
+            if (PreStation1.WorkPiece == null)
             {
-                PreStation1.Board = new Board() {Id = CurrentBoardId += 1 };
-                //PreStation1.Board.ProgressiveTimer.Start();
+                PreStation1.WorkPiece = new WorkPiece((CurrentBoardId += 1).ToString());
+                //PreStation1.WorkPiece.ProgressiveTimer.Start();
             }
         }
 
         private void Lane2StepRun()
         {
-            if (PreStation2.Board == null)
+            if (PreStation2.WorkPiece == null)
             {
-                PreStation2.Board = new Board() {Id = CurrentBoardId += 1 };
-                //PreStation2.Board.ProgressiveTimer.Start();
+                PreStation2.WorkPiece = new WorkPiece((CurrentBoardId += 1).ToString());
+                //PreStation2.WorkPiece.ProgressiveTimer.Start();
             }
         }
 

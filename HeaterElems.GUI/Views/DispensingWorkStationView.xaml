@@ -32,7 +32,7 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Border>
-        <ListBox Grid.Column="2" ItemsSource="{Binding ModelContext.BoardsContainer.DispensedBoards}" 
+        <ListBox Grid.Column="2" ItemsSource="{Binding ModelContext.DispensedWorkPiecesContainer.DispensedBoards}" 
                  Margin="4" Background="Transparent">
             <ListBox.ItemTemplate>
                 <DataTemplate>

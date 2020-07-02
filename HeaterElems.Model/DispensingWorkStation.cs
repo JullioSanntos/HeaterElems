@@ -26,13 +26,13 @@ namespace HeaterElems.Model
         }
         #endregion Conveyors
 
-        #region BoardsContainer
-        private BoardsContainer _boardsContainer;
-        public BoardsContainer BoardsContainer {
-            get => _boardsContainer ?? (_boardsContainer = new BoardsContainer());
-            set => SetProperty(ref _boardsContainer, value);
+        #region DispensedWorkPiecesContainer
+        private DispensedWorkPiecesContainer _dispensedWorkPiecesContainer;
+        public DispensedWorkPiecesContainer DispensedWorkPiecesContainer {
+            get => _dispensedWorkPiecesContainer ?? (_dispensedWorkPiecesContainer = new DispensedWorkPiecesContainer());
+            set => SetProperty(ref _dispensedWorkPiecesContainer, value);
         }
-        #endregion BoardsContainer
+        #endregion DispensedWorkPiecesContainer
 
         #region Singleton        
         private static readonly object SingletonLock = new object();
@@ -58,7 +58,7 @@ namespace HeaterElems.Model
         private void BoardDispensed(object sender, BoardArgs e)
         {
             if (e.Station.Name == Conveyor.PostStationName)
-                this.BoardsContainer.DispensedBoards.Insert(0, e.Board);
+                this.DispensedWorkPiecesContainer.DispensedBoards.Insert(0, e.WorkPiece);
         }
     }
 }

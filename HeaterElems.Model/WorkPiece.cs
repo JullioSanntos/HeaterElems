@@ -7,22 +7,23 @@ using HeaterElems.Common;
 
 namespace HeaterElems.Model
 {
-    public class Board : SetPropertyBase
+    public class WorkPiece 
     {
         #region Id
-        private int _id;
-        public int Id {
-            get => _id;
-            set => SetProperty(ref _id, value);
-        }
+        public string Id { get; protected set; }
         #endregion Id
 
         #region ProgressiveTimer
         private ProgressiveTimer _progressiveTimer;
         public ProgressiveTimer ProgressiveTimer {
-            get { return _progressiveTimer ?? (_progressiveTimer = new ProgressiveTimer()); }
-            set { SetProperty(ref _progressiveTimer, value); }
+            get => _progressiveTimer ?? (_progressiveTimer = new ProgressiveTimer());
+            protected set => _progressiveTimer = value;
         }
         #endregion ProgressiveTimer
+
+        public WorkPiece(string id)
+        {
+            Id = id;
+        }
     }
 }

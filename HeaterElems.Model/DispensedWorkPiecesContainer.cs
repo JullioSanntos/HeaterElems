@@ -8,12 +8,12 @@ using HeaterElems.Common;
 
 namespace HeaterElems.Model
 {
-    public class BoardsContainer : SetPropertyBase
+    public class DispensedWorkPiecesContainer : SetPropertyBase
     {
         #region DispensedBoards
-        private ObservableCollection<Board> _dispensedBoards;
-        public ObservableCollection<Board> DispensedBoards {
-            get => _dispensedBoards ?? (_dispensedBoards = new ObservableCollection<Board>());
+        private ObservableCollection<WorkPiece> _dispensedBoards;
+        public ObservableCollection<WorkPiece> DispensedBoards {
+            get => _dispensedBoards ?? (_dispensedBoards = new ObservableCollection<WorkPiece>());
             set => SetProperty(ref _dispensedBoards, value);
         }
         #endregion DispensedBoards

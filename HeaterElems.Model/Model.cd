@@ -1,41 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Comment CommentText="a.k.a Board">
+    <Position X="6.406" Y="3.333" Height="0.344" Width="0.815" />
+  </Comment>
   <Class Name="HeaterElems.Model.Station">
-    <Position X="5.5" Y="6.5" Width="2" />
+    <Position X="1.75" Y="6.5" Width="2" />
     <Members>
-      <Field Name="_board" Hidden="true" />
       <Field Name="_heater" Hidden="true" />
       <Field Name="_name" Hidden="true" />
+      <Field Name="_workPiece" Hidden="true" />
     </Members>
-    <AssociationLine Name="Board" Type="HeaterElems.Model.Board" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="WorkPiece" Type="HeaterElems.Model.WorkPiece" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="7.5" Y="7" />
-        <Point X="9.469" Y="7" />
-        <Point X="9.469" Y="4.675" />
+        <Point X="3.75" Y="6.844" />
+        <Point X="6.17" Y="6.844" />
+        <Point X="6.17" Y="4.805" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAAEMAAAAAAABAAAEAAAAAQAAABAAAAAAAAAACAAAAA=</HashCode>
+      <HashCode>AAAEIAAAAAAIAAAAAAAIAAQAAQDAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Station.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Heater" />
-      <Property Name="Board" />
+      <Property Name="WorkPiece" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="HeaterElems.Model.Board">
-    <Position X="9" Y="3.25" Width="2.75" />
+  <Class Name="HeaterElems.Model.WorkPiece">
+    <Position X="5.25" Y="3.25" Width="2.25" />
     <Members>
-      <Field Name="_id" Hidden="true" />
       <Field Name="_progressiveTimer" Hidden="true" />
     </Members>
+    <AssociationLine Name="ProgressiveTimer" Type="HeaterElems.Common.ProgressiveTimer">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.331" Y="0.568" />
+      </MemberNameLabel>
+    </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAACAAAAAAAAAAAAAABAEAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
-      <FileName>Board.cs</FileName>
+      <HashCode>AAACAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
+      <FileName>WorkPiece.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ProgressiveTimer" />
+    </ShowAsAssociation>
   </Class>
   <Class Name="HeaterElems.Model.DispensingWorkStation">
-    <Position X="4.5" Y="0.75" Width="2.5" />
+    <Position X="0.75" Y="0.75" Width="2.5" />
     <Members>
       <Field Name="_boardsContainer" Hidden="true" />
       <Field Name="_conveyors" Hidden="true" />
@@ -55,28 +65,29 @@
       <HashCode>gAAAAASAAAAAABCAAAAAAIAAAAgAAAAAQAABAAAAAAA=</HashCode>
       <FileName>DispensingWorkStation.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="BoardsContainer" />
-    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Conveyors" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="HeaterElems.Model.Conveyor">
-    <Position X="4.75" Y="2.5" Width="3" />
+    <Position X="1" Y="2.5" Width="3" />
     <Members>
       <Field Name="_mainStation" Hidden="true" />
       <Field Name="_name" Hidden="true" />
       <Field Name="_postStation" Hidden="true" />
       <Field Name="_preStation" Hidden="true" />
+      <Method Name="Conveyor" Hidden="true" />
+      <Method Name="MainStation_BoardLoaded" Hidden="true" />
       <Field Name="MainStationName" Hidden="true" />
+      <Method Name="PostStation_BoardLoaded" Hidden="true" />
       <Field Name="PostStationName" Hidden="true" />
+      <Method Name="PreStation_BoardLoaded" Hidden="true" />
       <Field Name="PreStationName" Hidden="true" />
     </Members>
     <AssociationLine Name="PreStation" Type="HeaterElems.Model.Station" FixedToPoint="true">
       <Path>
-        <Point X="6.5" Y="5.213" />
-        <Point X="6.5" Y="6.5" />
+        <Point X="2.75" Y="4.387" />
+        <Point X="2.75" Y="6.5" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.079" Y="0.154" />
@@ -84,10 +95,10 @@
     </AssociationLine>
     <AssociationLine Name="MainStation" Type="HeaterElems.Model.Station" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="5.938" Y="5.213" />
-        <Point X="5.938" Y="5.337" />
-        <Point X="5.938" Y="5.337" />
-        <Point X="5.938" Y="6.5" />
+        <Point X="2.188" Y="4.387" />
+        <Point X="2.188" Y="5.337" />
+        <Point X="2.188" Y="5.337" />
+        <Point X="2.188" Y="6.5" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-1.114" Y="0.731" />
@@ -95,15 +106,15 @@
     </AssociationLine>
     <AssociationLine Name="PostStation" Type="HeaterElems.Model.Station" FixedToPoint="true">
       <Path>
-        <Point X="7" Y="5.213" />
-        <Point X="7" Y="6.5" />
+        <Point X="3.25" Y="4.387" />
+        <Point X="3.25" Y="6.5" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-1.057" Y="0.185" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AAIAIAKAAAAAAhAAAAAEAAQEACACAEBAAAAAAAAAAEA=</HashCode>
+      <HashCode>AAIAIAKAAAAAAhAAAAAEIAQEACgCAEBAAAAAAAAAAEA=</HashCode>
       <FileName>Conveyor.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -112,26 +123,26 @@
       <Property Name="PostStation" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="HeaterElems.Model.BoardsContainer">
-    <Position X="9.75" Y="1" Width="1.5" />
+  <Class Name="HeaterElems.Model.DispensedWorkPiecesContainer">
+    <Position X="4.75" Y="1" Width="4.25" />
     <Members>
       <Field Name="_dispensedBoards" Hidden="true" />
     </Members>
-    <AssociationLine Name="DispensedBoards" Type="HeaterElems.Model.Board">
+    <AssociationLine Name="DispensedBoards" Type="HeaterElems.Model.WorkPiece">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-1.484" Y="0.185" />
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>BoardsContainer.cs</FileName>
+      <FileName>DispensedWorkPiecesContainer.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="DispensedBoards" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="HeaterElems.Model.Heater">
-    <Position X="9" Y="7.25" Width="1.75" />
+    <Position X="5.25" Y="7.25" Width="1.75" />
     <Members>
       <Field Name="_isPowered" Hidden="true" />
     </Members>
@@ -139,6 +150,18 @@
       <HashCode>AAAAAAEAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Heater.cs</FileName>
     </TypeIdentifier>
+  </Class>
+  <Class Name="HeaterElems.Common.ProgressiveTimer">
+    <Position X="8.75" Y="4.25" Width="4" />
+    <Members>
+      <Field Name="DateTimeNowFunc" Hidden="true" />
+      <Field Name="DEFAULT_MAX_DURATION_MILLISECONDS" Hidden="true" />
+      <Method Name="GetNextTickTimeMilliseconds" Hidden="true" />
+      <Field Name="MINIMUM_TICK_INTERVAL_MILLISECONDS" Hidden="true" />
+      <Method Name="RunClockAsync" Hidden="true" />
+    </Members>
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

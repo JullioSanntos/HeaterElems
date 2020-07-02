@@ -19,6 +19,15 @@ namespace HeaterElems.Model
         }
         #endregion Name
 
+        #region Name
+        private int _laneNumber;
+        public int LaneNumber
+        {
+            get => _laneNumber;
+            set => SetProperty(ref _laneNumber, value);
+        }
+        #endregion Name
+
         #region PreStation
         public const string PreStationName = nameof(PreStation);
         private Station _preStation;
@@ -54,33 +63,33 @@ namespace HeaterElems.Model
         #region constructor
         //public Conveyor() {
         //    this.PreStation.PropertyChanged += async (s, e) => {
-        //        if (e.PropertyName == nameof(PreStation.Board))
-        //            await BoardLoaded(this, this.PreStation);
+        //        if (e.PropertyName == nameof(PreStation.WorkPiece))
+        //            await WorkPieceLoaded(this, this.PreStation);
         //    };
 
         //    this.MainStation.PropertyChanged += async (s, e) => {
-        //        if (e.PropertyName == nameof(PreStation.Board))
-        //            await BoardLoaded(this, this.MainStation);
+        //        if (e.PropertyName == nameof(PreStation.WorkPiece))
+        //            await WorkPieceLoaded(this, this.MainStation);
         //    };
 
         //    this.PostStation.PropertyChanged += async (s, e) => {
-        //        if (e.PropertyName == nameof(PostStation.Board))
-        //            await BoardLoaded(this, this.PostStation);
+        //        if (e.PropertyName == nameof(PostStation.WorkPiece))
+        //            await WorkPieceLoaded(this, this.PostStation);
         //    };
         //}
         public Conveyor()
         {
-            this.PreStation.BoardLoaded += async (s,e) => await PreStation_BoardLoaded(s,e);
-            this.MainStation.BoardLoaded += async (s,e) => await MainStation_BoardLoaded(s,e);
-            this.PostStation.BoardLoaded += async (s,e) => await PostStation_BoardLoaded(s,e);
+            this.PreStation.WorkPieceLoaded += async (s,e) => await PreStation_BoardLoaded(s,e);
+            this.MainStation.WorkPieceLoaded += async (s,e) => await MainStation_BoardLoaded(s,e);
+            this.PostStation.WorkPieceLoaded += async (s,e) => await PostStation_BoardLoaded(s,e);
         }
 
         private async Task PreStation_BoardLoaded(object sender, BoardArgs e)
         {
 
             await Task.Delay(1500);
-            MainStation.Board = e.Board;
-            PreStation.Board = null;
+            MainStation.WorkPiece = e.WorkPiece;
+            PreStation.WorkPiece = null;
 
         }
 
@@ -88,15 +97,15 @@ namespace HeaterElems.Model
         {
             
             await Task.Delay(1500);
-            PostStation.Board = e.Board;
-            MainStation.Board = null;
+            PostStation.WorkPiece = e.WorkPiece;
+            MainStation.WorkPiece = null;
         }
 
         private async Task PostStation_BoardLoaded(object sender, BoardArgs e)
         {
             await Task.Delay(1500);
-            PostStation.Board = null;
-            BoardDispensed?.Invoke(this, new BoardArgs(PostStation, e.Board));
+            PostStation.WorkPiece = null;
+            BoardDispensed?.Invoke(this, new BoardArgs(PostStation, e.WorkPiece));
 
         }
 

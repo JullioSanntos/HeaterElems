@@ -35,6 +35,6 @@
                 </StackPanel>
             </StackPanel>
         </Border>
-        <TextBlock Text="{Binding ModelContext.Board.Id}" Width="30" Height="20" TextAlignment="Center" Padding="0,3.5,0,0" FontSize="10" FontWeight="Bold" />
+        <TextBlock Text="{Binding ModelContext.WorkPiece.Id}" Width="30" Height="20" TextAlignment="Center" Padding="0,3.5,0,0" FontSize="10" FontWeight="Bold" />
     </Grid>
 </UserControl>

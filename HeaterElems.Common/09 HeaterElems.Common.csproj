@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooleanToStringConverter.cs" />
+    <Compile Include="IProgressiveTimer.cs" />
     <Compile Include="ProgressiveTimer.cs" />
     <Compile Include="RelayCommand.cs" />
     <Compile Include="Properties\Annotations.cs" />

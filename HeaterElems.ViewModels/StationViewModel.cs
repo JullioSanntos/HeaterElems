@@ -20,7 +20,7 @@ namespace HeaterElems.ViewModels
         #endregion ModelContext
 
         #region HasBoard
-        public bool HasBoard => ModelContext.Board != null;
+        public bool HasBoard => ModelContext.WorkPiece != null;
         #endregion HasBoard
 
         public StationViewModel() {
@@ -38,7 +38,7 @@ namespace HeaterElems.ViewModels
         {
             switch (e.PropertyName)
             {
-                case nameof(ModelContext.Board):
+                case nameof(ModelContext.WorkPiece):
                     RaisePropertyChanged(nameof(HasBoard));
                     break;
             }
