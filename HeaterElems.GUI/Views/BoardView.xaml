@@ -5,12 +5,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:local="clr-namespace:HeaterElems.GUI.Views"
-             xmlns:resources="clr-namespace:HeaterElems.GUI.Resources"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels"
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance viewModels:StationViewModel, IsDesignTimeCreatable=True}"
-             d:DesignHeight="45" d:DesignWidth="120">
+             d:DataContext="{d:DesignInstance {x:Type viewModels:WorkPieceViewModel}, IsDesignTimeCreatable=True}"
+             d:DesignHeight="55" d:DesignWidth="120">
 
     <Grid>
         <Border BorderThickness="1" BorderBrush="Blue"  Width="120"  >
@@ -37,22 +36,8 @@
                     <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Stroke="Blue" />
                 </ListBox.Items>
             </ListBox>
-            <!--<StackPanel Orientation="Vertical">
-                <StackPanel Orientation="Horizontal"  >
-                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="10,5,5,5" Stroke="Blue" />
-                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="{StaticResource CircleMargin}" Stroke="Blue" />
-                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="{StaticResource CircleMargin}" Stroke="Blue" />
-                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="{StaticResource CircleMargin}" Stroke="Blue" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" >
-                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="10,5,5,5" Stroke="Blue" />
-                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="{StaticResource CircleMargin}" Stroke="Blue" />
-                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="{StaticResource CircleMargin}" Stroke="Blue" />
-                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="{StaticResource CircleMargin}" Stroke="Blue" />
 
-                </StackPanel>
-            </StackPanel>-->
         </Border>
-        <TextBlock Text="{Binding ModelContext.WorkPiece.Id}" Width="30" Height="20" TextAlignment="Center" Padding="0,3.5,0,0" FontSize="10" FontWeight="Bold" />
+        <TextBlock Text="{Binding ModelContext.Id}" Width="30" Height="20" TextAlignment="Center" Padding="0,3.5,0,0" FontSize="10" FontWeight="Bold" />
     </Grid>
 </UserControl>

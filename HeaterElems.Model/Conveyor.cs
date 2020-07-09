@@ -28,36 +28,7 @@ namespace HeaterElems.Model
         }
         #endregion LaneNumber
 
-        //#region PreStation
-        //public const string PreStationName = nameof(PreStation);
-        //private Station _preStation;
-        //public Station PreStation {
-        //    get { return _preStation ?? (_preStation = new Station() {Name = PreStationName}); }
-        //    set { SetProperty(ref _preStation, value); }
-        //}
-        //#endregion PreStation
-
-        //#region MainStation
-        //public const string MainStationName = nameof(MainStation);
-        //private Station _mainStation;
-        //public Station MainStation {
-        //    get { return _mainStation ?? (_mainStation = new Station() {Name = MainStationName}); }
-        //    set { SetProperty(ref _mainStation, value); }
-        //}
-        //#endregion MainStation
-
-        //#region PostStation
-
-        //public static string PostStationName = nameof(PostStation);
-        //private Station _postStation;
-        //public Station PostStation {
-        //    get { return _postStation ?? (_postStation = new Station() {Name = PostStationName}); }
-        //    set { SetProperty(ref _postStation, value); }
-        //}
-        //#endregion PostStation
-
         public event EventHandler<BoardArgs> BoardDispensed;
-
 
 
         #region constructor

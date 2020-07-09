@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HeaterElems.GUI.Views"
-             xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels" xmlns:resources="clr-namespace:HeaterElems.GUI.Resources"
+             xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels" 
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="800">
     <UserControl.DataContext>
@@ -21,8 +21,8 @@
             <Button Content="Run" Margin="4,50" Width="60" Command="{Binding RunCommand}" />
             <Button Content="Stop" Margin="4,50" Width="60" Command="{Binding RunCommand}" />
             <Button Content="Step" Margin="4" Width="60" Command="{Binding StepCommand}" />
-            <!--<Button Content="{resources:MyMarkupExtension FirstStr=J, SecondStr=S}" Margin="4" Width="60" Command="{Binding StepCommand}" />-->
         </StackPanel>
+
         <Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400" Width="550" >
             <ItemsControl ItemsSource="{Binding ConveyorViewModelsList}" VerticalAlignment="Center" >
                 <ItemsControl.ItemTemplate>
@@ -32,16 +32,6 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Border>
-
-        <!--<Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400" Width="550" >
-            <ItemsControl ItemsSource="{Binding ModelContext.Conveyors}" VerticalAlignment="Center" >
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <local:ConveyorBeltView Margin="20"  />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Border>-->
 
         <ListBox Grid.Column="2" ItemsSource="{Binding ModelContext.DispensedWorkPiecesContainer.DispensedBoards}" 
                  Margin="4" Background="Transparent">

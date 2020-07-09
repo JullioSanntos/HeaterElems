@@ -29,7 +29,7 @@ namespace HeaterElems.Model
         private string _name;
         public string Name
         {
-            get { return _name; }
+            get { return _name ?? ($"{DownstreamOrder} - {StationType}"); }
             set { SetProperty(ref _name, value); }
         }
         #endregion Name

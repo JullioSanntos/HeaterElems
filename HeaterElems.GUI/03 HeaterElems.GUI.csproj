@@ -61,7 +61,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DispensingWorkStationViewModel.cs" />
-    <Compile Include="Resources\MyMarkupExtension.cs" />
     <Compile Include="Views\BoardView.xaml.cs">
       <DependentUpon>BoardView.xaml</DependentUpon>
     </Compile>
