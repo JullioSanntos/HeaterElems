@@ -20,9 +20,9 @@ namespace HeaterElems.GUI.Views
     /// <summary>
     /// Interaction logic for BorderView.xaml
     /// </summary>
-    public partial class BoardView : UserControl
+    public partial class WorkPieceView : UserControl
     {
-        public BoardView()
+        public WorkPieceView()
         {
             InitializeComponent();
         }

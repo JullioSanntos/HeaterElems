@@ -18,7 +18,7 @@
             <StackPanel>
                 <TextBlock Text="{Binding ModelContext.Name}" Width="100" Height="23" TextAlignment="Center" HorizontalAlignment="Center" 
                          VerticalAlignment="Top" Margin="4" Foreground="Coral" FontSize="14" />
-                <local:BoardView DataContext="{Binding WorkPieceViewModel}" 
+                <local:WorkPieceView DataContext="{Binding WorkPieceViewModel}" 
                     Visibility="{Binding Path=DataContext.HasBoard, RelativeSource={RelativeSource AncestorType=UserControl},  ConverterParameter=Visible|Hidden, Converter={StaticResource BooleanToStringConverter}}" 
                     />
             </StackPanel>

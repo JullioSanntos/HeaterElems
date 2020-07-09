@@ -37,7 +37,7 @@
                  Margin="4" Background="Transparent">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <local:BoardView />
+                    <local:WorkPieceView />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
