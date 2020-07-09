@@ -11,12 +11,6 @@ namespace HeaterElems.ViewModels
     public class StationViewModel : ViewModelBase<Station>
     {
         
-        #region HasBoard
-        public bool HasBoard {
-            get { return WorkPieceViewModel?.ModelContext != null; }
-        }
-        #endregion HasBoard
-
         #region WorkPieceViewModel
         private WorkPieceViewModel _workPieceViewModel;
 
@@ -27,33 +21,23 @@ namespace HeaterElems.ViewModels
         }
         #endregion WorkPieceViewModel
 
-        public StationViewModel() {
-            this.PropertyChanged += StationViewModel_PropertyChanged;
-
-        }
-
-        private void StationViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case nameof(WorkPieceViewModel):
-                    RaisePropertyChanged(nameof(HasBoard));
-                    WorkPieceViewModel.PropertyChanged -= WorkPieceViewModel_PropertyChanged;
-                    WorkPieceViewModel.PropertyChanged += WorkPieceViewModel_PropertyChanged;
-                    break;
-            }
-        }
-
-
-        private void WorkPieceViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(WorkPieceViewModel.ModelContext)) RaisePropertyChanged(nameof(HasBoard));
-        }
-
-        public void LoadBoard(int boardId)
+        public async Task LoadBoardAsync(int boardId)
         {
             ModelContext.WorkPiece = new WorkPiece(boardId.ToString());
-            WorkPieceViewModel = new WorkPieceViewModel {ModelContext = ModelContext};
+            WorkPieceViewModel = new WorkPieceViewModel {ModelContext = ModelContext}; // use the same model context to facilitate access to Station.HasBoard property
+            await StartUnloadTimer();
+        }
+
+        private readonly Random _randomTime = new Random();
+        private readonly ProgressiveTimer _unloadTimer = new ProgressiveTimer();
+        private async Task StartUnloadTimer()
+        {
+            var heatingTime = _randomTime.Next(2000, 2500);
+            _unloadTimer.StopAfter(heatingTime);
+            await _unloadTimer.StartAsync();
+            ModelContext.WorkPiece = null;
+
+
         }
     }
 }

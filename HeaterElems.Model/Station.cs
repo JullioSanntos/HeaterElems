@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +13,8 @@ namespace HeaterElems.Model
     {
 
         #region events
-        public event EventHandler<BoardArgs> WorkPieceLoaded;
-        public event EventHandler<BoardArgs> WorkPieceUnloaded;
+        public event EventHandler<WorkPiece> WorkPieceLoaded;
+        public event EventHandler<WorkPiece> WorkPieceUnloaded;
         #endregion events
 
         #region DownstreamOrder
@@ -42,16 +43,22 @@ namespace HeaterElems.Model
         }
         #endregion Heater
 
+        #region HasBoard
+        public bool HasBoard { get { return WorkPiece != null; } }
+        #endregion HasBoard
+
         #region WorkPiece
         private WorkPiece _workPiece;
         public WorkPiece WorkPiece {
             get { return _workPiece; }
             set
             {
-                var previousBoard = _workPiece;
+
+                var prevWorkPiece = _workPiece;
                 SetProperty(ref _workPiece, value);
-                //if (_workPiece == null) WorkPieceUnloaded?.Invoke(this, new BoardArgs(null, previousBoard));
-                //else WorkPieceLoaded?.Invoke(this, new BoardArgs(null, _workPiece));
+                if (prevWorkPiece != null) WorkPieceUnloaded?.Invoke(this, prevWorkPiece);
+                if (_workPiece != null) WorkPieceLoaded?.Invoke(this, _workPiece);
+                RaisePropertyChanged(nameof(HasBoard));
             }
         }
         #endregion WorkPiece
@@ -70,15 +77,20 @@ namespace HeaterElems.Model
         {
             DownstreamOrder = downstreamOrder;
             StationType = stationType;
-            this.PropertyChanged += Station_PropertyChanged;
+            //this.WorkPieceLoaded += async (s, e) => await StartUnloadTimer();
         }
 
-        private void Station_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName != nameof(WorkPiece)) return;
-            if (WorkPiece == null) WorkPieceUnloaded?.Invoke(this, null);
-            else WorkPieceLoaded?.Invoke(this, new BoardArgs(WorkPiece));
-        }
+        //private readonly Random _randomTime = new Random();
+        //private readonly ProgressiveTimer _unloadTimer = new ProgressiveTimer();
+        //private async Task StartUnloadTimer()
+        //{
+        //    var heatingTime = _randomTime.Next(100, 1300);
+        //    _unloadTimer.StopAfter(heatingTime);
+        //    await _unloadTimer.StartAsync();
+        //    WorkPiece = null;
+
+
+        //}
         #endregion constructors
 
     }

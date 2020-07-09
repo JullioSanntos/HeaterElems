@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -230,6 +231,24 @@ namespace HeaterElems.Tests.Common
             await sut.StartAsync(); //re-start
             actualRunTimeMillisecond = (int)sut.TotalRunningTime.TotalMilliseconds;
             Assert.That(actualRunTimeMillisecond, Is.EqualTo(runningTime).Within(500));
+        }
+
+        [Test]
+        public async Task SubsequentTimerCallsTest()
+        {
+            var sut = new ProgressiveTimerShunt();
+            var timerRunMilliseconds = 1000;
+            var startTime = DateTime.Now;
+            
+            sut.StopAfter(timerRunMilliseconds);
+            await sut.StartAsync();
+            sut.StopAfter(timerRunMilliseconds);
+            await sut.StartAsync();
+
+            var actualTestTime = DateTime.Now - startTime;
+            var expectedTestTimeMilliseconds = 2 * timerRunMilliseconds;
+            Assert.That(actualTestTime.TotalMilliseconds, Is.EqualTo(expectedTestTimeMilliseconds).Within(expectedTestTimeMilliseconds * 0.25));
+
         }
     }
 

@@ -9,24 +9,29 @@ using HeaterElems.Common;
 
 namespace HeaterElems.ViewModels
 {
-    public class DispensingWorkStationViewModel : SetPropertyBase
+    public class DispensingWorkStationViewModel : ViewModelBase<DispensingWorkStation>
     {
         #region properties
 
-        public DispensingWorkStation ModelContext => DispensingWorkStation.Instance;
+        #region ModelContext
+        public new DispensingWorkStation ModelContext => DispensingWorkStation.Instance;
+        #endregion ModelContext
 
+        #region RunCommand
+        public RelayCommand RunCommand => new RelayCommand((o) => { /*Run()*/ });
+        #endregion RunCommand
 
-        public RelayCommand RunCommand => new RelayCommand((o) =>
-        {
-            /*Run()*/
-        });
+        #region StopCommand
         public RelayCommand StopCommand => new RelayCommand((o) => HasStopped = true);
-        public RelayCommand StepCommand => new RelayCommand((o) =>
-        {
-            Step();
-        });
+        #endregion StopCommand
 
+        #region StepCommand
+        public RelayCommand StepCommand => new RelayCommand((o) => { Step(); });
+        #endregion StepCommand
+
+        #region CurrentBoardId
         public int CurrentBoardId = 0;
+        #endregion CurrentBoardId
 
         #region HasStopped
         private bool _hasStopped;
@@ -55,15 +60,21 @@ namespace HeaterElems.ViewModels
         }
         #endregion ConveyorViewModelsList
 
+
         #endregion properties
 
-
+        #region constructors
+        public DispensingWorkStationViewModel() {
+            base.ModelContext = DispensingWorkStation.Instance;
+        }
+        #endregion constructors
 
         private void Step()
         {
             CurrentBoardId++;
             // Load a board on the first PreDispensing Station that is empty
-            ConveyorViewModelsList.FirstOrDefault(c => c.StationViewModelsOrderedList?.First()?.HasBoard == false)?.LoadBoard(CurrentBoardId);
+            var firstAvailableLane = ConveyorViewModelsList.FirstOrDefault(c => c.CanLoadBoard);
+            firstAvailableLane?.LoadBoard(CurrentBoardId);
         }
     }
 }

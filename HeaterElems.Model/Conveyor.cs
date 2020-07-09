@@ -11,6 +11,9 @@ namespace HeaterElems.Model
     public class Conveyor : SetPropertyBase
     {
 
+
+        public event EventHandler<BoardArgs> BoardDispensed;
+
         #region Name
         private string _name;
         public string Name {
@@ -28,51 +31,21 @@ namespace HeaterElems.Model
         }
         #endregion LaneNumber
 
-        public event EventHandler<BoardArgs> BoardDispensed;
-
+        #region StationOrderedList
+        private ObservableCollection<Station> _stationOrderedList;
+        public ObservableCollection<Station> StationOrderedList
+        {
+            get { return _stationOrderedList ?? (_stationOrderedList = new ObservableCollection<Station>()); }
+            set { SetProperty(ref _stationOrderedList, value); }
+        }
+        #endregion StationViewModelsOrderedLis
 
         #region constructor
         public Conveyor(string name, int laneNumber)
         {
             Name = name;
             LaneNumber = laneNumber;
-            //this.PreStation.WorkPieceLoaded += async (s, e) => await PreStation_BoardLoaded(s, e);
-            //this.MainStation.WorkPieceLoaded += async (s, e) => await MainStation_BoardLoaded(s, e);
-            //this.PostStation.WorkPieceLoaded += async (s, e) => await PostStation_BoardLoaded(s, e);
         }
-
-        //public Conveyor()
-        //{
-        //    this.PreStation.WorkPieceLoaded += async (s,e) => await PreStation_BoardLoaded(s,e);
-        //    this.MainStation.WorkPieceLoaded += async (s,e) => await MainStation_BoardLoaded(s,e);
-        //    this.PostStation.WorkPieceLoaded += async (s,e) => await PostStation_BoardLoaded(s,e);
-        //}
-
-        //private async Task PreStation_BoardLoaded(object sender, BoardArgs e)
-        //{
-
-        //    await Task.Delay(1500);
-        //    MainStation.WorkPiece = e.WorkPiece;
-        //    PreStation.WorkPiece = null;
-
-        //}
-
-        //private async Task MainStation_BoardLoaded(object sender, BoardArgs e)
-        //{
-
-        //    await Task.Delay(1500);
-        //    PostStation.WorkPiece = e.WorkPiece;
-        //    MainStation.WorkPiece = null;
-        //}
-
-        //private async Task PostStation_BoardLoaded(object sender, BoardArgs e)
-        //{
-        //    await Task.Delay(1500);
-        //    PostStation.WorkPiece = null;
-        //    BoardDispensed?.Invoke(this, new BoardArgs(PostStation, e.WorkPiece));
-
-        //}
-
         #endregion constructor
 
     }

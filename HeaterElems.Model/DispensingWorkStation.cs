@@ -34,7 +34,7 @@ namespace HeaterElems.Model
         }
         #endregion DispensedWorkPiecesContainer
 
-        #region Singleton        
+        #region Singleton constructor       
         private static readonly object SingletonLock = new object();
         private static DispensingWorkStation _dispensingWorkStation;
 
@@ -49,16 +49,9 @@ namespace HeaterElems.Model
             }
         }
 
-        private DispensingWorkStation()
-        {
-            //Conveyors.ToList().ForEach(cb => cb.BoardDispensed += BoardDispensed);
-        }
-        #endregion Singleton
+        //hide constructor
+        private DispensingWorkStation() { }
+        #endregion Singleton constructor
 
-        //private void BoardDispensed(object sender, BoardArgs e)
-        //{
-        //    if (e.Station.Name == Conveyor.PostStationName)
-        //        this.DispensedWorkPiecesContainer.DispensedBoards.Insert(0, e.WorkPiece);
-        //}
     }
 }

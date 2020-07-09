@@ -118,10 +118,10 @@ namespace HeaterElems.Common
         {
             get
             {
-                if (_endTime != null) return (DateTime)_endTime; // for unit tests purposes only. This is a Calculated property.
+                if (_endTime != null) return (DateTime)_endTime; // This is a Calculated property, therefore, the setter should only be used for tests.
                 if (StopAtDateTime != null) return (DateTime)StopAtDateTime;
                 if (StartTime == DateTime.MinValue) return DateTime.MinValue;
-                if (StopAfterMilliseconds > 0 && StartTime != DateTime.MinValue) return StartTime.AddMilliseconds(StopAfterMilliseconds);
+                if (StopAfterMilliseconds > 0) return StartTime.AddMilliseconds(StopAfterMilliseconds);
                 // return default maximum duration from current time if neither Stop properties has been set yet
                 return DateTimeNow.AddMilliseconds(DEFAULT_MAX_DURATION_MILLISECONDS);
             }
@@ -266,6 +266,8 @@ namespace HeaterElems.Common
             // Adjust EndTime, if after a Pause and StopAfterMilliseconds was set, by subtracting last run timespan from StopAfterMilliseconds
             if (IsPaused && StopAfterMilliseconds > 0) { StopAfterMilliseconds -= (int)RunningTimeSegments.Last().TotalMilliseconds; }
             if (IsPaused == false) { RunningTimeSegments.Clear(); }
+
+            _endTime = null; //The property EndTime is non-nullable. Only the backing field can be reset.
             StartTime = DateTimeNow;
             CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
             IsActive = true;
@@ -363,7 +365,6 @@ namespace HeaterElems.Common
             if (endTIme < DateTimeNow) { throw new ArgumentException("parameter is in the past", nameof(endTIme)); }
             StopAtDateTime = endTIme;
             StopAfterMilliseconds = 0;
-            EndTime = endTIme;
         }
 
         public void Pause()
