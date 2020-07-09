@@ -24,13 +24,13 @@ namespace HeaterElems.ViewModels
         #endregion NumberOfStations
 
         #region StationViewModelsOrderedList
-        private ObservableCollection<StationViewModel> _stationViewModelsOrderedList;
-        public ObservableCollection<StationViewModel> StationViewModelsOrderedList {
+        private IReadOnlyList<StationViewModel> _stationViewModelsOrderedList;
+        public IReadOnlyList<StationViewModel> StationViewModelsOrderedList {
             get
             {
                 if (_stationViewModelsOrderedList == null)
                 {
-                    StationViewModelsOrderedList = new ObservableCollection<StationViewModel>();
+                    var stationViewModelsOrderedList = new List<StationViewModel>();
                     ModelContext.StationOrderedList.Clear();
 
                     for (int stationIx = 0; stationIx < NumberOfStations; stationIx++) {
@@ -39,8 +39,10 @@ namespace HeaterElems.ViewModels
                         else if (stationIx == NumberOfStations - 1) station = new Station(stationIx, StationTypeEnum.PostStation);
                         else station = new Station(stationIx, StationTypeEnum.DispensingStation);
 
-                        StationViewModelsOrderedList.Add(new StationViewModel() {ModelContext = station});
+                        stationViewModelsOrderedList.Add(new StationViewModel() {ModelContext = station});
                     }
+                    
+                    StationViewModelsOrderedList = new List<StationViewModel>(stationViewModelsOrderedList);
                 }
 
                 return _stationViewModelsOrderedList; 
@@ -72,6 +74,11 @@ namespace HeaterElems.ViewModels
                     break;
                 case nameof(StationViewModelsOrderedList):
                     RaisePropertyChanged(nameof(PreStationVM));
+                    // this will create a memory leak but this is just demo code. This code move unloading boards to the next station
+                    for (var i = 1; i < NumberOfStations; i++) {
+                        var ix = i;
+                        StationViewModelsOrderedList[ix - 1].ModelContext.WorkPieceUnloaded += async (s, wp) => await StationViewModelsOrderedList[ix].LoadBoardAsync(wp);
+                    }
                     break;
                 case nameof(PreStationVM):
                     RaisePropertyChanged(nameof(CanLoadBoard));
@@ -80,9 +87,10 @@ namespace HeaterElems.ViewModels
         }
 
 
-        public void LoadBoard(int boardId)
+        public void LoadBoard(WorkPiece board)
         {
-            PreStationVM?.LoadBoardAsync(boardId);
+            PreStationVM?.LoadBoardAsync(board);
         }
+
     }
 }

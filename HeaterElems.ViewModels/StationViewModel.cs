@@ -21,9 +21,9 @@ namespace HeaterElems.ViewModels
         }
         #endregion WorkPieceViewModel
 
-        public async Task LoadBoardAsync(int boardId)
+        public async Task LoadBoardAsync(WorkPiece workPiece)
         {
-            ModelContext.WorkPiece = new WorkPiece(boardId.ToString());
+            ModelContext.WorkPiece = workPiece;
             WorkPieceViewModel = new WorkPieceViewModel {ModelContext = ModelContext}; // use the same model context to facilitate access to Station.HasBoard property
             await StartUnloadTimer();
         }
@@ -32,7 +32,7 @@ namespace HeaterElems.ViewModels
         private readonly ProgressiveTimer _unloadTimer = new ProgressiveTimer();
         private async Task StartUnloadTimer()
         {
-            var heatingTime = _randomTime.Next(2000, 2500);
+            var heatingTime = _randomTime.Next(500, 1300);
             _unloadTimer.StopAfter(heatingTime);
             await _unloadTimer.StartAsync();
             ModelContext.WorkPiece = null;

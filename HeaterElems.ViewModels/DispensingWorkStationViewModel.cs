@@ -74,7 +74,8 @@ namespace HeaterElems.ViewModels
             CurrentBoardId++;
             // Load a board on the first PreDispensing Station that is empty
             var firstAvailableLane = ConveyorViewModelsList.FirstOrDefault(c => c.CanLoadBoard);
-            firstAvailableLane?.LoadBoard(CurrentBoardId);
+            var board = new WorkPiece(CurrentBoardId.ToString());
+            firstAvailableLane?.LoadBoard(board);
         }
     }
 }

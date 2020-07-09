@@ -77,20 +77,7 @@ namespace HeaterElems.Model
         {
             DownstreamOrder = downstreamOrder;
             StationType = stationType;
-            //this.WorkPieceLoaded += async (s, e) => await StartUnloadTimer();
         }
-
-        //private readonly Random _randomTime = new Random();
-        //private readonly ProgressiveTimer _unloadTimer = new ProgressiveTimer();
-        //private async Task StartUnloadTimer()
-        //{
-        //    var heatingTime = _randomTime.Next(100, 1300);
-        //    _unloadTimer.StopAfter(heatingTime);
-        //    await _unloadTimer.StartAsync();
-        //    WorkPiece = null;
-
-
-        //}
         #endregion constructors
 
     }
