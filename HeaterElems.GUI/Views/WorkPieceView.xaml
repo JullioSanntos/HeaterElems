@@ -18,7 +18,6 @@
                 <Thickness x:Key="CircleMargin" Left="8" Top="5" Right="5" Bottom="5" />
             </Border.Resources>
 
-
             <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -38,6 +37,6 @@
             </ListBox>
 
         </Border>
-        <TextBlock Text="{Binding ModelContext.Id}" Width="30" Height="20" TextAlignment="Center" Padding="0,3.5,0,0" FontSize="10" FontWeight="Bold" />
+        <TextBlock Text="{Binding ModelContext.WorkPiece.Id}" Width="30" Height="20" TextAlignment="Center" Padding="0,3.5,0,0" FontSize="10" FontWeight="Bold" />
     </Grid>
 </UserControl>

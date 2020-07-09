@@ -18,8 +18,8 @@
             <StackPanel>
                 <TextBlock Text="{Binding ModelContext.Name}" Width="100" Height="23" TextAlignment="Center" HorizontalAlignment="Center" 
                          VerticalAlignment="Top" Margin="4" Foreground="Coral" FontSize="14" />
-                <local:WorkPieceView DataContext="{Binding WorkPieceViewModel}" 
-                    Visibility="{Binding Path=DataContext.HasBoard, RelativeSource={RelativeSource AncestorType=UserControl},  ConverterParameter=Visible|Hidden, Converter={StaticResource BooleanToStringConverter}}" 
+                <local:WorkPieceView 
+                    Visibility="{Binding Path=HasBoard, ConverterParameter=Visible|Hidden, Converter={StaticResource BooleanToStringConverter}}" 
                     />
             </StackPanel>
         </Border>

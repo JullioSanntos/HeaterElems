@@ -8,7 +8,7 @@ using HeaterElems.Model;
 
 namespace HeaterElems.ViewModels
 {
-    public class WorkPieceViewModel: ViewModelBase<WorkPiece>
+    public class WorkPieceViewModel: ViewModelBase<Station>
     {
         
     }

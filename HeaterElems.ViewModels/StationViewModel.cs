@@ -52,8 +52,8 @@ namespace HeaterElems.ViewModels
 
         public void LoadBoard(int boardId)
         {
-            var board = new WorkPiece(boardId.ToString());
-            WorkPieceViewModel = new WorkPieceViewModel {ModelContext = board};
+            ModelContext.WorkPiece = new WorkPiece(boardId.ToString());
+            WorkPieceViewModel = new WorkPieceViewModel {ModelContext = ModelContext};
         }
     }
 }
