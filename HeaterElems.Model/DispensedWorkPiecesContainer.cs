@@ -13,8 +13,8 @@ namespace HeaterElems.Model
         #region DispensedBoards
         private ObservableCollection<WorkPiece> _dispensedBoards;
         public ObservableCollection<WorkPiece> DispensedBoards {
-            get => _dispensedBoards ?? (_dispensedBoards = new ObservableCollection<WorkPiece>());
-            set => SetProperty(ref _dispensedBoards, value);
+            get { return _dispensedBoards ?? (_dispensedBoards = new ObservableCollection<WorkPiece>()); }
+            set { SetProperty(ref _dispensedBoards, value); }
         }
         #endregion DispensedBoards
     }

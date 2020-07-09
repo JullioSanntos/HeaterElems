@@ -15,11 +15,24 @@
     <StackPanel Orientation="Vertical">
         <TextBlock Text="{Binding ModelContext.Name}" HorizontalAlignment="Center" FontSize="16" Foreground="CadetBlue" FontWeight="Bold" />
         <Border BorderThickness="0,2" BorderBrush="CadetBlue"  Height="100" Width="500" >
-            <StackPanel Orientation="Horizontal">
+            <!--<StackPanel Orientation="Horizontal">
                 <local:StationView DataContext="{Binding ModelContext.PreStation}" Margin="2,0,22,0" />
                 <local:StationView DataContext="{Binding ModelContext.MainStation}" Margin="2,0,22,0" />
                 <local:StationView DataContext="{Binding ModelContext.PostStation}" />
-            </StackPanel>
+            </StackPanel>-->
+
+            <ListBox ItemsSource="{Binding StationViewModelsOrderedList}" ScrollViewer.VerticalScrollBarVisibility="Disabled"  >
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Rows="1" IsItemsHost="True" HorizontalAlignment="Center" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <local:StationView Padding="10,0" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Border>
     </StackPanel>
 </UserControl>

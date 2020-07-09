@@ -1,0 +1,6 @@
+
+[*]
+
+# ReSharper properties
+resharper_csharp_blank_lines_around_region=0
+resharper_csharp_blank_lines_inside_region=0

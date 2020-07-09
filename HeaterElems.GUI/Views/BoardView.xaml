@@ -10,16 +10,34 @@
              xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance viewModels:StationViewModel, IsDesignTimeCreatable=True}"
-             d:DesignHeight="50" d:DesignWidth="120">
+             d:DesignHeight="45" d:DesignWidth="120">
 
     <Grid>
-        <Border BorderThickness="1" BorderBrush="Blue"  Height="50" Width="120"  >
+        <Border BorderThickness="1" BorderBrush="Blue"  Width="120"  >
             <Border.Resources>
-                <system:Double x:Key="R" >15</system:Double>
+                <system:Double x:Key="R" >13</system:Double>
                 <Thickness x:Key="CircleMargin" Left="8" Top="5" Right="5" Bottom="5" />
             </Border.Resources>
 
-            <StackPanel Orientation="Vertical">
+
+            <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="4" Rows="2" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.Items>
+                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Stroke="Blue" />
+                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Stroke="Blue" />
+                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Stroke="Blue" />
+                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Stroke="Blue" />
+                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Stroke="Blue" />
+                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Stroke="Blue" />
+                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Stroke="Blue" />
+                    <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Stroke="Blue" />
+                </ListBox.Items>
+            </ListBox>
+            <!--<StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal"  >
                     <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="10,5,5,5" Stroke="Blue" />
                     <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="{StaticResource CircleMargin}" Stroke="Blue" />
@@ -33,7 +51,7 @@
                     <Ellipse Width="{StaticResource R}" Height="{StaticResource R}" Margin="{StaticResource CircleMargin}" Stroke="Blue" />
 
                 </StackPanel>
-            </StackPanel>
+            </StackPanel>-->
         </Border>
         <TextBlock Text="{Binding ModelContext.WorkPiece.Id}" Width="30" Height="20" TextAlignment="Center" Padding="0,3.5,0,0" FontSize="10" FontWeight="Bold" />
     </Grid>

@@ -67,8 +67,8 @@ namespace HeaterElems.Common
         private List<TimeSpan> _runningTimeSegments;
         public List<TimeSpan> RunningTimeSegments
         {
-            get => _runningTimeSegments ?? (_runningTimeSegments = new List<TimeSpan>());
-            protected set => _runningTimeSegments = value;
+            get { return _runningTimeSegments ?? (_runningTimeSegments = new List<TimeSpan>()); }
+            protected set { _runningTimeSegments = value; }
         }
         #endregion RunningTimeSegments
 
@@ -93,7 +93,7 @@ namespace HeaterElems.Common
                 if (IsPaused || IsActive == false) { return sumOfSegments; }
                 else { return sumOfSegments + (DateTimeNow - StartTime); }
             }
-            protected set => _totalRunningTime = value; // to be used only on automated tests
+            protected set { _totalRunningTime = value; } // to be used only on automated tests
         }
         #endregion TotalRunningTime
 
@@ -126,7 +126,7 @@ namespace HeaterElems.Common
                 return DateTimeNow.AddMilliseconds(DEFAULT_MAX_DURATION_MILLISECONDS);
             }
             // this setter should not be used but on Unit Tests. This is a Calculated property.
-            protected set => _endTime = value;
+            protected set { _endTime = value; }
         }
 
         #endregion EndTime
@@ -150,7 +150,7 @@ namespace HeaterElems.Common
                 if (_stopAfterMilliseconds <= 0) _stopAfterMilliseconds = DEFAULT_MAX_DURATION_MILLISECONDS;
                 return _stopAfterMilliseconds;
             }
-            set => _stopAfterMilliseconds = value;
+            set { _stopAfterMilliseconds = value; }
         }
         #endregion StopAfterMilliseconds
 
@@ -170,7 +170,7 @@ namespace HeaterElems.Common
         /// </summary>
         public int TickIntervalMilliseconds
         {
-            get => _tickIntervalMilliseconds;
+            get { return _tickIntervalMilliseconds; }
             set
             {
                 if (value <= MINIMUM_TICK_INTERVAL_MILLISECONDS) value = MINIMUM_TICK_INTERVAL_MILLISECONDS;
@@ -183,8 +183,8 @@ namespace HeaterElems.Common
         private CancellationTokenSource _cancellationTokenFactory;
         private CancellationTokenSource CancellationTokenFactory
         {
-            get => _cancellationTokenFactory ?? (_cancellationTokenFactory = new CancellationTokenSource());
-            set => _cancellationTokenFactory = value;
+            get { return _cancellationTokenFactory ?? (_cancellationTokenFactory = new CancellationTokenSource()); }
+            set { _cancellationTokenFactory = value; }
         }
         #endregion CancellationTokenFactory
 

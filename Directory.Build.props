@@ -1,0 +1,7 @@
+<!--https://resharper-support.jetbrains.com/hc/en-us/community/posts/115000716464-Specify-C-version-in-ReSharper-->
+<!--https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/configure-language-version-->
+<Project>
+  <PropertyGroup>
+    <LangVersion>6.0</LangVersion>
+  </PropertyGroup>
+</Project>

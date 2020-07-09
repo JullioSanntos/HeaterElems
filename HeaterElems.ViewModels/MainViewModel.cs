@@ -18,8 +18,8 @@ namespace HeaterElems.ViewModels
         #region HeatingWatch
         private ProgressiveTimer _heatingWatch;
         public ProgressiveTimer HeatingWatch {
-            get => _heatingWatch ?? (_heatingWatch = new ProgressiveTimer());
-            set => SetProperty(ref _heatingWatch, value);
+            get { return _heatingWatch ?? (_heatingWatch = new ProgressiveTimer()); }
+            set { SetProperty(ref _heatingWatch, value); }
         }
         #endregion HeatingWatch
 
@@ -31,7 +31,7 @@ namespace HeaterElems.ViewModels
         }
         #endregion StartCommand
 
-        #region Durantion
+        #region RunDuration
         public double RunDuration => Math.Round(HeatingWatch.TotalRunningTime.TotalMilliseconds / 1000, 1);
         #endregion Durantion
 
@@ -39,8 +39,8 @@ namespace HeaterElems.ViewModels
         #region CountDownValue
         private int _setDuration = 3;
         public int SetDuration {
-            get => _setDuration;
-            set => SetProperty(ref _setDuration, value);
+            get { return _setDuration; }
+            set { SetProperty(ref _setDuration, value); }
         }
         #endregion CountDownValue
 

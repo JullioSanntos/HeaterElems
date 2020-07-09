@@ -11,22 +11,36 @@ namespace HeaterElems.ViewModels
 {
     public class DispensingWorkStationViewModel : SetPropertyBase
     {
+        #region properties
+
         public DispensingWorkStation ModelContext => DispensingWorkStation.Instance;
 
 
-        public RelayCommand RunCommand => new RelayCommand((o) => Run());
+        public RelayCommand RunCommand => new RelayCommand((o) =>
+        {
+            /*Run()*/
+        });
         public RelayCommand StopCommand => new RelayCommand((o) => HasStopped = true);
-        public RelayCommand StepCommand => new RelayCommand((o) => Step());
+        public RelayCommand StepCommand => new RelayCommand((o) =>
+        {
+            Step();
+        });
+
+        private void Step()
+        {
+            CurrentBoardId++;
+            ConveyorViewModelsList.First().LoadBoard(CurrentBoardId);
+        }
 
         private Conveyor Lane1 => ModelContext.Conveyors.First();
         private Conveyor Lane2 => ModelContext.Conveyors.Skip(1).First();
 
-        private Station PreStation1 => Lane1.PreStation;
-        private Station PreStation2 => Lane2.PreStation;
-        private Station MainStation1 => Lane1.MainStation;
-        private Station MainStation2 => Lane2.MainStation;
-        private Station PostStation1 => Lane1.PostStation;
-        private Station PostStation2 => Lane2.PostStation;
+        //private Station PreStation1 => Lane1.PreStation;
+        //private Station PreStation2 => Lane2.PreStation;
+        //private Station MainStation1 => Lane1.MainStation;
+        //private Station MainStation2 => Lane2.MainStation;
+        //private Station PostStation1 => Lane1.PostStation;
+        //private Station PostStation2 => Lane2.PostStation;
 
         public int CurrentBoardId = 0;
 
@@ -39,69 +53,93 @@ namespace HeaterElems.ViewModels
         }
         #endregion HasStopped
 
+        #region ConveyorViewModelsList
 
-        public void Run()
+        private List<ConveyorBeltViewModel> _conveyorViewModelsList;
+
+        public List<ConveyorBeltViewModel> ConveyorViewModelsList
         {
-            HasStopped = false;
-            Lane1.BoardDispensed -= Lane1_BoardDispensed;
-            Lane1.BoardDispensed += Lane1_BoardDispensed;
-            Lane1.PreStation.WorkPieceUnloaded -= PreStation1WorkPieceUnloaded;
-            Lane1.PreStation.WorkPieceUnloaded += PreStation1WorkPieceUnloaded;
-            Lane1StepRun();
-            Lane2.BoardDispensed -= Lane2_BoardDispensed;
-            Lane2.BoardDispensed += Lane2_BoardDispensed;
-            Lane2.PreStation.WorkPieceUnloaded -= PreStation2WorkPieceUnloaded;
-            Lane2.PreStation.WorkPieceUnloaded += PreStation2WorkPieceUnloaded;
-            Lane2StepRun();
-        }
+            get {
+                if (_conveyorViewModelsList != null) return _conveyorViewModelsList;
 
-        private void PreStation1WorkPieceUnloaded(object sender, BoardArgs e)
-        {
-            Lane1StepRun();
-        }
-
-        private void PreStation2WorkPieceUnloaded(object sender, BoardArgs e)
-        {
-            Lane2StepRun();
-        }
-
-        public void Step()
-        {
-            Lane1StepRun();
-
-            Lane2StepRun();
-        }
-
-        private void Lane1_BoardDispensed(object sender, BoardArgs e)
-        {
-            Lane1StepRun();
-        }
-
-
-        private void Lane2_BoardDispensed(object sender, BoardArgs e)
-        {
-            Lane2StepRun();
-        }
-
-
-
-        private void Lane1StepRun()
-        {
-            if (PreStation1.WorkPiece == null)
-            {
-                PreStation1.WorkPiece = new WorkPiece((CurrentBoardId += 1).ToString());
-                //PreStation1.WorkPiece.ProgressiveTimer.Start();
+                _conveyorViewModelsList = new List<ConveyorBeltViewModel>();
+                var conv1 = new ConveyorBeltViewModel() { ModelContext = new Conveyor("Back Lane", 2) };
+                _conveyorViewModelsList.Add(conv1);
+                var conv2 = new ConveyorBeltViewModel() {ModelContext = new Conveyor("Front Lane", 1) };
+                _conveyorViewModelsList.Add(conv2);
+                return _conveyorViewModelsList;
             }
+            //get => _conveyorViewModelsList ?? (_conveyorViewModelsList = new List<ConveyorBeltViewModel>());
+            set { _conveyorViewModelsList = value; }
         }
 
-        private void Lane2StepRun()
-        {
-            if (PreStation2.WorkPiece == null)
-            {
-                PreStation2.WorkPiece = new WorkPiece((CurrentBoardId += 1).ToString());
-                //PreStation2.WorkPiece.ProgressiveTimer.Start();
-            }
-        }
+        #endregion ConveyorViewModelsList
+        
+        #endregion properties
+
+
+        //public void Run()
+        //{
+        //    HasStopped = false;
+        //    Lane1.BoardDispensed -= Lane1_BoardDispensed;
+        //    Lane1.BoardDispensed += Lane1_BoardDispensed;
+        //    Lane1.PreStation.WorkPieceUnloaded -= PreStation1WorkPieceUnloaded;
+        //    Lane1.PreStation.WorkPieceUnloaded += PreStation1WorkPieceUnloaded;
+        //    Lane1StepRun();
+        //    Lane2.BoardDispensed -= Lane2_BoardDispensed;
+        //    Lane2.BoardDispensed += Lane2_BoardDispensed;
+        //    Lane2.PreStation.WorkPieceUnloaded -= PreStation2WorkPieceUnloaded;
+        //    Lane2.PreStation.WorkPieceUnloaded += PreStation2WorkPieceUnloaded;
+        //    Lane2StepRun();
+        //}
+
+        //private void PreStation1WorkPieceUnloaded(object sender, BoardArgs e)
+        //{
+        //    Lane1StepRun();
+        //}
+
+        //private void PreStation2WorkPieceUnloaded(object sender, BoardArgs e)
+        //{
+        //    Lane2StepRun();
+        //}
+
+        //public void Step()
+        //{
+        //    Lane1StepRun();
+
+        //    Lane2StepRun();
+        //}
+
+        //private void Lane1_BoardDispensed(object sender, BoardArgs e)
+        //{
+        //    Lane1StepRun();
+        //}
+
+
+        //private void Lane2_BoardDispensed(object sender, BoardArgs e)
+        //{
+        //    Lane2StepRun();
+        //}
+
+
+
+        //private void Lane1StepRun()
+        //{
+        //    if (PreStation1.WorkPiece == null)
+        //    {
+        //        PreStation1.WorkPiece = new WorkPiece((CurrentBoardId += 1).ToString());
+        //        //PreStation1.WorkPiece.ProgressiveTimer.Start();
+        //    }
+        //}
+
+        //private void Lane2StepRun()
+        //{
+        //    if (PreStation2.WorkPiece == null)
+        //    {
+        //        PreStation2.WorkPiece = new WorkPiece((CurrentBoardId += 1).ToString());
+        //        //PreStation2.WorkPiece.ProgressiveTimer.Start();
+        //    }
+        //}
 
     }
 }

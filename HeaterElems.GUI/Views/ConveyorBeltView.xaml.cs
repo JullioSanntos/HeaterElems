@@ -22,18 +22,18 @@ namespace HeaterElems.GUI.Views
     /// </summary>
     public partial class ConveyorBeltView : UserControl
     {
-        private ConveyorBeltViewModel _vm { get; set; }
+        //private ConveyorBeltViewModel _vm { get; set; }
         public ConveyorBeltView()
         {
             InitializeComponent();
-            this.Loaded += ConveyorBeltView_Loaded;
-            _vm = new ConveyorBeltViewModel();
+            //this.Loaded += ConveyorBeltView_Loaded;
+            //_vm = new ConveyorBeltViewModel();
         }
 
-        private void ConveyorBeltView_Loaded(object sender, RoutedEventArgs e)
-        {
-            _vm.ModelContext = DataContext as Conveyor;
-            this.DataContext = _vm;
-        }
+        //private void ConveyorBeltView_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    _vm.ModelContext = DataContext as Conveyor;
+        //    this.DataContext = _vm;
+        //}
     }
 }

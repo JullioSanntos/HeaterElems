@@ -239,20 +239,20 @@ namespace HeaterElems.Tests.Common
 
         public new Func<DateTime> DateTimeNowFunc
         {
-            get => base.DateTimeNowFunc;
-            set => base.DateTimeNowFunc = value;
+            get { return base.DateTimeNowFunc; }
+            set { base.DateTimeNowFunc = value; }
         }
 
         public new DateTime StartTime
         {
-            get => base.StartTime;
-            set => base.StartTime = value;
+            get { return base.StartTime; }
+            set { base.StartTime = value; }
         }
 
         public new DateTime EndTime
         {
-            get => base.EndTime;
-            set => base.EndTime = value;
+            get { return base.EndTime; }
+            set { base.EndTime = value; }
         }
 
         public new int GetNextTickTimeMilliseconds()

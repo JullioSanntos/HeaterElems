@@ -45,9 +45,8 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="HeaterElems.Model.DispensingWorkStation">
-    <Position X="0.75" Y="0.75" Width="2.5" />
+    <Position X="1" Y="0.5" Width="2.5" />
     <Members>
-      <Field Name="_boardsContainer" Hidden="true" />
       <Field Name="_conveyors" Hidden="true" />
       <Field Name="_dispensingWorkStation" Hidden="true" />
       <Method Name="BoardDispensed" Hidden="true" />
@@ -62,7 +61,7 @@
       </MemberNameLabel>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>gAAAAASAAAAAABCAAAAAAIAAAAgAAAAAQAABAAAAAAA=</HashCode>
+      <HashCode>gAQAAASAAAAAABCAgAAAAAAAAAAAAAAAQAABAAAAAAA=</HashCode>
       <FileName>DispensingWorkStation.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -70,8 +69,9 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="HeaterElems.Model.Conveyor">
-    <Position X="1" Y="2.5" Width="3" />
+    <Position X="1" Y="3" Width="3" />
     <Members>
+      <Field Name="_laneNumber" Hidden="true" />
       <Field Name="_mainStation" Hidden="true" />
       <Field Name="_name" Hidden="true" />
       <Field Name="_postStation" Hidden="true" />
@@ -84,31 +84,17 @@
       <Method Name="PreStation_BoardLoaded" Hidden="true" />
       <Field Name="PreStationName" Hidden="true" />
     </Members>
-    <AssociationLine Name="PreStation" Type="HeaterElems.Model.Station" FixedToPoint="true">
-      <Path>
-        <Point X="2.75" Y="4.387" />
-        <Point X="2.75" Y="6.5" />
-      </Path>
+    <AssociationLine Name="PreStation" Type="HeaterElems.Model.Station">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.079" Y="0.154" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="MainStation" Type="HeaterElems.Model.Station" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="2.188" Y="4.387" />
-        <Point X="2.188" Y="5.337" />
-        <Point X="2.188" Y="5.337" />
-        <Point X="2.188" Y="6.5" />
-      </Path>
+    <AssociationLine Name="MainStation" Type="HeaterElems.Model.Station">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-1.114" Y="0.731" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="PostStation" Type="HeaterElems.Model.Station" FixedToPoint="true">
-      <Path>
-        <Point X="3.25" Y="4.387" />
-        <Point X="3.25" Y="6.5" />
-      </Path>
+    <AssociationLine Name="PostStation" Type="HeaterElems.Model.Station">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-1.057" Y="0.185" />
       </MemberNameLabel>

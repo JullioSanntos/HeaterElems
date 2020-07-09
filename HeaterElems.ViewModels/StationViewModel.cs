@@ -8,40 +8,52 @@ using HeaterElems.Model;
 
 namespace HeaterElems.ViewModels
 {
-    public class StationViewModel : SetPropertyBase
+    public class StationViewModel : ViewModelBase<Station>
     {
         
-        #region ModelContext
-        private Station _modelContext;
-        public Station ModelContext {
-            get => _modelContext;
-            set => SetProperty(ref _modelContext, value);
-        }
-        #endregion ModelContext
-
         #region HasBoard
-        public bool HasBoard => ModelContext.WorkPiece != null;
+        public bool HasBoard {
+            get { return WorkPieceViewModel?.ModelContext != null; }
+        }
         #endregion HasBoard
 
+        #region WorkPieceViewModel
+        private WorkPieceViewModel _workPieceViewModel;
+
+        public WorkPieceViewModel WorkPieceViewModel
+        {
+            get { return _workPieceViewModel; }
+            set { SetProperty(ref _workPieceViewModel, value); }
+        }
+        #endregion WorkPieceViewModel
+
         public StationViewModel() {
-            this.PropertyChanged += (s, e) => {
-                if (e.PropertyName == nameof(ModelContext) && ModelContext != null)
-                {
-                    ModelContext.PropertyChanged += ModelContext_PropertyChanged;
-                    RaisePropertyChanged(nameof(HasBoard));
-                }
-            };
+            this.PropertyChanged += StationViewModel_PropertyChanged;
 
         }
 
-        private void ModelContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void StationViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
-                case nameof(ModelContext.WorkPiece):
+                case nameof(WorkPieceViewModel):
                     RaisePropertyChanged(nameof(HasBoard));
+                    WorkPieceViewModel.PropertyChanged -= WorkPieceViewModel_PropertyChanged;
+                    WorkPieceViewModel.PropertyChanged += WorkPieceViewModel_PropertyChanged;
                     break;
             }
+        }
+
+
+        private void WorkPieceViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(WorkPieceViewModel.ModelContext)) RaisePropertyChanged(nameof(HasBoard));
+        }
+
+        public void LoadBoard(int boardId)
+        {
+            var board = new WorkPiece(boardId.ToString());
+            WorkPieceViewModel = new WorkPieceViewModel {ModelContext = board};
         }
     }
 }

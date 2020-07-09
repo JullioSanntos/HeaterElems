@@ -17,20 +17,20 @@ namespace HeaterElems.Model
                 if (_conveyors == null)
                 {
                     Conveyors = new ObservableCollection<Conveyor>(){
-                            new Conveyor() {Name = "Front Lane"}, new Conveyor() {Name = "Back Lane"}
+                            new Conveyor("Front Lane", 0), new Conveyor("Back Lane", 1)
                         };
                 }
                 return _conveyors;
             }
-            set => SetProperty(ref _conveyors, value);
+            set { SetProperty(ref _conveyors, value); }
         }
         #endregion Conveyors
 
         #region DispensedWorkPiecesContainer
         private DispensedWorkPiecesContainer _dispensedWorkPiecesContainer;
         public DispensedWorkPiecesContainer DispensedWorkPiecesContainer {
-            get => _dispensedWorkPiecesContainer ?? (_dispensedWorkPiecesContainer = new DispensedWorkPiecesContainer());
-            set => SetProperty(ref _dispensedWorkPiecesContainer, value);
+            get { return _dispensedWorkPiecesContainer ?? (_dispensedWorkPiecesContainer = new DispensedWorkPiecesContainer()); }
+            set { SetProperty(ref _dispensedWorkPiecesContainer, value); }
         }
         #endregion DispensedWorkPiecesContainer
 
@@ -51,14 +51,14 @@ namespace HeaterElems.Model
 
         private DispensingWorkStation()
         {
-            Conveyors.ToList().ForEach(cb => cb.BoardDispensed += BoardDispensed);
+            //Conveyors.ToList().ForEach(cb => cb.BoardDispensed += BoardDispensed);
         }
         #endregion Singleton
 
-        private void BoardDispensed(object sender, BoardArgs e)
-        {
-            if (e.Station.Name == Conveyor.PostStationName)
-                this.DispensedWorkPiecesContainer.DispensedBoards.Insert(0, e.WorkPiece);
-        }
+        //private void BoardDispensed(object sender, BoardArgs e)
+        //{
+        //    if (e.Station.Name == Conveyor.PostStationName)
+        //        this.DispensedWorkPiecesContainer.DispensedBoards.Insert(0, e.WorkPiece);
+        //}
     }
 }

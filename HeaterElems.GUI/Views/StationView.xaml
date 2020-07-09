@@ -11,14 +11,14 @@
              d:DataContext="{d:DesignInstance {x:Type viewModels:StationViewModel}, IsDesignTimeCreatable=True}"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="150">
-    <b:Interaction.Behaviors>
+    <!--<b:Interaction.Behaviors>
         <resources:ViewModelLocatorBehavior />
-    </b:Interaction.Behaviors>
+    </b:Interaction.Behaviors>-->
     <UserControl.Resources>
         <common:BooleanToStringConverter x:Key="BooleanToStringConverter" />
     </UserControl.Resources>
     <Grid>
-        <Border BorderThickness="1" BorderBrush="Coral"  Height="90" Width="150" >
+        <Border BorderThickness="1" BorderBrush="Coral"  Height="80" HorizontalAlignment="Center" >
             <StackPanel>
                 <!--<b:Interaction.Behaviors>
                     <b:MouseDragElementBehavior/>

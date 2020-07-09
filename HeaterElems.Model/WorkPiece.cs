@@ -16,8 +16,8 @@ namespace HeaterElems.Model
         #region ProgressiveTimer
         private ProgressiveTimer _progressiveTimer;
         public ProgressiveTimer ProgressiveTimer {
-            get => _progressiveTimer ?? (_progressiveTimer = new ProgressiveTimer());
-            protected set => _progressiveTimer = value;
+            get { return _progressiveTimer ?? (_progressiveTimer = new ProgressiveTimer()); }
+            protected set { _progressiveTimer = value; }
         }
         #endregion ProgressiveTimer
 

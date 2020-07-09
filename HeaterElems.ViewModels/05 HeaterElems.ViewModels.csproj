@@ -46,6 +46,7 @@
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StationViewModel.cs" />
+    <Compile Include="WorkPieceViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HeaterElems.Common\09 HeaterElems.Common.csproj">

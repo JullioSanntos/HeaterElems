@@ -24,7 +24,7 @@
             <!--<Button Content="{resources:MyMarkupExtension FirstStr=J, SecondStr=S}" Margin="4" Width="60" Command="{Binding StepCommand}" />-->
         </StackPanel>
         <Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400" Width="550" >
-            <ItemsControl ItemsSource="{Binding ModelContext.Conveyors}" VerticalAlignment="Center" >
+            <ItemsControl ItemsSource="{Binding ConveyorViewModelsList}" VerticalAlignment="Center" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <local:ConveyorBeltView Margin="20"  />
@@ -32,6 +32,17 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Border>
+
+        <!--<Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400" Width="550" >
+            <ItemsControl ItemsSource="{Binding ModelContext.Conveyors}" VerticalAlignment="Center" >
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <local:ConveyorBeltView Margin="20"  />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>-->
+
         <ListBox Grid.Column="2" ItemsSource="{Binding ModelContext.DispensedWorkPiecesContainer.DispensedBoards}" 
                  Margin="4" Background="Transparent">
             <ListBox.ItemTemplate>

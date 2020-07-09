@@ -14,8 +14,8 @@ namespace HeaterElems.Model
         #region IsPowered
         private bool _isPowered;
         public bool IsPowered {
-            get => _isPowered;
-            set => SetProperty(ref _isPowered, value);
+            get { return _isPowered; }
+            set { SetProperty(ref _isPowered, value); }
         }
         #endregion IsPowered
 	}
