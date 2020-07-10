@@ -19,7 +19,7 @@
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0">
             <Button Content="Run" Margin="4,20" Width="60" Command="{Binding RunCommand}" />
-            <Button Content="Stop" Margin="4,20" Width="60" Command="{Binding RunCommand}" />
+            <Button Content="Stop" Margin="4,20" Width="60" Command="{Binding StopCommand}" />
             <Button Content="Step" Margin="4,40" Width="60" Command="{Binding StepCommand}" />
             <StackPanel Margin="2,40" Orientation="Horizontal" >
                 <Label Content="#stations" />

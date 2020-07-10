@@ -19,7 +19,7 @@ namespace HeaterElems.ViewModels
         #endregion ModelContext
 
         #region RunCommand
-        public RelayCommand RunCommand => new RelayCommand((o) => { /*Run()*/ });
+        public RelayCommand RunCommand => new RelayCommand(async (o) => { HasStopped = false; await RunAsync(); });
         #endregion RunCommand
 
         #region StopCommand
@@ -109,13 +109,21 @@ namespace HeaterElems.ViewModels
 
         #endregion constructors
 
-
-
-        private void Step()
+        protected async Task RunAsync()
         {
-            CurrentBoardId++;
+            while (HasStopped == false)
+            {
+                Step();
+                await Task.Delay(70);
+            }
+        }
+
+        protected void Step()
+        {
             // Load a board on the first PreDispensing Station that is empty
             var firstAvailableLane = ConveyorViewModelsList.FirstOrDefault(c => c.CanLoadBoard);
+            if (firstAvailableLane == null) return;
+            CurrentBoardId++;
             var board = new WorkPiece(CurrentBoardId.ToString());
             firstAvailableLane?.LoadBoard(board);
         }
