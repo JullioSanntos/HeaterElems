@@ -41,7 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConveyorArgs.cs" />
     <Compile Include="BoardArgs.cs" />
     <Compile Include="Conveyor.cs" />
     <Compile Include="StationTypeEnum.cs" />

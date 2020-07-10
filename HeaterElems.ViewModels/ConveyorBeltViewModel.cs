@@ -31,7 +31,8 @@ namespace HeaterElems.ViewModels
                 if (_stationViewModelsOrderedList == null)
                 {
                     var stationViewModelsOrderedList = new List<StationViewModel>();
-                    ModelContext.StationOrderedList.Clear();
+                    ModelContext.StationOrderedList = null;
+                    var stationOrderedList = new List<Station>();
 
                     for (int stationIx = 0; stationIx < NumberOfStations; stationIx++) {
                         Station station;
@@ -39,9 +40,11 @@ namespace HeaterElems.ViewModels
                         else if (stationIx == NumberOfStations - 1) station = new Station(stationIx, StationTypeEnum.PostStation);
                         else station = new Station(stationIx, StationTypeEnum.DispensingStation);
 
+                        stationOrderedList.Add(station);
                         stationViewModelsOrderedList.Add(new StationViewModel() {ModelContext = station});
                     }
-                    
+
+                    ModelContext.StationOrderedList = stationOrderedList;
                     StationViewModelsOrderedList = new List<StationViewModel>(stationViewModelsOrderedList);
                 }
 

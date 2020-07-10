@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,25 +50,44 @@ namespace HeaterElems.ViewModels
             get {
                 if (_conveyorViewModelsList != null) return _conveyorViewModelsList;
 
-                _conveyorViewModelsList = new List<ConveyorBeltViewModel>();
+                var conveyorViewModelsList = new List<ConveyorBeltViewModel>();
                 var conv1 = new ConveyorBeltViewModel() { ModelContext = new Conveyor("Back Lane", 2) };
-                _conveyorViewModelsList.Add(conv1);
+                conveyorViewModelsList.Add(conv1);
                 var conv2 = new ConveyorBeltViewModel() {ModelContext = new Conveyor("Front Lane", 1) };
-                _conveyorViewModelsList.Add(conv2);
+                conveyorViewModelsList.Add(conv2);
+                ConveyorViewModelsList = conveyorViewModelsList;
+
                 return _conveyorViewModelsList;
             }
-            set { _conveyorViewModelsList = value; }
+            set { SetProperty(ref _conveyorViewModelsList, value); }
         }
         #endregion ConveyorViewModelsList
-
 
         #endregion properties
 
         #region constructors
         public DispensingWorkStationViewModel() {
             base.ModelContext = DispensingWorkStation.Instance;
+
+            this.PropertyChanged += DispensingWorkStationViewModel_PropertyChanged;
+
+            //ModelContext.PropertyChanged += DispensingWorkStationViewModel_PropertyChanged;
+            //ModelContext.Conveyors?.ToList().ForEach(c => c.BoardDispensed += Conveyor_BoardDispensed);
+        }
+        private void DispensingWorkStationViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(ConveyorViewModelsList)) return;
+
+            ConveyorViewModelsList?.ForEach(c => c.ModelContext.BoardDispensed += Conveyor_BoardDispensed); //this creates a memory leak
+        }
+
+        private void Conveyor_BoardDispensed(object sender, WorkPiece e)
+        {
+            ModelContext.DispensedWorkPiecesContainer.DispensedBoards.Add(e);
         }
         #endregion constructors
+
+
 
         private void Step()
         {

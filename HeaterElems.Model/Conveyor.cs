@@ -12,7 +12,7 @@ namespace HeaterElems.Model
     {
 
 
-        public event EventHandler<BoardArgs> BoardDispensed;
+        public event EventHandler<WorkPiece> BoardDispensed;
 
         #region Name
         private string _name;
@@ -32,12 +32,19 @@ namespace HeaterElems.Model
         #endregion LaneNumber
 
         #region StationOrderedList
-        private ObservableCollection<Station> _stationOrderedList;
-        public ObservableCollection<Station> StationOrderedList
+        private IReadOnlyList<Station> _stationOrderedList;
+        public IReadOnlyList<Station> StationOrderedList
         {
-            get { return _stationOrderedList ?? (_stationOrderedList = new ObservableCollection<Station>()); }
-            set { SetProperty(ref _stationOrderedList, value); }
+            get { return _stationOrderedList ?? (_stationOrderedList = new List<Station>()); }
+            set
+            {
+
+                SetProperty(ref _stationOrderedList, value);
+                var lastStation = _stationOrderedList?.LastOrDefault();
+                if (lastStation != null) lastStation.WorkPieceUnloaded += (s, wp) => BoardDispensed?.Invoke(this, wp);
+            }
         }
+
         #endregion StationViewModelsOrderedLis
 
         #region constructor

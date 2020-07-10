@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,22 +12,12 @@ namespace HeaterElems.ViewModels
 {
     public class DispensingWorkStationViewModel : SetPropertyBase
     {
+        #region properties
         public DispensingWorkStation ModelContext => DispensingWorkStation.Instance;
-
 
         public RelayCommand RunCommand => new RelayCommand((o) => Run());
         public RelayCommand StopCommand => new RelayCommand((o) => HasStopped = true);
         public RelayCommand StepCommand => new RelayCommand((o) => Step());
-
-        private Conveyor Lane1 => ModelContext.Conveyors.First();
-        private Conveyor Lane2 => ModelContext.Conveyors.Skip(1).First();
-
-        //private Station PreStation1 => Lane1.PreStation;
-        //private Station PreStation2 => Lane2.PreStation;
-        //private Station MainStation1 => Lane1.MainStation;
-        //private Station MainStation2 => Lane2.MainStation;
-        //private Station PostStation1 => Lane1.PostStation;
-        //private Station PostStation2 => Lane2.PostStation;
 
         public int CurrentBoardId = 0;
 
@@ -39,26 +30,22 @@ namespace HeaterElems.ViewModels
         }
         #endregion HasStopped
 
+        #endregion properties
 
-        public void Run()
+        #region constructor
+        public DispensingWorkStationViewModel()
         {
-            HasStopped = false;
-            Lane1.BoardDispensed -= Lane1_BoardDispensed;
-            Lane1.BoardDispensed += Lane1_BoardDispensed;
-            //Lane1.PreStation.WorkPieceUnloaded -= PreStation1WorkPieceUnloaded;
-            //Lane1.PreStation.WorkPieceUnloaded += PreStation1WorkPieceUnloaded;
-            Lane1StepRun();
-            Lane2.BoardDispensed -= Lane2_BoardDispensed;
-            Lane2.BoardDispensed += Lane2_BoardDispensed;
-            //Lane2.PreStation.WorkPieceUnloaded -= PreStation2WorkPieceUnloaded;
-            //Lane2.PreStation.WorkPieceUnloaded += PreStation2WorkPieceUnloaded;
-            Lane2StepRun();
+
         }
 
-        private void PreStation1WorkPieceUnloaded(object sender, BoardArgs e)
-        {
-            Lane1StepRun();
-        }
+
+
+
+        #endregion constructor
+
+        public void Run() { HasStopped = false; }
+
+        private void PreStation1WorkPieceUnloaded(object sender, BoardArgs e) { Lane1StepRun(); }
 
         private void PreStation2WorkPieceUnloaded(object sender, BoardArgs e)
         {
