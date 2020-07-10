@@ -15,7 +15,6 @@ namespace HeaterElems.ViewModels
 
         #region NumberOfStations
         private int _numberOfStations;
-
         public int NumberOfStations
         {
             get { return _numberOfStations; }
@@ -35,10 +34,7 @@ namespace HeaterElems.ViewModels
                     var stationOrderedList = new List<Station>();
 
                     for (int stationIx = 0; stationIx < NumberOfStations; stationIx++) {
-                        Station station;
-                        if (stationIx == 0) station = new Station(stationIx, StationTypeEnum.PreStation);
-                        else if (stationIx == NumberOfStations - 1) station = new Station(stationIx, StationTypeEnum.PostStation);
-                        else station = new Station(stationIx, StationTypeEnum.DispensingStation);
+                        var station = new Station(stationIx, GetStationType(NumberOfStations, stationIx));
 
                         stationOrderedList.Add(station);
                         stationViewModelsOrderedList.Add(new StationViewModel() {ModelContext = station});
@@ -54,18 +50,21 @@ namespace HeaterElems.ViewModels
         }
         #endregion StationViewModelsOrderedList
 
-        #region PreStationVM
-        public StationViewModel PreStationVM { get { return StationViewModelsOrderedList?.FirstOrDefault(c => c.ModelContext.StationType == StationTypeEnum.PreStation); } }
-        #endregion PreStationVM
+        #region PreStationVm
+        public StationViewModel PreStationVm {
+            get { return StationViewModelsOrderedList?.OrderBy(s => s.ModelContext.DownstreamOrder).First(); }
+        }
+        #endregion PreStationVm
 
         #region CanLoadBoard
-        public bool CanLoadBoard { get { return PreStationVM?.ModelContext?.HasBoard == false; } }
+        public bool CanLoadBoard { get { return PreStationVm?.ModelContext?.HasBoard == false; } }
         #endregion CanLoadBoard
 
-        public ConveyorViewModel()
-        {
+        #region constructor
+        public ConveyorViewModel() {
             this.PropertyChanged += ConveyorBeltViewModel_PropertyChanged;
         }
+        #endregion constructor
 
         private void ConveyorBeltViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -76,23 +75,45 @@ namespace HeaterElems.ViewModels
                     StationViewModelsOrderedList = null;
                     break;
                 case nameof(StationViewModelsOrderedList):
-                    RaisePropertyChanged(nameof(PreStationVM));
+                    RaisePropertyChanged(nameof(PreStationVm));
                     // this will create a memory leak but this is just demo code. This code move unloading boards to the next station
                     for (var i = 1; i < NumberOfStations; i++) {
                         var ix = i;
                         StationViewModelsOrderedList[ix - 1].ModelContext.WorkPieceUnloaded += async (s, wp) => await StationViewModelsOrderedList[ix].LoadBoardAsync(wp);
                     }
                     break;
-                case nameof(PreStationVM):
+                case nameof(PreStationVm):
                     RaisePropertyChanged(nameof(CanLoadBoard));
                     break;
             }
         }
 
-
         public void LoadBoard(WorkPiece board)
         {
-            PreStationVM?.LoadBoardAsync(board);
+            PreStationVm?.LoadBoardAsync(board);
+        }
+
+        protected StationTypeEnum GetStationType(int nbrOfStations, int stationIx)
+        {
+            var stationType = StationTypeEnum.DispensingStation;
+            switch (nbrOfStations)
+            {
+                case 1:
+                    stationType = StationTypeEnum.DispensingStation;
+                    break;
+                case 2:
+                    if (stationIx == 0) stationType = StationTypeEnum.PreStation;
+                    else stationType = StationTypeEnum.DispensingStation;
+                    break;
+                default:
+                    if (stationIx == 0) stationType = StationTypeEnum.PreStation;
+                    else if (stationIx == nbrOfStations - 1) stationType = StationTypeEnum.PostStation;
+                    else stationType = StationTypeEnum.DispensingStation;
+                    break;
+                
+            }
+
+            return stationType;
         }
 
     }

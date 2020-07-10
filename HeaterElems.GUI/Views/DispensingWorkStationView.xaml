@@ -23,7 +23,7 @@
             <Button Content="Step" Margin="4,40" Width="60" Command="{Binding StepCommand}" />
             <StackPanel Margin="2,40" Orientation="Horizontal" >
                 <Label Content="#stations" />
-                <TextBox Text="{Binding NumberOfStations}" Width="30" 
+                <TextBox Text="{Binding NumberOfStations, UpdateSourceTrigger=PropertyChanged}" Width="30" 
                          Height="23" FontSize="15" BorderThickness="2" />
             </StackPanel>
         </StackPanel>

@@ -31,7 +31,7 @@ namespace HeaterElems.ViewModels
         #endregion StepCommand
 
         #region NumberOfStations
-        private int _numberOfStations = 3;
+        private int _numberOfStations;
 
         public int NumberOfStations {
             get { return _numberOfStations; }
