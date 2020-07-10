@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:b="http://schemas.microsoft.com/xaml/behaviors" 
              xmlns:local="clr-namespace:HeaterElems.GUI.Views"
+             xmlns:resources="clr-namespace:HeaterElems.GUI.Resources"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:viewModels="clr-namespace:HeaterElems.ViewModels;assembly=HeaterElems.ViewModels"
              mc:Ignorable="d" 
@@ -12,13 +13,17 @@
              d:DesignHeight="55" d:DesignWidth="120">
 
     <Grid>
+        <Grid.Resources>
+            <resources:IntegerToColorConverter x:Key="IntegerToColorConverter" />
+        </Grid.Resources>
         <Border BorderThickness="1" BorderBrush="Blue"  Width="120"  >
             <Border.Resources>
                 <system:Double x:Key="R" >13</system:Double>
                 <Thickness x:Key="CircleMargin" Left="8" Top="5" Right="5" Bottom="5" />
             </Border.Resources>
 
-            <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+            <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                     Background="{Binding WorkPiece.Id, Converter={StaticResource IntegerToColorConverter}}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Columns="4" Rows="2" />

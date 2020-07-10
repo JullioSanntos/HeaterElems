@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:HeaterElems.GUI"
         xmlns:views="clr-namespace:HeaterElems.GUI.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="820">
     <Grid>
 
         <!--<views:MainView Height="100" Width="400" />-->

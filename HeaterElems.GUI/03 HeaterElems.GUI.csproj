@@ -60,6 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Resources\IntegerToColorConverter.cs" />
     <Compile Include="Views\WorkPieceView.xaml.cs">
       <DependentUpon>WorkPieceView.xaml</DependentUpon>
     </Compile>
