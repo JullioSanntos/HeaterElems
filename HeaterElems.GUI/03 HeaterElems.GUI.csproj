@@ -64,8 +64,8 @@
     <Compile Include="Views\WorkPieceView.xaml.cs">
       <DependentUpon>WorkPieceView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ConveyorBeltView.xaml.cs">
-      <DependentUpon>ConveyorBeltView.xaml</DependentUpon>
+    <Compile Include="Views\ConveyorView.xaml.cs">
+      <DependentUpon>ConveyorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DispensingWorkStationView.xaml.cs">
       <DependentUpon>DispensingWorkStationView.xaml</DependentUpon>
@@ -92,7 +92,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\ConveyorBeltView.xaml">
+    <Page Include="Views\ConveyorView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -18,16 +18,16 @@ using HeaterElems.ViewModels;
 namespace HeaterElems.GUI.Views
 {
     /// <summary>
-    /// Interaction logic for ConveyorBeltView.xaml
+    /// Interaction logic for ConveyorView.xaml
     /// </summary>
-    public partial class ConveyorBeltView : UserControl
+    public partial class ConveyorView : UserControl
     {
-        //private ConveyorBeltViewModel _vm { get; set; }
-        public ConveyorBeltView()
+        //private ConveyorViewModel _vm { get; set; }
+        public ConveyorView()
         {
             InitializeComponent();
             //this.Loaded += ConveyorBeltView_Loaded;
-            //_vm = new ConveyorBeltViewModel();
+            //_vm = new ConveyorViewModel();
         }
 
         //private void ConveyorBeltView_Loaded(object sender, RoutedEventArgs e)

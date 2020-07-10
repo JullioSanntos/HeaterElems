@@ -14,20 +14,25 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="100" />
-            <ColumnDefinition Width="550" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="160" />
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Column="0">
-            <Button Content="Run" Margin="4,50" Width="60" Command="{Binding RunCommand}" />
-            <Button Content="Stop" Margin="4,50" Width="60" Command="{Binding RunCommand}" />
-            <Button Content="Step" Margin="4" Width="60" Command="{Binding StepCommand}" />
+            <Button Content="Run" Margin="4,20" Width="60" Command="{Binding RunCommand}" />
+            <Button Content="Stop" Margin="4,20" Width="60" Command="{Binding RunCommand}" />
+            <Button Content="Step" Margin="4,40" Width="60" Command="{Binding StepCommand}" />
+            <StackPanel Margin="2,40" Orientation="Horizontal" >
+                <Label Content="#stations" />
+                <TextBox Text="{Binding NumberOfStations}" Width="30" 
+                         Height="23" FontSize="15" BorderThickness="2" />
+            </StackPanel>
         </StackPanel>
 
-        <Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400" Width="550" >
-            <ItemsControl ItemsSource="{Binding ConveyorViewModelsList}" VerticalAlignment="Center" >
+        <Border Grid.Column="1" BorderThickness="2" BorderBrush="Black"  Height="400"  >
+            <ItemsControl ItemsSource="{Binding ConveyorViewModelsList}" >
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <local:ConveyorBeltView Margin="20"  />
+                        <local:ConveyorView Margin="20"  />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

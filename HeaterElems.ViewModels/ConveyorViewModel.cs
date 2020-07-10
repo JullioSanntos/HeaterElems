@@ -10,11 +10,11 @@ using HeaterElems.Common;
 
 namespace HeaterElems.ViewModels
 {
-    public class ConveyorBeltViewModel : ViewModelBase<Conveyor>
+    public class ConveyorViewModel : ViewModelBase<Conveyor>
     {
 
         #region NumberOfStations
-        private int _numberOfStations = 3;
+        private int _numberOfStations;
 
         public int NumberOfStations
         {
@@ -62,7 +62,7 @@ namespace HeaterElems.ViewModels
         public bool CanLoadBoard { get { return PreStationVM?.ModelContext?.HasBoard == false; } }
         #endregion CanLoadBoard
 
-        public ConveyorBeltViewModel()
+        public ConveyorViewModel()
         {
             this.PropertyChanged += ConveyorBeltViewModel_PropertyChanged;
         }

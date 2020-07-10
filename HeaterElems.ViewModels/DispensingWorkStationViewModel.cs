@@ -30,6 +30,19 @@ namespace HeaterElems.ViewModels
         public RelayCommand StepCommand => new RelayCommand((o) => { Step(); });
         #endregion StepCommand
 
+        #region NumberOfStations
+        private int _numberOfStations = 3;
+
+        public int NumberOfStations {
+            get { return _numberOfStations; }
+            set
+            {
+                SetProperty(ref _numberOfStations, value);
+                ConveyorViewModelsList.ForEach(c => c.NumberOfStations = NumberOfStations);
+            }
+        }
+        #endregion NumberOfStations
+
         #region CurrentBoardId
         public int CurrentBoardId = 0;
         #endregion CurrentBoardId
@@ -44,16 +57,16 @@ namespace HeaterElems.ViewModels
         #endregion HasStopped
 
         #region ConveyorViewModelsList
-        private List<ConveyorBeltViewModel> _conveyorViewModelsList;
-        public List<ConveyorBeltViewModel> ConveyorViewModelsList
+        private List<ConveyorViewModel> _conveyorViewModelsList;
+        public List<ConveyorViewModel> ConveyorViewModelsList
         {
             get {
                 if (_conveyorViewModelsList != null) return _conveyorViewModelsList;
 
-                var conveyorViewModelsList = new List<ConveyorBeltViewModel>();
-                var conv1 = new ConveyorBeltViewModel() { ModelContext = new Conveyor("Back Lane", 2) };
+                var conveyorViewModelsList = new List<ConveyorViewModel>();
+                var conv1 = new ConveyorViewModel() { ModelContext = new Conveyor("Back Lane", 2) };
                 conveyorViewModelsList.Add(conv1);
-                var conv2 = new ConveyorBeltViewModel() {ModelContext = new Conveyor("Front Lane", 1) };
+                var conv2 = new ConveyorViewModel() {ModelContext = new Conveyor("Front Lane", 1) };
                 conveyorViewModelsList.Add(conv2);
                 ConveyorViewModelsList = conveyorViewModelsList;
 
@@ -78,6 +91,7 @@ namespace HeaterElems.ViewModels
         public DispensingWorkStationViewModel() {
             base.ModelContext = DispensingWorkStation.Instance;
             this.PropertyChanged += DispensingWorkStationViewModel_PropertyChanged;
+            NumberOfStations = 3;
         }
         private void DispensingWorkStationViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -92,6 +106,7 @@ namespace HeaterElems.ViewModels
             DispensedWorkPiecesViewModel.DispensedBoardsVmList.Add(dispensedWorkPieceVm);
             
         }
+
         #endregion constructors
 
 
