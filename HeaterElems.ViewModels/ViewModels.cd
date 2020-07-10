@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="HeaterElems.ViewModels.DispensingWorkStationViewModel">
+    <Position X="1.75" Y="1" Width="3" />
+    <Members>
+      <Field Name="_conveyorViewModelsList" Hidden="true" />
+      <Field Name="_dispensedWorkPiecesViewModel" Hidden="true" />
+      <Field Name="_hasStopped" Hidden="true" />
+      <Field Name="_numberOfStations" Hidden="true" />
+      <Field Name="CurrentBoardId" Hidden="true" />
+      <Method Name="DispensingWorkStationViewModel_PropertyChanged" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAQACCAIAAAAABAAAAEAAAAAAAAIAIDiQAAEAQAA=</HashCode>
+      <FileName>DispensingWorkStationViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DispensedWorkPiecesViewModel" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="ConveyorViewModelsList" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="HeaterElems.ViewModels.ConveyorViewModel">
+    <Position X="2" Y="5.25" Width="2.5" />
+    <Members>
+      <Field Name="_numberOfStations" Hidden="true" />
+      <Field Name="_stationViewModelsOrderedList" Hidden="true" />
+      <Method Name="ConveyorBeltViewModel_PropertyChanged" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAIAQAAAAAQAAAAAAEAAAAAAABAAAQAKAAA=</HashCode>
+      <FileName>ConveyorViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="StationViewModelsOrderedList" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="HeaterElems.ViewModels.StationViewModel">
+    <Position X="6.5" Y="5.25" Width="3.5" />
+    <Members>
+      <Field Name="_randomTime" Hidden="true" />
+      <Field Name="_unloadTimer" Hidden="true" />
+      <Field Name="_workPiece" Hidden="true" />
+      <Field Name="_workPieceViewModel" Hidden="true" />
+      <Method Name="StationViewModel_PropertyChanged" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAGAAAAAAAAAAAIAAAAAAAAAQCACACAAAAAAAQAAQA=</HashCode>
+      <FileName>StationViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="WorkPiece" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="HeaterElems.ViewModels.DispensedWorkPiecesContainerViewModel">
+    <Position X="6.75" Y="1" Width="3" />
+    <Members>
+      <Field Name="_dispensedBoardsVmList" Hidden="true" />
+      <Method Name="DispensedBoardsVmListCollectionChanged" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DispensedWorkPiecesContainerViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="DispensedBoardsVmList" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="HeaterElems.Model.WorkPiece" Collapsed="true">
+    <Position X="12" Y="5.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="HeaterElems.ViewModels.WorkPieceViewModel">
+    <Position X="11.75" Y="1" Width="2.25" />
+    <Members>
+      <Field Name="_workPiece" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQCAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>WorkPieceViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="WorkPiece" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

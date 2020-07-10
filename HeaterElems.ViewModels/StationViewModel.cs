@@ -57,7 +57,7 @@ namespace HeaterElems.ViewModels
 
         private readonly Random _randomTime = new Random();
         private readonly ProgressiveTimer _unloadTimer = new ProgressiveTimer();
-        private async Task StartUnloadTimer()
+        public async Task StartUnloadTimer()
         {
             var heatingTime = _randomTime.Next(500, 1300);
             _unloadTimer.StopAfter(heatingTime);

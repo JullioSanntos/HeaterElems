@@ -100,7 +100,7 @@ namespace HeaterElems.ViewModels
             ConveyorViewModelsList?.ForEach(c => c.ModelContext.BoardDispensed += Conveyor_BoardDispensed); //this creates a memory leak
         }
 
-        private void Conveyor_BoardDispensed(object sender, WorkPiece e)
+        public void Conveyor_BoardDispensed(object sender, WorkPiece e)
         {
             var dispensedWorkPieceVm = new WorkPieceViewModel() {WorkPiece = e};
             DispensedWorkPiecesViewModel.DispensedBoardsVmList.Add(dispensedWorkPieceVm);
@@ -109,7 +109,7 @@ namespace HeaterElems.ViewModels
 
         #endregion constructors
 
-        protected async Task RunAsync()
+        public async Task RunAsync()
         {
             while (HasStopped == false)
             {
@@ -118,7 +118,7 @@ namespace HeaterElems.ViewModels
             }
         }
 
-        protected void Step()
+        public void Step()
         {
             // Load a board on the first PreDispensing Station that is empty
             var firstAvailableLane = ConveyorViewModelsList.FirstOrDefault(c => c.CanLoadBoard);
