@@ -10,7 +10,7 @@ namespace HeaterElems.ViewModels
 {
     public class StationViewModel : ViewModelBase<Station>
     {
-        
+        #region properties
         #region WorkPieceViewModel
         private WorkPieceViewModel _workPieceViewModel;
 
@@ -20,6 +20,33 @@ namespace HeaterElems.ViewModels
             set { SetProperty(ref _workPieceViewModel, value); }
         }
         #endregion WorkPieceViewModel
+
+        #region WorkPiece
+        private WorkPiece _workPiece;
+
+        public WorkPiece WorkPiece {
+            get { return _workPiece ?? (ModelContext.WorkPiece); }
+            set { SetProperty(ref _workPiece, value); }
+        }
+        #endregion WorkPiece
+        #endregion properties
+
+        #region Constructors
+        public StationViewModel() {
+            this.PropertyChanged += StationViewModel_PropertyChanged;
+ 
+        }
+
+        private void StationViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName != nameof(ModelContext)) return;
+            if (ModelContext == null) return;
+
+            this.ModelContext.PropertyChanged += (s, st) => {
+                if (st.PropertyName == nameof(ModelContext.WorkPiece)) RaisePropertyChanged(nameof(WorkPiece));
+            };
+        }
+        #endregion Constructors
 
         public async Task LoadBoardAsync(WorkPiece workPiece)
         {

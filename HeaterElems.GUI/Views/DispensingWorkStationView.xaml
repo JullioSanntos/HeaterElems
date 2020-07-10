@@ -33,8 +33,8 @@
             </ItemsControl>
         </Border>
 
-        <ListBox Grid.Column="2" ItemsSource="{Binding ModelContext.DispensedWorkPiecesContainer.DispensedBoards}" 
-                 Margin="4" Background="Transparent">
+        <ListBox Grid.Column="2" ItemsSource="{Binding DispensedWorkPiecesViewModel.DispensedBoardsVmList}" 
+                 Margin="4" Background="Transparent" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <local:WorkPieceView />

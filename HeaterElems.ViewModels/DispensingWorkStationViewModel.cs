@@ -63,16 +63,21 @@ namespace HeaterElems.ViewModels
         }
         #endregion ConveyorViewModelsList
 
+        #region DispensedWorkPiecesViewModel
+        private DispensedWorkPiecesContainerViewModel _dispensedWorkPiecesViewModel;
+        public DispensedWorkPiecesContainerViewModel DispensedWorkPiecesViewModel
+        {
+            get { return _dispensedWorkPiecesViewModel ?? (_dispensedWorkPiecesViewModel = new DispensedWorkPiecesContainerViewModel() {ModelContext = new DispensedWorkPiecesContainer()}); }
+            set { SetProperty(ref _dispensedWorkPiecesViewModel, value); }
+        }
+        #endregion DispensedWorkPiecesViewModel
+
         #endregion properties
 
         #region constructors
         public DispensingWorkStationViewModel() {
             base.ModelContext = DispensingWorkStation.Instance;
-
             this.PropertyChanged += DispensingWorkStationViewModel_PropertyChanged;
-
-            //ModelContext.PropertyChanged += DispensingWorkStationViewModel_PropertyChanged;
-            //ModelContext.Conveyors?.ToList().ForEach(c => c.BoardDispensed += Conveyor_BoardDispensed);
         }
         private void DispensingWorkStationViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -83,7 +88,9 @@ namespace HeaterElems.ViewModels
 
         private void Conveyor_BoardDispensed(object sender, WorkPiece e)
         {
-            ModelContext.DispensedWorkPiecesContainer.DispensedBoards.Add(e);
+            var dispensedWorkPieceVm = new WorkPieceViewModel() {WorkPiece = e};
+            DispensedWorkPiecesViewModel.DispensedBoardsVmList.Add(dispensedWorkPieceVm);
+            
         }
         #endregion constructors
 

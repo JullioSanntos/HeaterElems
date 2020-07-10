@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConveyorBeltViewModel.cs" />
+    <Compile Include="DispensedWorkPiecesContainerViewModel.cs" />
     <Compile Include="DispensingWorkStationViewModel.cs" />
     <Compile Include="MainViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
