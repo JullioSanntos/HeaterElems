@@ -43,14 +43,24 @@
       <Field Name="_unloadTimer" Hidden="true" />
       <Field Name="_workPiece" Hidden="true" />
       <Field Name="_workPieceViewModel" Hidden="true" />
+      <Method Name="StationViewModel" Hidden="true" />
       <Method Name="StationViewModel_PropertyChanged" Hidden="true" />
+      <Property Name="WorkPiece" Hidden="true" />
     </Members>
+    <AssociationLine Name="WorkPieceViewModel" Type="HeaterElems.ViewModels.WorkPieceViewModel" ManuallyRouted="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.75" Y="5.25" />
+        <Point X="8.75" Y="4.875" />
+        <Point X="8.75" Y="4.875" />
+        <Point X="8.75" Y="3.997" />
+      </Path>
+    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAGAAAAAAAAAAAIAAAAAAAAAQCACACAAAAAAAQAAQA=</HashCode>
       <FileName>StationViewModel.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="WorkPiece" />
+      <Property Name="WorkPieceViewModel" />
     </ShowAsAssociation>
   </Class>
   <Class Name="HeaterElems.ViewModels.DispensedWorkPiecesContainerViewModel">
@@ -68,11 +78,11 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="HeaterElems.Model.WorkPiece" Collapsed="true">
-    <Position X="12" Y="5.25" Width="1.5" />
+    <Position X="13" Y="3.25" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="HeaterElems.ViewModels.WorkPieceViewModel">
-    <Position X="11.75" Y="1" Width="2.25" />
+    <Position X="7.5" Y="3" Width="2.25" />
     <Members>
       <Field Name="_workPiece" Hidden="true" />
     </Members>
