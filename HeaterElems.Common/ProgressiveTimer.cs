@@ -229,19 +229,15 @@ namespace HeaterElems.Common
         #region methods
 
         /// <summary>
-        /// Calls <see cref="StartAsync"/> without waiting for a response
-        /// Starts a timer in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="TotalRunningTime"/>
-        /// The event is raised as often as determined by <see cref="TickIntervalMilliseconds"/> in milliseconds.
-        /// This clock will have a hard stop when elapsed time indicated by <see cref="DefaultMaxDurationMilliseconds"/> or when time in <see cref="EndTime"/> is reached.
-        /// This awaitable method returns when the clock is stopped.
+        /// Calls <see cref="StartAsync"/> without waiting for a response.
+        /// Please, see <see cref="StartAsync"/> documentation.
         /// <example>
         /// <code>
         ///     var sut = new ProgressiveTimer();
         ///     var isCompleted = false;;
         ///     sut.RunCompleted += (s, e) => isCompleted = true;
+        ///     sut.Start(); 
         ///     sut.StopAfter(1000);
-        ///     await sut.StartAsync();
-        ///     Assert.IsTrue(isCompleted);
         /// </code>
         /// </example>
         /// </summary>        
@@ -254,10 +250,12 @@ namespace HeaterElems.Common
 
         /// <summary>
         /// 
-        /// Starts a timer in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="TotalRunningTime"/>
+        /// Starts a timer in which progress is indicated by raising the <see cref="Tick"/> event
         /// The event is raised as often as determined by <see cref="TickIntervalMilliseconds"/> in milliseconds.
-        /// This clock will have a hard stop when elapsed time indicated by <see cref="DefaultMaxDurationMilliseconds"/> or when time in <see cref="EndTime"/> is reached.
-        /// This awaitable method returns when the clock is stopped.
+        /// This timer will have a hard stop when elapsed time indicated by <see cref="EndTime"/> is reached.
+        /// This awaitable <see cref="StartAsync"/>method returns when the Timer is stopped because <see cref="EndTime"/> was reached or
+        ///     <see cref="Cancel"/> was invoked
+        /// When the times stops the <see cref="RunCompleted"/> is raised
         /// <example>
         /// <code>
         ///     var sut = new ProgressiveTimer();
@@ -265,7 +263,6 @@ namespace HeaterElems.Common
         ///     sut.RunCompleted += (s, e) => isCompleted = true;
         ///     sut.StopAfter(1000);
         ///     await sut.StartAsync();
-        ///     Assert.IsTrue(isCompleted);
         /// </code>
         /// </example>
         /// </summary>
