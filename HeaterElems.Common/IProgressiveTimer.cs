@@ -45,11 +45,7 @@ namespace HeaterElems.Common
         /// This property is setup by calling <see cref="StopAt"/> or <see cref="StopAfter"/>.
         /// This property is also adjusted on a re-start (<see cref="Start"/>) after a <see cref="Pause"/>.
         /// </summary>
-        DateTime EndTime
-        {
-            get;
-            // this setter should not be used but on Unit Tests. This is a Calculated property.
-        }
+        DateTime EndTime { get; }
 
         DateTime? StopAtDateTime { get; }
 
@@ -57,12 +53,7 @@ namespace HeaterElems.Common
         /// How long the clock should run in milliseconds.
         /// This property is set by <see cref="StopAfter"/> and is used in the calculation of <see cref="EndTime"/>
         /// </summary>
-        int StopAfterMilliseconds { get; set; }
-
-        ///// <summary>
-        /////  This property indicates if <see cref="Cancel"/> was invoked
-        ///// </summary>
-        //bool IsCancelled { get; }
+        int StopAfterMilliseconds { get; }
 
         /// <summary>
         /// Indicates how frequently <see cref="Tick"/> event should be raised.
@@ -76,17 +67,6 @@ namespace HeaterElems.Common
         /// </summary>
         CancellationToken CancellationToken { get; }
 
-        ///// <summary>
-        ///// Indicates that the timer has started (<see cref="StartTime"/> or <see cref="Start"/> invoked).
-        ///// It will return false when timer stopped (<see cref="EndTime"/> reached).
-        ///// </summary>
-        //bool Active { get; set; }
-
-        ///// <summary>
-        /////  This property indicates if <see cref="Cancel"/> was invoked
-        ///// </summary>
-        //bool IsPaused { get; }
-
         /// <summary>
         /// Calls StartAsync without waiting for a response
         /// </summary>
@@ -95,7 +75,7 @@ namespace HeaterElems.Common
         /// <summary>
         /// Starts the clock in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="ProgressiveTimer.TotalRunningTime"/>
         /// The event is raised as often as determined by <see cref="ProgressiveTimer.TickIntervalMilliseconds"/> in milliseconds.
-        /// This clock will have a hard stop when elapsed time indicated by <see cref="ProgressiveTimer.DEFAULT_MAX_DURATION_MILLISECONDS"/> or when time in <see cref="ProgressiveTimer.EndTime"/> is reached.
+        /// This clock will have a hard stop when elapsed time indicated by <see cref="ProgressiveTimer.DefaultMaxDurationMilliseconds"/> or when time in <see cref="ProgressiveTimer.EndTime"/> is reached.
         /// This awaitable method returns when the clock is stopped.
         /// <example>
         /// <code>

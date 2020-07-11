@@ -41,7 +41,7 @@ namespace HeaterElems.Tests.Common
         public void EndTimeTest()
         {
             var sut = new ProgressiveTimer();
-            Assert.IsTrue((sut.EndTime - DateTime.Now).TotalMilliseconds <= ProgressiveTimer.DEFAULT_MAX_DURATION_MILLISECONDS);
+            Assert.IsTrue((sut.EndTime - DateTime.Now).TotalMilliseconds <= ProgressiveTimer.DefaultMaxDurationMilliseconds);
         }
 
         [Test]

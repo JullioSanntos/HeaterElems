@@ -16,10 +16,10 @@ namespace HeaterElems.Common
     /// It also provides a series of progress notifications through <see cref="Tick"/> (as in Tick/Tock).
     /// 
     /// The timer completed notification is done through any one of two approaches:
-    ///     1) By awaiting the <see cref="StartAsync"/> call to be returned;
+    ///     1) By awaiting the <see cref="StartAsync"/> call to return;
     ///     2) By subscribing to the <see cref="RunCompleted"/> event.
     /// 
-    /// Progress notifications is done through <see cref="Tick"/> events which
+    /// Progress notifications are done through <see cref="Tick"/> event which
     /// identifies property <see cref="TotalRunningTime"/> as having changed.
     ///
     /// <example>
@@ -77,7 +77,7 @@ namespace HeaterElems.Common
         /// sets the run default time to a Maximum of 20 seconds unless overriden by one of the "Stop" calls.
         /// It will be ignored if <see cref="StopAfter"/> or <see cref="StopAt"/>  is invoked or <see cref="StopAfterMilliseconds"/> is set
         /// </summary>
-        public const int DEFAULT_MAX_DURATION_MILLISECONDS = 20000;
+        public const int DefaultMaxDurationMilliseconds = 20000;
         #endregion DefaultMaxDurationMilliseconds
 
         #region RunningTimeSegments
@@ -141,7 +141,7 @@ namespace HeaterElems.Common
                 if (StartTime == DateTime.MinValue) return DateTime.MinValue;
                 if (StopAfterMilliseconds > 0) return StartTime.AddMilliseconds(StopAfterMilliseconds);
                 // return default maximum duration from current time if neither Stop properties has been set yet
-                return DateTimeNow.AddMilliseconds(DEFAULT_MAX_DURATION_MILLISECONDS);
+                return DateTimeNow.AddMilliseconds(DefaultMaxDurationMilliseconds);
             }
             // this setter should not be used but on Unit Tests. This is a Calculated property.
             protected set { _endTime = value; }
@@ -165,23 +165,16 @@ namespace HeaterElems.Common
         {
             get
             {
-                if (_stopAfterMilliseconds <= 0) _stopAfterMilliseconds = DEFAULT_MAX_DURATION_MILLISECONDS;
+                if (_stopAfterMilliseconds <= 0) _stopAfterMilliseconds = DefaultMaxDurationMilliseconds;
                 return _stopAfterMilliseconds;
             }
-            set { _stopAfterMilliseconds = value; }
+            private set { _stopAfterMilliseconds = value; }
         }
         #endregion StopAfterMilliseconds
 
-        //#region IsCancelled
-        ///// <summary>
-        /////  This property indicates if <see cref="Cancel"/> was invoked
-        ///// </summary>
-        //public bool IsCancelled => CancellationToken.IsCancellationRequested;
-        //#endregion IsCancelled
-
         #region TickIntervalMilliseconds
-        public const int MINIMUM_TICK_INTERVAL_MILLISECONDS = 200;
-        private int _tickIntervalMilliseconds = MINIMUM_TICK_INTERVAL_MILLISECONDS;
+        public const int MinimumTickIntervalMilliseconds = 200;
+        private int _tickIntervalMilliseconds = MinimumTickIntervalMilliseconds;
         /// <summary>
         /// Indicates how frequently the <see cref="Tick"/> event is raised
         /// Minimum Tick interval is 100 milliseconds.
@@ -191,7 +184,7 @@ namespace HeaterElems.Common
             get { return _tickIntervalMilliseconds; }
             set
             {
-                if (value <= MINIMUM_TICK_INTERVAL_MILLISECONDS) value = MINIMUM_TICK_INTERVAL_MILLISECONDS;
+                if (value <= MinimumTickIntervalMilliseconds) value = MinimumTickIntervalMilliseconds;
                 _tickIntervalMilliseconds = value;
             }
         }
@@ -231,30 +224,27 @@ namespace HeaterElems.Common
         private DateTime DateTimeNow => DateTimeNowFunc();
         #endregion DateTimeNow
 
-        #region Active
-
-        ///// <summary>
-        ///// Indicates that the timer has started (<see cref="StartTime"/> or <see cref="Start"/> invoked).
-        ///// It will return false when timer stopped (<see cref="EndTime"/> reached).
-        ///// </summary>
-        //public bool Active { get; set; }
-
-        #endregion Active
-
-        //#region IsPaused
-        ///// <summary>
-        /////  This property indicates if <see cref="Cancel"/> was invoked
-        ///// </summary>
-        //public bool IsPaused { get; protected set; }
-        //#endregion IsPaused
-
         #endregion properties
 
         #region methods
 
         /// <summary>
-        /// Calls StartAsync without waiting for a response
-        /// </summary>
+        /// Calls <see cref="StartAsync"/> without waiting for a response
+        /// Starts a timer in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="TotalRunningTime"/>
+        /// The event is raised as often as determined by <see cref="TickIntervalMilliseconds"/> in milliseconds.
+        /// This clock will have a hard stop when elapsed time indicated by <see cref="DefaultMaxDurationMilliseconds"/> or when time in <see cref="EndTime"/> is reached.
+        /// This awaitable method returns when the clock is stopped.
+        /// <example>
+        /// <code>
+        ///     var sut = new ProgressiveTimer();
+        ///     var isCompleted = false;;
+        ///     sut.RunCompleted += (s, e) => isCompleted = true;
+        ///     sut.StopAfter(1000);
+        ///     await sut.StartAsync();
+        ///     Assert.IsTrue(isCompleted);
+        /// </code>
+        /// </example>
+        /// </summary>        
         public void Start()
         {
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
@@ -263,9 +253,10 @@ namespace HeaterElems.Common
         }
 
         /// <summary>
-        /// Starts the clock in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="TotalRunningTime"/>
+        /// 
+        /// Starts a timer in which progress is indicated by raising <see cref="INotifyPropertyChanged.PropertyChanged"/> event for the property <see cref="TotalRunningTime"/>
         /// The event is raised as often as determined by <see cref="TickIntervalMilliseconds"/> in milliseconds.
-        /// This clock will have a hard stop when elapsed time indicated by <see cref="DEFAULT_MAX_DURATION_MILLISECONDS"/> or when time in <see cref="EndTime"/> is reached.
+        /// This clock will have a hard stop when elapsed time indicated by <see cref="DefaultMaxDurationMilliseconds"/> or when time in <see cref="EndTime"/> is reached.
         /// This awaitable method returns when the clock is stopped.
         /// <example>
         /// <code>

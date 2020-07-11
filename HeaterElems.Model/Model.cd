@@ -112,9 +112,7 @@
     <Position X="8.75" Y="4.25" Width="4" />
     <Members>
       <Field Name="DateTimeNowFunc" Hidden="true" />
-      <Field Name="DEFAULT_MAX_DURATION_MILLISECONDS" Hidden="true" />
       <Method Name="GetNextTickTimeMilliseconds" Hidden="true" />
-      <Field Name="MINIMUM_TICK_INTERVAL_MILLISECONDS" Hidden="true" />
       <Method Name="RunClockAsync" Hidden="true" />
     </Members>
     <TypeIdentifier />
