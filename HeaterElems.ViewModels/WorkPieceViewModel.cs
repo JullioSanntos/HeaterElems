@@ -13,11 +13,11 @@ namespace HeaterElems.ViewModels
         #region WorkPiece
         private WorkPiece _workPiece;
 
-        public WorkPiece WorkPiece
-        {
+        public WorkPiece WorkPiece {
             get { return _workPiece ?? (ModelContext.WorkPiece); }
             set { SetProperty(ref _workPiece, value); }
         }
         #endregion WorkPiece
+
     }
 }
