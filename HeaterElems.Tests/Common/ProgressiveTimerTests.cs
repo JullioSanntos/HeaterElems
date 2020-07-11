@@ -76,15 +76,33 @@ namespace HeaterElems.Tests.Common
         }
 
         [Test]
-        public void CancelTest()
+        public async Task Completed()
+        {
+            var sut = new ProgressiveTimer();
+            var wasCompleted = false;
+            sut.RunCompleted += (s, e) => wasCompleted = sut.TimerState == ProgressiveTimerStateEnum.Completed;
+            //Assert.IsFalse(sut.Active);
+            Assert.IsTrue(sut.TimerState == ProgressiveTimerStateEnum.Idle);
+            sut.StopAfter(1000);
+            await sut.StartAsync();
+            //Assert.IsTrue(sut.Active);
+            Assert.IsTrue(wasCompleted);
+            Assert.IsTrue(sut.TimerState == ProgressiveTimerStateEnum.Idle);
+        }
+
+        [Test]
+        public void CancelledTest()
         {
             var sut = new ProgressiveTimer();
             var isCompleted = false;
             sut.RunCompleted += (s, e) => isCompleted = true;
-            Assert.IsFalse(sut.IsActive);
+            //Assert.IsFalse(sut.Active);
+            Assert.IsTrue(sut.TimerState == ProgressiveTimerStateEnum.Idle);
             sut.Start();
-            Assert.IsTrue(sut.IsActive);
+            //Assert.IsTrue(sut.Active);
+            Assert.IsTrue(sut.TimerState == ProgressiveTimerStateEnum.Active);
             sut.Cancel();
+            Assert.IsTrue(sut.TimerState == ProgressiveTimerStateEnum.Cancelled);
             Assert.IsFalse(isCompleted);
         }
 

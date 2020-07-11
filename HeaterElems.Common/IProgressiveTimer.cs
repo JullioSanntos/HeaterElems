@@ -20,6 +20,8 @@ namespace HeaterElems.Common
         /// </summary>
         event EventHandler<Tuple<TimeSpan, CancellationToken>> Tick;
 
+        ProgressiveTimerStateEnum TimerState { get; }
+
         List<TimeSpan> RunningTimeSegments { get; }
 
         /// <summary>
@@ -57,10 +59,10 @@ namespace HeaterElems.Common
         /// </summary>
         int StopAfterMilliseconds { get; set; }
 
-        /// <summary>
-        ///  This property indicates if <see cref="Cancel"/> was invoked
-        /// </summary>
-        bool IsCancelled { get; }
+        ///// <summary>
+        /////  This property indicates if <see cref="Cancel"/> was invoked
+        ///// </summary>
+        //bool IsCancelled { get; }
 
         /// <summary>
         /// Indicates how frequently <see cref="Tick"/> event should be raised.
@@ -74,16 +76,16 @@ namespace HeaterElems.Common
         /// </summary>
         CancellationToken CancellationToken { get; }
 
-        /// <summary>
-        /// Indicates that the timer has started (<see cref="StartTime"/> or <see cref="Start"/> invoked).
-        /// It will return false when timer stopped (<see cref="EndTime"/> reached).
-        /// </summary>
-        bool IsActive { get; set; }
+        ///// <summary>
+        ///// Indicates that the timer has started (<see cref="StartTime"/> or <see cref="Start"/> invoked).
+        ///// It will return false when timer stopped (<see cref="EndTime"/> reached).
+        ///// </summary>
+        //bool Active { get; set; }
 
-        /// <summary>
-        ///  This property indicates if <see cref="Cancel"/> was invoked
-        /// </summary>
-        bool IsPaused { get; }
+        ///// <summary>
+        /////  This property indicates if <see cref="Cancel"/> was invoked
+        ///// </summary>
+        //bool IsPaused { get; }
 
         /// <summary>
         /// Calls StartAsync without waiting for a response

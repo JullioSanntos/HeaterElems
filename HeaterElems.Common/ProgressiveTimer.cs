@@ -41,12 +41,16 @@ namespace HeaterElems.Common
     {
         #region events
         /// <summary>
-        /// Event is raised when <see cref="EndTime"/> time is reached
+        /// Event is raised when <see cref="EndTime"/> time is reached, unless it was cancelled by invoking <see cref="Cancel"/>
+        /// This event is invoked synchronously.
+        /// 
         /// </summary>
         public event EventHandler<TimeSpan?> RunCompleted;
         /// <summary>
-        /// Event is raise every <see cref="TickIntervalMilliseconds"/>
-        /// 
+        /// Event is raised every <see cref="TickIntervalMilliseconds"/>, for as long as this Timer is "Active"
+        /// This event is invoked asynchronously on another thread than the one that started this Timer.
+        /// This event is cancellable by invoking <see cref="Cancel"/>
+        /// All subscribers receive the <see cref="CancellationToken"/> to, cooperatively and graciously, handle a cancellation.
         /// </summary>
         public event EventHandler<Tuple<TimeSpan, CancellationToken>> Tick;
 
@@ -54,6 +58,19 @@ namespace HeaterElems.Common
 
         #region properties
 
+
+        #region TimerState
+        /// <summary>
+        /// <see cref="ProgressiveTimerStateEnum"/>
+        /// "Idle" is the state before this Timer is started (<see cref="Start"/> or <see cref="StartAsync"/> is invoked) or
+        ///     after the <see cref="RunCompleted"/> event returns control to this Timer.
+        /// "Active" Indicates that the timer has started (<see cref="StartTime"/> or <see cref="Start"/> was invoked).
+        /// "Paused"  indicates that <see cref="Pause"/> was invoked
+        /// "Cancelled" indicates that <see cref="Cancel"/> was invoked
+        /// "Completed" means that the EndTime was reached and its scope is just for the duration of the <see cref="RunCompleted"/> event.
+        /// </summary>
+        public ProgressiveTimerStateEnum TimerState { get; private set; }
+        #endregion TimerState
 
         #region DefaultMaxDurationMilliseconds
         /// <summary>
@@ -90,7 +107,8 @@ namespace HeaterElems.Common
             {
                 if (_totalRunningTime.Milliseconds > 0) { return _totalRunningTime; } // to be used only on automated tests
                 var sumOfSegments = new TimeSpan(RunningTimeSegments.Sum(s => s.Ticks));
-                if (IsPaused || IsActive == false) { return sumOfSegments; }
+                //if (IsPaused || Active == false) { return sumOfSegments; }
+                if (TimerState != ProgressiveTimerStateEnum.Paused || TimerState != ProgressiveTimerStateEnum.Active) { return sumOfSegments; }
                 else { return sumOfSegments + (DateTimeNow - StartTime); }
             }
             protected set { _totalRunningTime = value; } // to be used only on automated tests
@@ -154,12 +172,12 @@ namespace HeaterElems.Common
         }
         #endregion StopAfterMilliseconds
 
-        #region IsCancelled
-        /// <summary>
-        ///  This property indicates if <see cref="Cancel"/> was invoked
-        /// </summary>
-        public bool IsCancelled => CancellationToken.IsCancellationRequested;
-        #endregion IsCancelled
+        //#region IsCancelled
+        ///// <summary>
+        /////  This property indicates if <see cref="Cancel"/> was invoked
+        ///// </summary>
+        //public bool IsCancelled => CancellationToken.IsCancellationRequested;
+        //#endregion IsCancelled
 
         #region TickIntervalMilliseconds
         public const int MINIMUM_TICK_INTERVAL_MILLISECONDS = 200;
@@ -213,22 +231,22 @@ namespace HeaterElems.Common
         private DateTime DateTimeNow => DateTimeNowFunc();
         #endregion DateTimeNow
 
-        #region IsActive
+        #region Active
 
-        /// <summary>
-        /// Indicates that the timer has started (<see cref="StartTime"/> or <see cref="Start"/> invoked).
-        /// It will return false when timer stopped (<see cref="EndTime"/> reached).
-        /// </summary>
-        public bool IsActive { get; set; }
+        ///// <summary>
+        ///// Indicates that the timer has started (<see cref="StartTime"/> or <see cref="Start"/> invoked).
+        ///// It will return false when timer stopped (<see cref="EndTime"/> reached).
+        ///// </summary>
+        //public bool Active { get; set; }
 
-        #endregion IsActive
+        #endregion Active
 
-        #region IsCancelled
-        /// <summary>
-        ///  This property indicates if <see cref="Cancel"/> was invoked
-        /// </summary>
-        public bool IsPaused { get; protected set; }
-        #endregion IsCancelled
+        //#region IsPaused
+        ///// <summary>
+        /////  This property indicates if <see cref="Cancel"/> was invoked
+        ///// </summary>
+        //public bool IsPaused { get; protected set; }
+        //#endregion IsPaused
 
         #endregion properties
 
@@ -264,14 +282,16 @@ namespace HeaterElems.Common
         public async Task StartAsync()
         {
             // Adjust EndTime, if after a Pause and StopAfterMilliseconds was set, by subtracting last run timespan from StopAfterMilliseconds
-            if (IsPaused && StopAfterMilliseconds > 0) { StopAfterMilliseconds -= (int)RunningTimeSegments.Last().TotalMilliseconds; }
-            if (IsPaused == false) { RunningTimeSegments.Clear(); }
+            //if (IsPaused && StopAfterMilliseconds > 0) { StopAfterMilliseconds -= (int)RunningTimeSegments.Last().TotalMilliseconds; }
+            if (TimerState == ProgressiveTimerStateEnum.Paused && StopAfterMilliseconds > 0) { StopAfterMilliseconds -= (int)RunningTimeSegments.Last().TotalMilliseconds; }
+            //if (IsPaused == false) { RunningTimeSegments.Clear(); }
+            if (TimerState != ProgressiveTimerStateEnum.Paused) { RunningTimeSegments.Clear(); }
 
             _endTime = null; //The property EndTime is non-nullable. Only the backing field can be reset.
             StartTime = DateTimeNow;
             CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
-            IsActive = true;
-            IsPaused = false;
+            TimerState = ProgressiveTimerStateEnum.Active;
+            //IsPaused = false;
 
             try
             {
@@ -283,11 +303,17 @@ namespace HeaterElems.Common
                 CancellationTokenFactory = null;
             }
 
-            IsActive = false;
             EndTime = DateTimeNow;
             RunningTimeSegments.Add(DateTimeNow - StartTime);
-            if (IsCancelled == false) RunCompleted?.Invoke(this, TotalRunningTime);
-            else RunCompleted?.Invoke(this, null);
+            //if (IsCancelled == false) RunCompleted?.Invoke(this, TotalRunningTime);
+            if (TimerState == ProgressiveTimerStateEnum.Cancelled) RunCompleted?.Invoke(this, null);
+            else {
+                TimerState = ProgressiveTimerStateEnum.Completed;
+                RunCompleted?.Invoke(this, TotalRunningTime);
+            }
+            
+            TimerState = ProgressiveTimerStateEnum.Idle;
+
         }
 
         /// <summary>
@@ -301,7 +327,7 @@ namespace HeaterElems.Common
 
             var endTimeReached = new Func<bool>(() => EndTime < DateTimeNow);
             // Run the timer while EndTime is not reached and while StopNow is not invoked
-            while (endTimeReached() == false && IsCancelled == false)
+            while (endTimeReached() == false && TimerState != ProgressiveTimerStateEnum.Cancelled)
             {
                 await Task.Delay(waitTimeForNextTick, CancellationToken).ConfigureAwait(false);
                 //await Waiter.WaitOneAsync(waitTimeForNextTick, CancellationToken);
@@ -343,6 +369,7 @@ namespace HeaterElems.Common
         public void Cancel()
         {
             CancellationTokenFactory.Cancel(false);
+            TimerState = ProgressiveTimerStateEnum.Cancelled;
         }
 
         /// <summary>
@@ -369,13 +396,23 @@ namespace HeaterElems.Common
 
         public void Pause()
         {
-            IsPaused = true;
+            //IsPaused = true;
+            TimerState = ProgressiveTimerStateEnum.Paused;
             RunningTimeSegments.Add(DateTimeNow - StartTime);
             CancellationTokenFactory.Cancel(false);
         }
 
         #endregion methods
 
+    }
+
+    public enum ProgressiveTimerStateEnum
+    {
+        Idle,
+        Active,
+        Paused,
+        Completed,
+        Cancelled
     }
 
 }
