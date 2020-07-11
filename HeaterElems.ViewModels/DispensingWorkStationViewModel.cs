@@ -103,7 +103,7 @@ namespace HeaterElems.ViewModels
         public void Conveyor_BoardDispensed(object sender, WorkPiece e)
         {
             var dispensedWorkPieceVm = new WorkPieceViewModel() {WorkPiece = e};
-            DispensedWorkPiecesViewModel.DispensedBoardsVmList.Add(dispensedWorkPieceVm);
+            DispensedWorkPiecesViewModel.DispensedBoardsVmList.Insert(0, dispensedWorkPieceVm);
             
         }
 
