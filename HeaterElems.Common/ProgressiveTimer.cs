@@ -43,7 +43,6 @@ namespace HeaterElems.Common
         /// <summary>
         /// Event is raised when <see cref="EndTime"/> time is reached, unless it was cancelled by invoking <see cref="Cancel"/>
         /// This event is invoked synchronously.
-        /// 
         /// </summary>
         public event EventHandler<TimeSpan?> RunCompleted;
         /// <summary>
@@ -57,7 +56,6 @@ namespace HeaterElems.Common
         #endregion events
 
         #region properties
-
 
         #region TimerState
         /// <summary>
@@ -125,7 +123,6 @@ namespace HeaterElems.Common
         #endregion StartTime
 
         #region EndTime
-
         private DateTime? _endTime;
         /// <summary>
         /// Time at which this Timer will stop running and will stop raising <see cref="Tick"/> events.
@@ -143,16 +140,13 @@ namespace HeaterElems.Common
                 // return default maximum duration from current time if neither Stop properties has been set yet
                 return DateTimeNow.AddMilliseconds(DefaultMaxDurationMilliseconds);
             }
-            // this setter should not be used but on Unit Tests. This is a Calculated property.
-            protected set { _endTime = value; }
+            protected set { _endTime = value; } // this setter should only be used on Unit Tests. This is a Calculated property.
         }
 
         #endregion EndTime
 
         #region StopAtDateTime
-
         public DateTime? StopAtDateTime { get; private set; }
-
         #endregion StopAtDateTime
 
         #region StopAfterMilliseconds
@@ -270,16 +264,13 @@ namespace HeaterElems.Common
         public async Task StartAsync()
         {
             // Adjust EndTime, if after a Pause and StopAfterMilliseconds was set, by subtracting last run timespan from StopAfterMilliseconds
-            //if (IsPaused && StopAfterMilliseconds > 0) { StopAfterMilliseconds -= (int)RunningTimeSegments.Last().TotalMilliseconds; }
             if (TimerState == ProgressiveTimerStateEnum.Paused && StopAfterMilliseconds > 0) { StopAfterMilliseconds -= (int)RunningTimeSegments.Last().TotalMilliseconds; }
-            //if (IsPaused == false) { RunningTimeSegments.Clear(); }
             if (TimerState != ProgressiveTimerStateEnum.Paused) { RunningTimeSegments.Clear(); }
 
             _endTime = null; //The property EndTime is non-nullable. Only the backing field can be reset.
             StartTime = DateTimeNow;
             CancellationToken = CancellationTokenFactory.Token; //get a fresh token for this run
             TimerState = ProgressiveTimerStateEnum.Active;
-            //IsPaused = false;
 
             try
             {
@@ -293,8 +284,7 @@ namespace HeaterElems.Common
 
             EndTime = DateTimeNow;
             RunningTimeSegments.Add(DateTimeNow - StartTime);
-            //if (IsCancelled == false) RunCompleted?.Invoke(this, TotalRunningTime);
-            if (TimerState == ProgressiveTimerStateEnum.Cancelled) RunCompleted?.Invoke(this, null);
+            if (TimerState == ProgressiveTimerStateEnum.Cancelled) { RunCompleted?.Invoke(this, null); }
             else {
                 TimerState = ProgressiveTimerStateEnum.Completed;
                 RunCompleted?.Invoke(this, TotalRunningTime);
@@ -318,7 +308,6 @@ namespace HeaterElems.Common
             while (endTimeReached() == false && TimerState != ProgressiveTimerStateEnum.Cancelled)
             {
                 await Task.Delay(waitTimeForNextTick, CancellationToken).ConfigureAwait(false);
-                //await Waiter.WaitOneAsync(waitTimeForNextTick, CancellationToken);
 #pragma warning disable 4014
                 // by design this is a fire-and-forget call. This timer shouldn't be blocked by clients code
                 Task.Run(() => Tick?.Invoke(this, new Tuple<TimeSpan, CancellationToken>(TotalRunningTime, CancellationToken)), CancellationToken);
@@ -382,9 +371,12 @@ namespace HeaterElems.Common
             StopAfterMilliseconds = 0;
         }
 
+        /// <summary>
+        /// Pause the time count and stop the <see cref="Tick"/> event from being raised.
+        /// Use <see cref="Start"/> or <see cref="StartAsync"/> to resume the time count.
+        /// </summary>
         public void Pause()
         {
-            //IsPaused = true;
             TimerState = ProgressiveTimerStateEnum.Paused;
             RunningTimeSegments.Add(DateTimeNow - StartTime);
             CancellationTokenFactory.Cancel(false);
